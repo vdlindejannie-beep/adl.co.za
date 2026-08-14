@@ -1,5 +1,99 @@
-<h1>Your Shopping Cart</h1>
-{% for item in cart %}
-    <p>{{ item.name }} - R{{ item.price }}</p>
-{% endfor %}
-<a href="/checkout">Proceed to Checkout</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - Leather by Annuschka</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #241c17; color: #f3efe6; font-family: 'Inter', sans-serif; }
+        .gold-accent { color: #d4af37; }
+        .gold-bg { background-color: #d4af37; }
+        .card-bg { background-color: #2e241e; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- Navbar -->
+    <nav class="bg-[#1c1512] border-b border-[#3a2d26] py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50">
+        <a href="{{ url_for('index') }}" class="text-2xl font-serif gold-accent font-bold tracking-wider">Leather by Annuschka</a>
+        <div class="hidden md:flex space-x-8 text-sm uppercase tracking-widest">
+            <a href="{{ url_for('index') }}" class="hover:text-[#d4af37] transition">Home</a>
+            <a href="{{ url_for('shop') }}" class="hover:text-[#d4af37] transition">Shop Catalog</a>
+            <a href="{{ url_for('cart') }}" class="gold-accent font-bold transition"><i class="fa fa-shopping-cart"></i> Cart</a>
+        </div>
+        <a href="{{ url_for('shop') }}" class="gold-bg text-[#1c1512] px-4 py-2 rounded-full font-semibold text-sm">Continue Shopping</a>
+    </nav>
+
+    <!-- Cart Main -->
+    <main class="max-w-5xl mx-auto px-6 py-12 flex-grow w-full">
+        <h1 class="text-3xl font-serif font-bold mb-8">Your Shopping Cart</h1>
+
+        {% if cart_items %}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 space-y-4">
+                {% for item in cart_items %}
+                <div class="card-bg p-4 rounded-xl border border-[#3a2d26] flex items-center justify-between gap-4">
+                    <img src="{{ url_for('static', filename=item.image) }}" alt="{{ item.name }}" class="w-20 h-20 object-contain bg-[#1c1512] rounded-lg p-2">
+                    <div class="flex-grow">
+                        <h3 class="font-serif font-bold text-lg">{{ item.name }}</h3>
+                        <p class="text-xs text-gray-400">Color: {{ item.color }} | Size: {{ item.size }}</p>
+                        <p class="gold-accent font-bold mt-1">R {{ "%.2f"|format(item.price) }}</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <form action="{{ url_for('update_cart', index=loop.index0) }}" method="POST">
+                            <input type="hidden" name="action" value="decrease">
+                            <button type="submit" class="bg-[#1c1512] px-2.5 py-1 rounded border border-[#3a2d26] hover:bg-[#3a2d26]">-</button>
+                        </form>
+                        <span class="px-2 font-semibold">{{ item.quantity }}</span>
+                        <form action="{{ url_for('update_cart', index=loop.index0) }}" method="POST">
+                            <input type="hidden" name="action" value="increase">
+                            <button type="submit" class="bg-[#1c1512] px-2.5 py-1 rounded border border-[#3a2d26] hover:bg-[#3a2d26]">+</button>
+                        </form>
+                        <form action="{{ url_for('update_cart', index=loop.index0) }}" method="POST">
+                            <input type="hidden" name="action" value="remove">
+                            <button type="submit" class="text-red-400 hover:text-red-300 ml-3"><i class="fa fa-trash"></i></button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Summary Box -->
+            <div class="card-bg p-6 rounded-xl border border-[#3a2d26] h-fit">
+                <h3 class="font-serif font-bold text-xl mb-4 border-b border-[#3a2d26] pb-2">Order Summary</h3>
+                <div class="flex justify-between mb-2 text-gray-300">
+                    <span>Subtotal</span>
+                    <span>R {{ "%.2f"|format(total) }}</span>
+                </div>
+                <div class="flex justify-between mb-4 text-gray-300">
+                    <span>Shipping (Local)</span>
+                    <span>Calculated at Checkout</span>
+                </div>
+                <div class="flex justify-between font-bold text-lg mb-6 gold-accent border-t border-[#3a2d26] pt-4">
+                    <span>Total</span>
+                    <span>R {{ "%.2f"|format(total) }}</span>
+                </div>
+                <a href="{{ url_for('checkout') }}" class="block text-center gold-bg text-[#1c1512] py-3 rounded-lg font-bold hover:opacity-90 transition">
+                    Proceed to Checkout
+                </a>
+            </div>
+        </div>
+        {% else %}
+        <div class="text-center py-20 card-bg rounded-xl border border-[#3a2d26]">
+            <i class="fa fa-shopping-bag gold-accent text-5xl mb-4"></i>
+            <h2 class="text-2xl font-serif font-bold mb-2">Your cart is empty</h2>
+            <p class="text-gray-400 mb-6">Discover our handcrafted leather catalog and add your favorite pieces.</p>
+            <a href="{{ url_for('shop') }}" class="gold-bg text-[#1c1512] px-6 py-3 rounded-full font-bold">Start Shopping</a>
+        </div>
+        {% endif %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#18110e] py-8 text-center text-xs text-gray-400 border-t border-[#3a2d26]">
+        <p>&copy; 2026 Leather by Annuschka. All rights reserved. | Contact: lummisannuschka001@gmail.com | WhatsApp: +27 76 430 7990</p>
+    </footer>
+
+</body>
+</html>

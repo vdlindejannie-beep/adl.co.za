@@ -1,472 +1,494 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, flash, redirect, render_template, request, session, url_for
 
 app = Flask(__name__)
-app.secret_key = 'leather-by-annuschka-secret-key'
+app.secret_key = "leather_by_annuschka_secret_key"
 
-# In-memory database for reviews and orders
-REVIEWS = [
-    {"name": "Marike v.d. Merwe", "rating": 5, "comment": "Absolute top quality! The leather backpack exceeded all my expectations.", "date": "August 2026"},
-    {"name": "Pieter B.", "rating": 5, "comment": "Brought the medium travel bag for a weekend trip. Beautiful craftsmanship and smells amazing.", "date": "August 2026"}
-]
-
-ORDERS = []
-
+# Product Catalog with accurate image mapping and categories
 PRODUCTS = [
-    # Travel Bags
+    # Travel & Luggage
     {
-        "id": "large-luggage",
+        "id": 1,
         "name": "Large Luggage / Travel Bag",
-        "category": "Travel Bags",
-        "price": 1725,
-        "images": ["Large_Luggage_travel bag.jpeg"],
-        "description": "Spacious handcrafted large travel bag built for durability and long journeys.",
-        "colors": [],
-        "sizes": []
+        "category": "Travel & Luggage",
+        "price": 3850.00,
+        "image": "Screenshot 2026-08-14 142732.jpeg",
+        "description": "Spacious premium full-grain leather travel bag designed for extended journeys.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Standard (Large)"],
     },
     {
-        "id": "medium-luggage",
+        "id": 2,
         "name": "Medium Luggage / Travel Bag",
-        "category": "Travel Bags",
-        "price": 1150,
-        "images": ["Medium_luggage_travel bag.jpeg", "Medium_luggage_travel bag1.jpeg"],
-        "description": "Versatile medium luggage piece available in two classic shades.",
-        "colors": ["Dark", "Light"],
-        "sizes": []
+        "category": "Travel & Luggage",
+        "price": 3200.00,
+        "image": "Medium_luggage_travel bag.png",
+        "description": "Ideal weekend getaway bag crafted from durable, supple leather.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Medium"],
     },
     {
-        "id": "small-travel-bag",
+        "id": 3,
         "name": "Small Travel Bag / Overnight Bag",
-        "category": "Travel Bags",
-        "price": 680,
-        "images": ["Medium_luggage_travel bag1.jpeg"],
-        "description": "Compact overnight travel bag for short trips.",
-        "colors": ["Dark", "Light"],
-        "sizes": []
+        "category": "Travel & Luggage",
+        "price": 2650.00,
+        "image": "Small_luggage_travel bag1.png",
+        "description": "Compact overnight travel bag with robust brass hardware and comfortable handles.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Small"],
     },
     {
-        "id": "overnight-bag",
+        "id": 4,
         "name": "Overnight Bag",
-        "category": "Travel Bags",
-        "price": 1275,
-        "images": ["Overnight Bag.jpeg"],
-        "description": "Premium overnight bag crafted with exceptional leather quality.",
-        "colors": [],
-        "sizes": []
+        "category": "Travel & Luggage",
+        "price": 2800.00,
+        "image": "Overnight Bag.png",
+        "description": "Classic structured overnight bag for seamless short trips.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Standard"],
     },
     {
-        "id": "medium-travel-bag-dokters",
+        "id": 5,
         "name": "Medium Travel Bag / Doctor's Bag",
-        "category": "Travel Bags",
-        "price": 910,
-        "images": ["Medium Travel Bag _Dokters bag.jpeg"],
-        "description": "Classic structured doctor's style travel bag in two color options.",
-        "colors": ["Dark", "Light"],
-        "sizes": []
+        "category": "Travel & Luggage",
+        "price": 3100.00,
+        "image": "Medium Travel Bag _Dokters bag.png",
+        "description": "Vintage-inspired doctor's bag style with wide-frame opening.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Medium"],
     },
-
-    # Everyday Essentials
+    # Handbags & Slings
     {
-        "id": "toiletries-makeup-bag",
-        "name": "Toiletries / Makeup Bag",
-        "category": "Everyday Essentials",
-        "price": 450,
-        "images": ["Toiletries_makup bag.jpeg"],
-        "description": "Handcrafted toiletries and makeup bag. Available in 4 shades of brown (specify preference in comment).",
-        "colors": ["Shade 1 (Light Brown)", "Shade 2 (Medium Brown)", "Shade 3 (Dark Brown)", "Shade 4 (Rich Chestnut)"],
-        "sizes": []
-    },
-    {
-        "id": "coin-purse",
-        "name": "Coin Purse (Medium or Large)",
-        "category": "Everyday Essentials",
-        "price": 55,
-        "images": ["Coin purse medium 1.jpeg", "Coin purse medium.jpeg", "Coin purse Large.jpeg", "Coin purse Large 1.jpeg"],
-        "description": "Handcrafted coin purse available in Medium and Large across multiple shades of brown.",
-        "colors": ["Multiple Shades of Brown"],
-        "sizes": ["Medium", "Large"],
-        "price_variants": {"Medium": 55, "Large": 65}
-    },
-    {
-        "id": "pencil-bag",
-        "name": "Pencil Bag",
-        "category": "Everyday Essentials",
-        "price": 175,
-        "images": ["Pencil bag.jpeg", "Pencil bag 1.jpeg", "Pencil bag 2.jpeg"],
-        "description": "Sturdy leather pencil bag available in light, medium, or dark colors.",
-        "colors": ["Light", "Medium", "Dark"],
-        "sizes": []
-    },
-
-    # Sling Bags
-    {
-        "id": "sling-bag-small",
-        "name": "Sling Bag (Small)",
-        "category": "Sling Bags",
-        "price": 250,
-        "images": ["Sling bag (smal).jpeg"],
-        "description": "Compact and stylish small leather sling bag.",
-        "colors": [],
-        "sizes": []
-    },
-    {
-        "id": "sling-bag-satchel-medium",
-        "name": "Sling Bag / Satchel (Medium)",
-        "category": "Sling Bags",
-        "price": 435,
-        "images": ["Slingba-Sachel (medium).jpeg"],
-        "description": "Medium-sized leather satchel / sling bag for everyday carry.",
-        "colors": [],
-        "sizes": []
-    },
-    {
-        "id": "sling-bag-satchel-large",
+        "id": 6,
         "name": "Sling Bag / Satchel (Large)",
-        "category": "Sling Bags",
-        "price": 500,
-        "images": ["Slingba-Sachel (large).jpeg"],
-        "description": "Large leather satchel / sling bag offering generous storage.",
-        "colors": [],
-        "sizes": []
+        "category": "Handbags & Slings",
+        "price": 1950.00,
+        "image": "Slingba-Sachel (large).png",
+        "description": "Large artisan leather satchel with adjustable shoulder strap.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Large"],
     },
     {
-        "id": "anti-theft-sling-bag",
-        "name": "Anti-Theft Sling Bag",
-        "category": "Sling Bags",
-        "price": 365,
-        "images": ["Anti-theft sling bag.jpeg"],
-        "description": "Secure anti-theft design leather sling bag.",
-        "colors": [],
-        "sizes": []
+        "id": 7,
+        "name": "Sling Bag / Satchel (Medium)",
+        "category": "Handbags & Slings",
+        "price": 1650.00,
+        "image": "Slingba-Sachel (medium).png",
+        "description": "Medium everyday leather satchel combining elegance and practicality.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Medium"],
     },
     {
-        "id": "cross-body-sling-bag",
+        "id": 8,
         "name": "Cross Body Sling Bag",
-        "category": "Sling Bags",
-        "price": 620,
-        "images": ["Cross Bosy Sling Bag.jpeg"],
-        "description": "Comfortable and elegant cross-body leather sling bag.",
-        "colors": [],
-        "sizes": []
+        "category": "Handbags & Slings",
+        "price": 1450.00,
+        "image": "Cross Bosy Sling Bag.png",
+        "description": "Versatile cross-body bag for effortless daily wear.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Standard"],
     },
     {
-        "id": "adjustable-cross-body-moon-bag",
+        "id": 9,
         "name": "Adjustable Cross Body Bag / Moon Bag",
-        "category": "Sling Bags",
-        "price": 655,
-        "images": ["Adjustable Cross bode Bag_Moon Bag.jpeg"],
-        "description": "Versatile moon bag with adjustable strap, available in dark or light.",
-        "colors": ["Dark", "Light"],
-        "sizes": []
+        "category": "Handbags & Slings",
+        "price": 1350.00,
+        "image": "Adjustable Cross bode Bag_Moon Bag.png",
+        "description": "Contemporary curved moon bag with adjustable strap.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Standard"],
     },
     {
-        "id": "slingbag-with-bow",
-        "name": "Slingbag with Bow",
-        "category": "Sling Bags",
-        "price": 245,
-        "images": ["Slingbag with bow.jpeg", "closeup.jpeg"],
-        "description": "Charming sling bag accented with a leather bow detail. Available in light and dark.",
-        "colors": ["Light", "Dark"],
-        "sizes": []
-    },
-    {
-        "id": "sling-bag",
+        "id": 10,
         "name": "Sling Bag",
-        "category": "Sling Bags",
-        "price": 550,
-        "images": ["Sling Bag.jpeg"],
-        "description": "Classic everyday leather sling bag.",
-        "colors": [],
-        "sizes": []
+        "category": "Handbags & Slings",
+        "price": 1250.00,
+        "image": "Sling Bag.png",
+        "description": "Minimalist leather sling bag for essentials.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Standard"],
     },
     {
-        "id": "sling-bag-2",
+        "id": 11,
         "name": "Sling Bag 2",
-        "category": "Sling Bags",
-        "price": 640,
-        "images": ["Sling Bag 2.jpeg"],
-        "description": "Alternative design premium leather sling bag.",
-        "colors": [],
-        "sizes": []
+        "category": "Handbags & Slings",
+        "price": 1250.00,
+        "image": "Sling Bag 2.png",
+        "description": "Alternative design minimalist leather sling bag.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Standard"],
     },
     {
-        "id": "cellphone-sling-bag",
+        "id": 12,
         "name": "Cellphone Sling Bag",
-        "category": "Sling Bags",
-        "price": 240,
-        "images": ["Celphone slingbag.jpeg"],
-        "description": "Minimalist cellphone sling bag available in dark, medium, and light.",
-        "colors": ["Dark", "Medium", "Light"],
-        "sizes": []
-    },
-
-    # Handbags
-    {
-        "id": "handbag-5",
-        "name": "Handbag",
-        "category": "Handbags",
-        "price": 650,
-        "images": ["Handbag 5.jpeg"],
-        "description": "Exquisite handcrafted leather handbag.",
-        "colors": [],
-        "sizes": []
+        "category": "Handbags & Slings",
+        "price": 850.00,
+        "image": "Celphone slingbag.png",
+        "description": "Compact carrier perfectly sized for your smartphone and cards.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Standard"],
     },
     {
-        "id": "handbag-4",
-        "name": "Handbag",
-        "category": "Handbags",
-        "price": 450,
-        "images": ["Handbag 4.jpeg"],
-        "description": "Timeless leather handbag design.",
-        "colors": [],
-        "sizes": []
+        "id": 13,
+        "name": "Anti-theft Sling Bag",
+        "category": "Handbags & Slings",
+        "price": 1550.00,
+        "image": "Anti-theft sling bag.jpeg",
+        "description": "Secure travel sling bag with hidden zip compartments.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Standard"],
     },
     {
-        "id": "handbag-3",
-        "name": "Handbag",
-        "category": "Handbags",
-        "price": 300,
-        "images": ["Handbag 3.jpeg"],
-        "description": "Compact everyday leather handbag.",
-        "colors": [],
-        "sizes": []
+        "id": 14,
+        "name": "Sling Bag (Small)",
+        "category": "Handbags & Slings",
+        "price": 1100.00,
+        "image": "Sling bag (smal).jpeg",
+        "description": "Petite leather sling for light days out.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Small"],
     },
     {
-        "id": "handbag-2",
-        "name": "Handbag",
-        "category": "Handbags",
-        "price": 700,
-        "images": ["Handbag 2.jpeg"],
-        "description": "Spacious premium leather handbag.",
-        "colors": [],
-        "sizes": []
+        "id": 15,
+        "name": "Slingbag with Bow",
+        "category": "Handbags & Slings",
+        "price": 1350.00,
+        "image": "Slingbag with bow.jpeg",
+        "description": "Charming leather sling featuring a delicate handcrafted bow accent.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Standard"],
     },
     {
-        "id": "handbag-1",
-        "name": "Handbag",
-        "category": "Handbags",
-        "price": 610,
-        "images": ["Handbag 1.jpeg"],
-        "description": "Elegantly crafted signature leather handbag.",
-        "colors": [],
-        "sizes": []
-    },
-
-    # Laptop bags
-    {
-        "id": "laptop-bag-1",
-        "name": "Laptop Bag",
-        "category": "Laptop bags",
-        "price": 750,
-        "images": ["Laptop bag 1.jpeg"],
-        "description": "Professional padded leather laptop bag.",
-        "colors": [],
-        "sizes": []
+        "id": 16,
+        "name": "Handbag 1",
+        "category": "Handbags & Slings",
+        "price": 2100.00,
+        "image": "Handbag 1.png",
+        "description": "Elegant structured leather handbag with twin carry handles.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Standard"],
     },
     {
-        "id": "laptop-bag-2",
-        "name": "Laptop Bag",
-        "category": "Laptop bags",
-        "price": 600,
-        "images": ["Laptop bag 2.jpeg"],
-        "description": "Sleek and slim leather laptop bag.",
-        "colors": [],
-        "sizes": []
+        "id": 17,
+        "name": "Handbag 2",
+        "category": "Handbags & Slings",
+        "price": 2200.00,
+        "image": "Handbag 2.png",
+        "description": "Sophisticated everyday handbag crafted from premium hide.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Standard"],
     },
     {
-        "id": "laptop-bag-3",
-        "name": "Laptop Bag",
-        "category": "Laptop bags",
-        "price": 750,
-        "images": ["Laptop bag 3.jpeg"],
-        "description": "Executive full-grain leather laptop bag.",
-        "colors": [],
-        "sizes": []
+        "id": 18,
+        "name": "Handbag 3",
+        "category": "Handbags & Slings",
+        "price": 2150.00,
+        "image": "Handbag 3.png",
+        "description": "Chic spacious handbag with secure zippered top.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Standard"],
     },
     {
-        "id": "laptop-sleeve",
-        "name": "Laptop Sleeve",
-        "category": "Laptop bags",
-        "price": 575,
-        "images": ["Laptop sleeve 2.jpeg", "Laptop sleeve 1.jpeg"],
-        "description": "Protective handcrafted leather laptop sleeve with dual image views.",
-        "colors": [],
-        "sizes": []
-    },
-
-    # Backpacks
-    {
-        "id": "backpack-1",
-        "name": "Backpack",
-        "category": "Backpacks",
-        "price": 735,
-        "images": ["Backpac 1.jpeg"],
-        "description": "Rugged everyday leather backpack.",
-        "colors": [],
-        "sizes": []
+        "id": 19,
+        "name": "Handbag 4",
+        "category": "Handbags & Slings",
+        "price": 2300.00,
+        "image": "Handbag 4.png",
+        "description": "Luxury leather handbag with refined hardware details.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Standard"],
     },
     {
-        "id": "backpack-2",
-        "name": "Backpack",
-        "category": "Backpacks",
-        "price": 665,
-        "images": ["Backpac 2.jpeg"],
-        "description": "Comfortable and stylish leather backpack.",
-        "colors": [],
-        "sizes": []
+        "id": 20,
+        "name": "Handbag 5",
+        "category": "Handbags & Slings",
+        "price": 2050.00,
+        "image": "Handbag 5.png",
+        "description": "Timeless leather handbag designed for versatile styling.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Standard"],
+    },
+    # Backpacks & Laptop Bags
+    {
+        "id": 21,
+        "name": "Backpack 1",
+        "category": "Backpacks & Laptop Bags",
+        "price": 2750.00,
+        "image": "Backpac 1.png",
+        "description": "Robust leather backpack with comfortable shoulder straps.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Standard"],
     },
     {
-        "id": "backpack-3",
-        "name": "Backpack",
-        "category": "Backpacks",
-        "price": 575,
-        "images": ["Backpac 3.jpeg"],
-        "description": "Multi-size leather backpack available in Small (R575), Medium (R690), and Large (R770).",
-        "colors": [],
-        "sizes": ["Small", "Medium", "Large"],
-        "price_variants": {"Small": 575, "Medium": 690, "Large": 770}
+        "id": 22,
+        "name": "Backpack 2",
+        "category": "Backpacks & Laptop Bags",
+        "price": 2850.00,
+        "image": "Backpac 2.png",
+        "description": "Executive leather backpack with ample internal compartments.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Standard"],
     },
     {
-        "id": "backpack-4",
-        "name": "Backpack",
-        "category": "Backpacks",
-        "price": 805,
-        "images": ["Backpac 4.jpeg"],
-        "description": "Large capacity premium leather backpack.",
-        "colors": [],
-        "sizes": []
+        "id": 23,
+        "name": "Backpack 3",
+        "category": "Backpacks & Laptop Bags",
+        "price": 2700.00,
+        "image": "Backpac 3.png",
+        "description": "Sleek minimalist leather backpack for daily commutes.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Standard"],
     },
     {
-        "id": "backpack-with-handles",
+        "id": 24,
+        "name": "Backpack 4",
+        "category": "Backpacks & Laptop Bags",
+        "price": 2900.00,
+        "image": "Backpac 4.png",
+        "description": "Durable heavy-duty leather backpack built for adventure.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Standard"],
+    },
+    {
+        "id": 25,
         "name": "Backpack with Handles",
-        "category": "Backpacks",
-        "price": 655,
-        "images": ["Backpac with Handles.jpeg"],
-        "description": "Versatile leather backpack featuring top carry handles.",
-        "colors": [],
-        "sizes": []
+        "category": "Backpacks & Laptop Bags",
+        "price": 2950.00,
+        "image": "Backpac with Handles.png",
+        "description": "Versatile convertible backpack featuring top carry handles.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Standard"],
     },
     {
-        "id": "baby-backpack-diaper-bag",
+        "id": 26,
         "name": "Baby Backpack / Diaper Bag",
-        "category": "Backpacks",
-        "price": 920,
-        "images": ["Baby backpack_diaper bag.jpeg"],
-        "description": "Thoughtfully designed leather diaper bag / baby backpack. Available in light or dark.",
-        "colors": ["Light", "Dark"],
-        "sizes": []
-    },
-
-    # Home & Leisure
-    {
-        "id": "wine-bag-double",
-        "name": "Wine Bag (Double Bottle)",
-        "category": "Home & Leisure",
-        "price": 550,
-        "images": ["Wine Bag (Double Bottle).jpeg"],
-        "description": "Padded leather double wine bottle carrier.",
-        "colors": [],
-        "sizes": []
+        "category": "Backpacks & Laptop Bags",
+        "price": 2600.00,
+        "image": "Baby backpack_diaper bag.png",
+        "description": "Stylish leather diaper bag and backpack with stroller straps.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Standard"],
     },
     {
-        "id": "wine-bag-single",
-        "name": "Wine Bag (Single Bottle)",
-        "category": "Home & Leisure",
-        "price": 356,
-        "images": ["Wine Bag (Single bottle).jpeg"],
-        "description": "Elegant single wine bottle leather carrier.",
-        "colors": [],
-        "sizes": []
+        "id": 27,
+        "name": "Laptop Bag 1",
+        "category": "Backpacks & Laptop Bags",
+        "price": 2850.00,
+        "image": "Laptop bag 1.png",
+        "description": "Padded leather laptop briefcase for professionals.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["13 inch", "15 inch"],
     },
     {
-        "id": "cooler-bag",
-        "name": "Cooler Bag",
-        "category": "Home & Leisure",
-        "price": 750,
-        "images": ["Cooler bag.jpeg"],
-        "description": "Insulated premium leather cooler bag.",
-        "colors": [],
-        "sizes": []
+        "id": 28,
+        "name": "Laptop Bag 2",
+        "category": "Backpacks & Laptop Bags",
+        "price": 2950.00,
+        "image": "Laptop bag 2.png",
+        "description": "Premium leather messenger-style laptop bag.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["13 inch", "15 inch"],
     },
     {
-        "id": "leather-apron",
+        "id": 29,
+        "name": "Laptop Bag 3",
+        "category": "Backpacks & Laptop Bags",
+        "price": 2800.00,
+        "image": "Laptop bag 3.png",
+        "description": "Sleek executive laptop bag with secure compartments.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["13 inch", "15 inch"],
+    },
+    {
+        "id": 30,
+        "name": "Laptop Sleeve 1",
+        "category": "Backpacks & Laptop Bags",
+        "price": 1200.00,
+        "image": "Laptop sleeve 1.png",
+        "description": "Minimalist protective leather laptop sleeve.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["13 inch", "15 inch"],
+    },
+    {
+        "id": 31,
+        "name": "Laptop Sleeve 2",
+        "category": "Backpacks & Laptop Bags",
+        "price": 1250.00,
+        "image": "Laptop sleeve 2.png",
+        "description": "Handcrafted leather sleeve with magnetic closure flap.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["13 inch", "15 inch"],
+    },
+    # Small Goods & Accessories
+    {
+        "id": 32,
+        "name": "Coin Purse Large",
+        "category": "Small Goods & Accessories",
+        "price": 450.00,
+        "image": "Coin purse Large.jpeg",
+        "description": "Roomy leather coin and card purse.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Standard"],
+    },
+    {
+        "id": 33,
+        "name": "Coin Purse Medium",
+        "category": "Small Goods & Accessories",
+        "price": 350.00,
+        "image": "Coin purse medium.jpeg",
+        "description": "Compact coin purse for loose change and small essentials.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Standard"],
+    },
+    {
+        "id": 34,
+        "name": "Pencil Bag",
+        "category": "Small Goods & Accessories",
+        "price": 380.00,
+        "image": "Pencil bag.jpeg",
+        "description": "Durable leather pen and pencil case.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Standard"],
+    },
+    {
+        "id": 35,
+        "name": "Toiletries & Makeup Bag",
+        "category": "Small Goods & Accessories",
+        "price": 950.00,
+        "image": "Toiletries_makup bag.jpeg",
+        "description": "Spacious leather wash bag for travel grooming essentials.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Standard"],
+    },
+    # Home, Leisure & Care
+    {
+        "id": 36,
         "name": "Leather Apron",
-        "category": "Home & Leisure",
-        "price": 825,
-        "images": ["Leather Apron.jpeg"],
-        "description": "Durable handcrafted leather apron. Available in light and dark.",
-        "colors": ["Light", "Dark"],
-        "sizes": []
+        "category": "Home, Leisure & Care",
+        "price": 1850.00,
+        "image": "Leather Apron.png",
+        "description": "Heavy-duty handcrafted leather apron for cooking, crafting, and woodworking.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Standard"],
     },
-
-    # Belts
     {
-        "id": "leather-belt",
-        "name": "Leather Belt",
-        "category": "Belts",
-        "price": 200,
-        "images": [
-            "Screenshot 2026-08-14 140410.jpeg",
-            "Screenshot 2026-08-14 140415.jpeg",
-            "Screenshot 2026-08-14 140419.jpeg",
-            "Screenshot 2026-08-14 140423.jpeg",
-            "Screenshot 2026-08-14 140428.jpeg",
-            "Screenshot 2026-08-14 140432.jpeg",
-            "Screenshot 2026-08-14 140436.jpeg",
-            "Screenshot 2026-08-14 140441.jpeg"
-        ],
-        "description": "Classic full-grain leather belt. Multiple photos available to browse.",
-        "colors": [],
-        "sizes": []
+        "id": 37,
+        "name": "Cooler Bag",
+        "category": "Home, Leisure & Care",
+        "price": 2400.00,
+        "image": "Cooler bag.png",
+        "description": "Insulated leather cooler bag for picnics and outdoor excursions.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Standard"],
     },
-
-    # Leather care
     {
-        "id": "leather-care-cream",
-        "name": "Leather Care Cream with Microfiber Cloth",
-        "category": "Leather care",
-        "price": 59,
-        "images": ["Screenshot 2026-08-14 140829.jpeg"],
-        "description": "Premium leather care cream paired with a soft microfiber cloth to nourish and protect your leather items.",
-        "colors": [],
-        "sizes": []
-    }
+        "id": 38,
+        "name": "Wine Bag (Single Bottle)",
+        "category": "Home, Leisure & Care",
+        "price": 850.00,
+        "image": "Wine Bag (Single bottle).png",
+        "description": "Elegant single-bottle leather wine carrier with handle.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Standard"],
+    },
+    {
+        "id": 39,
+        "name": "Wine Bag (Double Bottle)",
+        "category": "Home, Leisure & Care",
+        "price": 1250.00,
+        "image": "Wine Bag (Double Bottle).png",
+        "description": "Luxurious double-bottle leather wine carrier for gifting.",
+        "colors": ["Cognac", "Dark Brown", "Black"],
+        "sizes": ["Standard"],
+    },
 ]
 
 @app.route('/')
 def index():
-    return render_template('index.html', reviews=REVIEWS)
+    return render_template('index.html')
 
 @app.route('/shop')
 def shop():
-    return render_template('shop.html', products=PRODUCTS)
+    category = request.args.get('category', 'All')
+    search_query = request.args.get('q', '').strip().lower()
+    
+    filtered_products = PRODUCTS
+    if category != 'All':
+        filtered_products = [p for p in filtered_products if p['category'] == category]
+    
+    if search_query:
+        filtered_products = [p for p in filtered_products if search_query in p['name'].lower() or search_query in p['description'].lower()]
+        
+    categories = ['All', 'Travel & Luggage', 'Handbags & Slings', 'Backpacks & Laptop Bags', 'Small Goods & Accessories', 'Home, Leisure & Care']
+    
+    return render_template('shop.html', products=filtered_products, categories=categories, selected_category=category, search_query=search_query)
+
+@app.route('/cart')
+def cart():
+    cart_items = session.get('cart', [])
+    total = sum(item['price'] * item['quantity'] for item in cart_items)
+    return render_template('cart.html', cart_items=cart_items, total=total)
+
+@app.route('/add_to_cart/<int:product_id>', methods=['POST'])
+def add_to_cart(product_id):
+    product = next((p for p in PRODUCTS if p['id'] == product_id), None)
+    if product:
+        if 'cart' not in session:
+            session['cart'] = []
+        cart = session['cart']
+        
+        color = request.form.get('color', product['colors'][0])
+        size = request.form.get('size', product['sizes'][0])
+        quantity = int(request.form.get('quantity', 1))
+        
+        existing = next((item for item in cart if item['id'] == product_id and item['color'] == color and item['size'] == size), None)
+        if existing:
+            existing['quantity'] += quantity
+        else:
+            cart.append({
+                'id': product['id'],
+                'name': product['name'],
+                'price': product['price'],
+                'image': product['image'],
+                'color': color,
+                'size': size,
+                'quantity': quantity
+            })
+        session['cart'] = cart
+        flash(f"Added {product['name']} to your cart!", "success")
+    return redirect(url_for('cart'))
+
+@app.route('/update_cart/<int:index>', methods=['POST'])
+def update_cart(index):
+    cart = session.get('cart', [])
+    action = request.form.get('action')
+    if 0 <= index < len(cart):
+        if action == 'increase':
+            cart[index]['quantity'] += 1
+        elif action == 'decrease':
+            cart[index]['quantity'] -= 1
+            if cart[index]['quantity'] <= 0:
+                cart.pop(index)
+        elif action == 'remove':
+            cart.pop(index)
+        session['cart'] = cart
+    return redirect(url_for('cart'))
 
 @app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
+    cart_items = session.get('cart', [])
+    if not cart_items:
+        flash("Your cart is empty.", "warning")
+        return redirect(url_for('shop'))
+    
+    total = sum(item['price'] * item['quantity'] for item in cart_items)
+    
     if request.method == 'POST':
-        data = request.form
-        order = {
-            "name": data.get("name"),
-            "email": data.get("email"),
-            "phone": data.get("phone"),
-            "address": data.get("address"),
-            "comment": data.get("comment"),
-            "items": data.get("items_json")
-        }
-        ORDERS.append(order)
-        flash("Order inquiry submitted successfully! Annuschka will contact you shortly.", "success")
-        return redirect(url_for('index'))
-    return render_template('checkout.html')
-
-@app.route('/add_review', methods=['POST'])
-def add_review():
-    name = request.form.get("reviewer_name")
-    rating = int(request.form.get("rating", 5))
-    comment = request.form.get("comment")
-    if name and comment:
-        REVIEWS.insert(0, {"name": name, "rating": rating, "comment": comment, "date": "August 2026"})
-        flash("Thank you for your review!", "success")
-    return redirect(url_for('index') + "#reviews")
+        name = request.form.get('name')
+        session.pop('cart', None)
+        return render_template('checkout_success.html', name=name, total=total)
+        
+    return render_template('checkout.html', cart_items=cart_items, total=total)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True)

@@ -3,118 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout | Leather by Annuschka</title>
+    <title>Checkout - Leather by Annuschka</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        h1, h2, h3, .font-serif { font-family: 'Playfair Display', serif; }
+        body { background-color: #241c17; color: #f3efe6; font-family: 'Inter', sans-serif; }
+        .gold-accent { color: #d4af37; }
+        .gold-bg { background-color: #d4af37; }
+        .card-bg { background-color: #2e241e; }
     </style>
 </head>
-<body class="bg-[#FAF9F6] text-[#2C221E] antialiased" x-data="checkoutApp()">
+<body class="min-h-screen flex flex-col justify-between">
 
-    <!-- Header -->
-    <header class="bg-[#2C221E] text-white py-6 shadow-md">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-            <a href="/shop" class="flex items-center gap-2 text-sm text-[#D3C5BD] hover:text-[#D4AF37]">
-                <i class="fa-solid fa-arrow-left"></i> Back to Shop
-            </a>
-            <span class="font-serif text-xl font-bold tracking-wider text-[#D4AF37]">Leather by Annuschka</span>
-            <div></div>
-        </div>
-    </header>
+    <!-- Navbar -->
+    <nav class="bg-[#1c1512] border-b border-[#3a2d26] py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50">
+        <a href="{{ url_for('index') }}" class="text-2xl font-serif gold-accent font-bold tracking-wider">Leather by Annuschka</a>
+        <a href="{{ url_for('cart') }}" class="text-sm uppercase tracking-widest hover:text-[#d4af37]"><i class="fa fa-arrow-left"></i> Back to Cart</a>
+    </nav>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            
-            <!-- Checkout Details Form -->
-            <div class="bg-white p-8 rounded-3xl shadow-lg border border-[#E2D8CD]">
-                <h2 class="font-serif text-2xl font-bold mb-6 text-[#2C221E]">Shipping & Contact Details</h2>
-                <form action="/checkout" method="POST" class="space-y-6" @submit="prepareSubmission">
-                    <input type="hidden" name="items_json" x-model="itemsJson">
+    <!-- Checkout Form -->
+    <main class="max-w-4xl mx-auto px-6 py-12 flex-grow w-full">
+        <h1 class="text-3xl font-serif font-bold mb-8">Secure Local Checkout</h1>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                        <input type="text" name="name" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#D4AF37] focus:outline-none" placeholder="Jan van der Linde">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                        <input type="email" name="email" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#D4AF37] focus:outline-none" placeholder="jan@example.com">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                        <input type="tel" name="phone" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#D4AF37] focus:outline-none" placeholder="+27 82 123 4567">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Shipping Address Line</label>
-                        <input type="text" name="address" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#D4AF37] focus:outline-none" placeholder="Street address, city, postal code">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Comment / Special Delivery Instructions / Custom Requests</label>
-                        <textarea name="comment" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#D4AF37] focus:outline-none" placeholder="Mention preferred brown shade, custom embossing, or delivery notes..."></textarea>
-                    </div>
-
-                    <button type="submit" class="w-full bg-[#D4AF37] text-[#2C221E] py-4 rounded-xl font-bold text-base hover:bg-[#C5A028] transition shadow-lg">
-                        Complete Order Inquiry
-                    </button>
-                </form>
-            </div>
-
-            <!-- Order Summary -->
-            <div class="bg-[#2C221E] text-white p-8 rounded-3xl shadow-xl flex flex-col justify-between">
+        <form action="{{ url_for('checkout') }}" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="card-bg p-8 rounded-xl border border-[#3a2d26] space-y-4">
+                <h3 class="font-serif font-bold text-xl mb-4 gold-accent">Shipping Details (South Africa)</h3>
                 <div>
-                    <h2 class="font-serif text-2xl font-bold mb-6 text-[#D4AF37]">Order Summary</h2>
-                    <div class="space-y-4 max-h-96 overflow-y-auto pr-2">
-                        <template x-for="item in cart" :key="item.id + item.size + item.color">
-                            <div class="flex justify-between items-center bg-[#3D302A] p-4 rounded-xl border border-[#524138]">
-                                <div>
-                                    <h4 class="font-bold text-sm text-white" x-text="item.name"></h4>
-                                    <p class="text-xs text-[#D3C5BD] mt-0.5">
-                                        <template x-if="item.size"><span x-text="'Size: ' + item.size + ' | '"></span></template>
-                                        <template x-if="item.color"><span x-text="'Color: ' + item.color"></span></template>
-                                        <span x-text="'Qty: ' + item.quantity"></span>
-                                    </p>
-                                </div>
-                                <span class="font-bold text-[#D4AF37]" x-text="'R ' + (item.price * item.quantity)"></span>
-                            </div>
-                        </template>
-                    </div>
+                    <label class="block text-xs uppercase text-gray-400 mb-1">Full Name</label>
+                    <input type="text" name="name" required class="w-full bg-[#1c1512] border border-[#3a2d26] rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-[#d4af37]">
                 </div>
-
-                <div class="mt-8 pt-6 border-t border-[#524138] space-y-4">
-                    <div class="flex justify-between items-center text-lg font-bold">
-                        <span>Total Amount:</span>
-                        <span class="text-[#D4AF37]" x-text="'R ' + cartTotal"></span>
-                    </div>
-                    <p class="text-xs text-[#D3C5BD]">Annuschka will review your order inquiry and contact you to confirm final payment and delivery details.</p>
+                <div>
+                    <label class="block text-xs uppercase text-gray-400 mb-1">Email Address</label>
+                    <input type="email" name="email" required class="w-full bg-[#1c1512] border border-[#3a2d26] rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-[#d4af37]">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase text-gray-400 mb-1">Phone Number</label>
+                    <input type="text" name="phone" required class="w-full bg-[#1c1512] border border-[#3a2d26] rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-[#d4af37]">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase text-gray-400 mb-1">Delivery Address</label>
+                    <textarea name="address" rows="3" required class="w-full bg-[#1c1512] border border-[#3a2d26] rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-[#d4af37]"></textarea>
                 </div>
             </div>
 
-        </div>
+            <div class="card-bg p-8 rounded-xl border border-[#3a2d26] flex flex-col justify-between">
+                <div>
+                    <h3 class="font-serif font-bold text-xl mb-4 gold-accent">Order Summary</h3>
+                    <div class="space-y-3 mb-6 max-h-60 overflow-y-auto pr-2">
+                        {% for item in cart_items %}
+                        <div class="flex justify-between text-sm border-b border-[#3a2d26] pb-2">
+                            <span>{{ item.quantity }}x {{ item.name }} ({{ item.color }})</span>
+                            <span class="gold-accent">R {{ "%.2f"|format(item.price * item.quantity) }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="flex justify-between font-bold text-lg gold-accent pt-4 border-t border-[#3a2d26]">
+                        <span>Total Due</span>
+                        <span>R {{ "%.2f"|format(total) }}</span>
+                    </div>
+                </div>
+                <button type="submit" class="w-full gold-bg text-[#1c1512] py-3 rounded-lg font-bold hover:opacity-90 transition mt-6">
+                    Place Order
+                </button>
+            </div>
+        </form>
     </main>
 
-    <script>
-        function checkoutApp() {
-            return {
-                cart: JSON.parse(localStorage.getItem('annuschka_cart')) || [],
-                itemsJson: '',
+    <!-- Footer -->
+    <footer class="bg-[#18110e] py-8 text-center text-xs text-gray-400 border-t border-[#3a2d26]">
+        <p>&copy; 2026 Leather by Annuschka. All rights reserved. | Contact: lummisannuschka001@gmail.com | WhatsApp: +27 76 430 7990</p>
+    </footer>
 
-                get cartTotal() {
-                    return this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-                },
-
-                prepareSubmission() {
-                    this.itemsJson = JSON.stringify(this.cart);
-                    localStorage.removeItem('annuschka_cart');
-                }
-            }
-        }
-    </script>
 </body>
 </html>
