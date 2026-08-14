@@ -1,0 +1,5 @@
+<h1>Your Shopping Cart</h1>
+{% for item in cart %}
+    <p>{{ item.name }} - R{{ item.price }}</p>
+{% endfor %}
+<a href="/checkout">Proceed to Checkout</a>
