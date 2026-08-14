@@ -1,445 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shop Catalog | Leather by Annuschka</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .font-serif { font-family: 'Playfair Display', serif; }
-    </style>
-</head>
-<body class="bg-[#F7F3EC] text-[#3A2518] antialiased" x-data="{ cart: [], activeCategory: 'all' }">
-
-    <!-- Top Bar / Announcement -->
-    <div class="bg-[#3A2518] text-[#EFEADF] text-xs py-2 px-6 text-center tracking-[0.2em] uppercase font-light">
-        Genuine Leather • Quality Craftsmanship • Timeless Style
-    </div>
-
-    <!-- Header / Navbar -->
-    <header class="bg-[#F7F3EC]/95 backdrop-blur-md border-b border-[#E6DCB8] sticky top-0 z-50 shadow-xs">
-        <div class="max-w-7xl mx-auto px-8 py-4 flex justify-between items-center">
-            <div class="flex items-center space-x-4">
-                <a href="/" class="flex items-center space-x-3.5 group">
-                    <img src="{{ url_for('static', filename='Logo.jpeg') }}" alt="Leather by Annuschka Logo" class="w-16 h-16 rounded-full object-cover border-2 border-[#C29B38] shadow-sm group-hover:scale-105 transition">
-                    <div>
-                        <h1 class="text-xl font-serif font-bold tracking-wide text-[#3A2518]">Leather by Annuschka</h1>
-                        <p class="text-xs text-[#8A623A] italic font-medium">Handcrafted Leather Creations</p>
-                    </div>
-                </a>
-            </div>
-            <nav class="hidden md:flex space-x-8 text-sm font-medium text-[#5C4033]">
-                <a href="/" class="hover:text-[#3A2518] transition">Home</a>
-                <a href="/shop" class="text-[#3A2518] font-semibold border-b-2 border-[#C29B38] pb-1 transition">Shop Catalog</a>
-                <a href="/#about" class="hover:text-[#3A2518] transition">Our Story</a>
-                <a href="/#care" class="hover:text-[#3A2518] transition">Leather Care</a>
-                <a href="/#contact" class="hover:text-[#3A2518] transition">Contact & Custom Orders</a>
-            </nav>
-            <div>
-                <a href="/" class="text-xs font-semibold text-[#8A623A] hover:text-[#3A2518] transition flex items-center gap-1">← Back to Home</a>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Shop Section -->
-    <main class="max-w-7xl mx-auto px-6 py-12">
-        <div class="text-center mb-10">
-            <h2 class="text-4xl font-serif font-bold text-[#3A2518] tracking-wide">Full Product Collection</h2>
-            <p class="text-[#6B4F3B] mt-2">Explore our complete catalog organized by collection. Select items to add to your order inquiry list (Prices in ZAR).</p>
-            
-            <!-- Category Filter Buttons -->
-            <div class="flex flex-wrap justify-center gap-2 mt-6">
-                <button @click="activeCategory = 'all'" :class="activeCategory === 'all' ? 'bg-[#3A2518] text-white' : 'bg-[#EFEADF] text-[#3A2518] hover:elector hover:bg-[#E2D8CC]'" class="px-4 py-2 text-xs font-semibold rounded-sm transition">All Products</button>
-                <button @click="activeCategory = 'travel'" :class="activeCategory === 'travel' ? 'bg-[#3A2518] text-white' : 'bg-[#EFEADF] text-[#3A2518] hover:bg-[#E2D8CC]'" class="px-4 py-2 text-xs font-semibold rounded-sm transition">Travel Bags</button>
-                <button @click="activeCategory = 'essentials'" :class="activeCategory === 'essentials' ? 'bg-[#3A2518] text-white' : 'bg-[#EFEADF] text-[#3A2518] hover:bg-[#E2D8CC]'" class="px-4 py-2 text-xs font-semibold rounded-sm transition">Everyday Essentials</button>
-                <button @click="activeCategory = 'slings'" :class="activeCategory === 'slings' ? 'bg-[#3A2518] text-white' : 'bg-[#EFEADF] text-[#3A2518] hover:bg-[#E2D8CC]'" class="px-4 py-2 text-xs font-semibold rounded-sm transition">Sling Bags</button>
-                <button @click="activeCategory = 'handbags'" :class="activeCategory === 'handbags' ? 'bg-[#3A2518] text-white' : 'bg-[#EFEADF] text-[#3A2518] hover:bg-[#E2D8CC]'" class="px-4 py-2 text-xs font-semibold rounded-sm transition">Handbags</button>
-                <button @click="activeCategory = 'laptops'" :class="activeCategory === 'laptops' ? 'bg-[#3A2518] text-white' : 'bg-[#EFEADF] text-[#3A2518] hover:bg-[#E2D8CC]'" class="px-4 py-2 text-xs font-semibold rounded-sm transition">Laptop Bags</button>
-                <button @click="activeCategory = 'backpacks'" :class="activeCategory === 'backpacks' ? 'bg-[#3A2518] text-white' : 'bg-[#EFEADF] text-[#3A2518] hover:bg-[#E2D8CC]'" class="px-4 py-2 text-xs font-semibold rounded-sm transition">Backpacks</button>
-                <button @click="activeCategory = 'home'" :class="activeCategory === 'home' ? 'bg-[#3A2518] text-white' : 'bg-[#EFEADF] text-[#3A2518] hover:bg-[#E2D8CC]'" class="px-4 py-2 text-xs font-semibold rounded-sm transition">Home & Leisure</button>
-                <button @click="activeCategory = 'belts'" :class="activeCategory === 'belts' ? 'bg-[#3A2518] text-white' : 'bg-[#EFEADF] text-[#3A2518] hover:bg-[#E2D8CC]'" class="px-4 py-2 text-xs font-semibold rounded-sm transition">Belts & Care</button>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
-            
-            <!-- Products Grid (2 columns) -->
-            <div class="lg:col-span-2 space-y-12">
-                
-                <!-- 1. TRAVEL BAGS SECTION -->
-                <div x-show="activeCategory === 'all' || activeCategory === 'travel'" class="space-y-6">
-                    <div class="border-b-2 border-[#C29B38] pb-2">
-                        <h3 class="text-2xl font-serif font-bold text-[#3A2518] tracking-wide">Travel Bags</h3>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        
-                        <!-- Large Luggage -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Large_Luggage_travel bag.jpeg') }}" alt="Large Luggage / Travel Bag" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Travel</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Large Luggage / Travel Bag</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Spacious genuine leather travel companion for long journeys.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R1,725.00</span>
-                                    <button @click="cart.push({name: 'Large Luggage / Travel Bag', price: 1725})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Medium Luggage -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Medium_luggage_travel bag.jpeg') }}" alt="Medium Luggage / Travel Bag" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Travel</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Medium Luggage / Travel Bag</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Ideal mid-size weekender bag combining elegance and utility.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R1,150.00</span>
-                                    <button @click="cart.push({name: 'Medium Luggage / Travel Bag', price: 1150})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Small Travel Bag / Overnight Bag -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Sling bag (smal).jpeg') }}" alt="Small Travel Bag / Overnight Bag" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Travel</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Small Travel Bag / Overnight Bag</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Compact and versatile overnight companion.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R680.00</span>
-                                    <button @click="cart.push({name: 'Small Travel Bag / Overnight Bag', price: 680})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Medium Travel Bag / Doctor's Bag -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Toiletries_makup bag.jpeg') }}" alt="Medium Travel Bag / Doctor's Bag" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Travel</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Medium Travel Bag / Doctor's Bag</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Structured framing with secure top closure.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R910.00</span>
-                                    <button @click="cart.push({name: 'Medium Travel Bag / Doctor\'s Bag', price: 910})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Overnight Bag -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Large_Luggage_travel bag.jpeg') }}" alt="Overnight Bag" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Travel</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Overnight Bag</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Tall structured overnight tote with reinforced shoulder straps.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R1,275.00</span>
-                                    <button @click="cart.push({name: 'Overnight Bag', price: 1275})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <!-- 2. EVERYDAY ESSENTIALS SECTION -->
-                <div x-show="activeCategory === 'all' || activeCategory === 'essentials'" class="space-y-6">
-                    <div class="border-b-2 border-[#C29B38] pb-2">
-                        <h3 class="text-2xl font-serif font-bold text-[#3A2518] tracking-wide">Everyday Essentials</h3>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        
-                        <!-- Toiletries / Makeup Bag -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Toiletries_makup bag.jpeg') }}" alt="Toiletries / Makeup Bag" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Essentials</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Toiletries / Makeup Bag</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Water-resistant lined leather pouch for grooming and cosmetics.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R450.00</span>
-                                    <button @click="cart.push({name: 'Toiletries / Makeup Bag', price: 450})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Cosmetics / Makeup Bag -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Coin purse medium.jpeg') }}" alt="Cosmetics / Makeup Bag" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Essentials</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Cosmetics / Makeup Bag</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Handy smaller zip pouch for everyday makeup essentials.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R180.00</span>
-                                    <button @click="cart.push({name: 'Cosmetics / Makeup Bag', price: 180})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Pencil Bag -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Pencil bag.jpeg') }}" alt="Pencil Bag" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Essentials</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Pencil Bag</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Sleek leather zipper pouch for stationery or daily tools.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R175.00</span>
-                                    <button @click="cart.push({name: 'Pencil Bag', price: 175})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Coin Purse (Medium) -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Coin purse medium.jpeg') }}" alt="Coin Purse (Medium)" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Essentials</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Coin Purse (Medium)</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Pocket-sized pouch with reliable zipper closure.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R55.00</span>
-                                    <button @click="cart.push({name: 'Coin Purse (Medium)', price: 55})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Coin Purse (Large) -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Coin purse Large.jpeg') }}" alt="Coin Purse (Large)" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Essentials</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Coin Purse (Large)</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Generous zippered pouch for cards, cash, and coins.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R65.00</span>
-                                    <button @click="cart.push({name: 'Coin Purse (Large)', price: 65})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <!-- 3. SLING BAGS SECTION -->
-                <div x-show="activeCategory === 'all' || activeCategory === 'slings'" class="space-y-6">
-                    <div class="border-b-2 border-[#C29B38] pb-2">
-                        <h3 class="text-2xl font-serif font-bold text-[#3A2518] tracking-wide">Sling Bags</h3>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        
-                        <!-- Sling Bag / Satchel (Medium) -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Slingba-Sachel (medium).jpeg') }}" alt="Sling Bag / Satchel (Medium)" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Slings</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Sling Bag / Satchel (Medium)</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Structured mid-size satchel with adjustable strap.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R435.00</span>
-                                    <button @click="cart.push({name: 'Sling Bag / Satchel (Medium)', price: 435})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Sling Bag / Satchel (Large) -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Slingba-Sachel (medium).jpeg') }}" alt="Sling Bag / Satchel (Large)" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Slings</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Sling Bag / Satchel (Large)</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Larger capacity satchel with classic flap closure.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R500.00</span>
-                                    <button @click="cart.push({name: 'Sling Bag / Satchel (Large)', price: 500})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Anti-Theft Sling Bag -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Anti-theft sling bag.jpeg') }}" alt="Anti-Theft Sling Bag" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Slings</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Anti-Theft Sling Bag</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Secure back-facing zippers for peace of mind while traveling.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R365.00</span>
-                                    <button @click="cart.push({name: 'Anti-Theft Sling Bag', price: 365})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Cross Body Sling Bag -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Anti-theft sling bag.jpeg') }}" alt="Cross Body Sling Bag" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Slings</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Cross Body Sling Bag</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Multi-compartment hands-free crossbody design.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R620.00</span>
-                                    <button @click="cart.push({name: 'Cross Body Sling Bag', price: 620})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Adjustable Cross Body Bag / Moon Bag -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Sling bag (smal).jpeg') }}" alt="Adjustable Cross Body Bag / Moon Bag" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Slings</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Adjustable Cross Body Bag / Moon Bag</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Curved silhouette with adjustable waist or shoulder strap.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R655.00</span>
-                                    <button @click="cart.push({name: 'Adjustable Cross Body Bag / Moon Bag', price: 655})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Sling Bag (Small) -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Sling bag (smal).jpeg') }}" alt="Sling Bag (Small)" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Slings</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Sling Bag (Small)</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Lightweight and minimalist daily walk companion.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R250.00</span>
-                                    <button @click="cart.push({name: 'Sling Bag (Small)', price: 250})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Sling Bag with Bow -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Sling bag with bow.jpeg') }}" alt="Sling Bag with Bow" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Slings</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Sling Bag with Bow</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Charming artisan accent piece featuring delicate leather bow detailing.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R245.00</span>
-                                    <button @click="cart.push({name: 'Sling Bag with Bow', price: 245})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Cellphone Sling Bag -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Sling bag (smal).jpeg') }}" alt="Cellphone Sling Bag" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Slings</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Cellphone Sling Bag</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Designed specifically to carry your phone and cards securely on the go.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R240.00</span>
-                                    <button @click="cart.push({name: 'Cellphone Sling Bag', price: 240})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Sling Bag (Standard) -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Slingba-Sachel (medium).jpeg') }}" alt="Sling Bag" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Slings</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Sling Bag</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Classic everyday shoulder sling bag with sturdy strap.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R550.00 / R640.00</span>
-                                    <button @click="cart.push({name: 'Sling Bag (Standard/Flap)', price: 550})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
+</div>
 
                 <!-- 4. HANDBAGS SECTION -->
                 <div x-show="activeCategory === 'all' || activeCategory === 'handbags'" class="space-y-6">
@@ -447,97 +6,40 @@
                         <h3 class="text-2xl font-serif font-bold text-[#3A2518] tracking-wide">Handbags</h3>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        
-                        <!-- Handbag (Zipped Pocket) -->
+                        <!-- Handbag Product 1 -->
                         <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
                             <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Large_Luggage_travel bag.jpeg') }}" alt="Handbag" class="w-full h-full object-cover">
+                                <img src="{{ url_for('static', filename='Medium_luggage_travel bag.jpeg') }}" alt="Classic Leather Handbag" class="w-full h-full object-cover">
                                 <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Handbags</span>
                             </div>
                             <div class="p-6 flex flex-col flex-grow justify-between">
                                 <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Handbag (Front Zip Pocket)</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Elegant vertical handbag with secure exterior zipped pocket.</p>
+                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Classic Leather Handbag</h4>
+                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Elegant structured everyday handbag with dual top handles.</p>
                                 </div>
                                 <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R650.00</span>
-                                    <button @click="cart.push({name: 'Handbag (Front Zip Pocket)', price: 650})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
+                                    <span class="font-bold text-base text-[#3A2518]">R1,350.00</span>
+                                    <button @click="cart.push({name: 'Classic Leather Handbag', price: 1350})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Handbag (Double Zipped) -->
+                        <!-- Handbag Product 2 -->
                         <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
                             <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Medium_luggage_travel bag.jpeg') }}" alt="Handbag" class="w-full h-full object-cover">
+                                <img src="{{ url_for('static', filename='Slingba-Sachel (medium).jpeg') }}" alt="Structured Tote Handbag" class="w-full h-full object-cover">
                                 <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Handbags</span>
                             </div>
                             <div class="p-6 flex flex-col flex-grow justify-between">
                                 <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Handbag (Double Zipped)</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Structured shoulder handbag featuring dual front horizontal zippers.</p>
+                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Structured Tote Handbag</h4>
+                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Spacious artisan tote designed for daily elegance.</p>
                                 </div>
                                 <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R450.00</span>
-                                    <button @click="cart.push({name: 'Handbag (Double Zipped)', price: 450})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
+                                    <span class="font-bold text-base text-[#3A2518]">R1,480.00</span>
+                                    <button @click="cart.push({name: 'Structured Tote Handbag', price: 1480})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Handbag / Sling Bag -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Sling bag (smal).jpeg') }}" alt="Handbag / Sling Bag" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Handbags</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Handbag / Sling Bag</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Soft slouchy silhouette convertible for shoulder or crossbody wear.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R300.00</span>
-                                    <button @click="cart.push({name: 'Handbag / Sling Bag', price: 300})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Handbag (Front Pocket) -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Large_Luggage_travel bag.jpeg') }}" alt="Handbag" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Handbags</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Handbag (Front Magnetic Pocket)</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Sophisticated winged handbag with rounded exterior pocket detail.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R700.00</span>
-                                    <button @click="cart.push({name: 'Handbag (Front Magnetic Pocket)', price: 700})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Handbag (Multi-Pocket Tote) -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Medium_luggage_travel bag.jpeg') }}" alt="Handbag" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Handbags</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Handbag (Multi-Pocket Utility)</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Practical tote featuring multiple zipped front sections and flap pocket.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R610.00</span>
-                                    <button @click="cart.push({name: 'Handbag (Multi-Pocket Utility)', price: 610})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
 
@@ -547,79 +49,23 @@
                         <h3 class="text-2xl font-serif font-bold text-[#3A2518] tracking-wide">Laptop Bags</h3>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        
-                        <!-- Laptop Bag (Double Zip) -->
+                        <!-- Laptop Bag Product -->
                         <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
                             <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Large_Luggage_travel bag.jpeg') }}" alt="Laptop Bag" class="w-full h-full object-cover">
+                                <img src="{{ url_for('static', filename='Large_Luggage_travel bag.jpeg') }}" alt="Executive Leather Laptop Briefcase" class="w-full h-full object-cover">
                                 <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Laptops</span>
                             </div>
                             <div class="p-6 flex flex-col flex-grow justify-between">
                                 <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Laptop Bag (Double Zip Front)</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Professional briefcase with padded internal compartment and shoulder strap.</p>
+                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Executive Leather Laptop Briefcase</h4>
+                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Padded interior compartment designed to protect up to 15-inch laptops.</p>
                                 </div>
                                 <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R750.00</span>
-                                    <button @click="cart.push({name: 'Laptop Bag (Double Zip Front)', price: 750})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
+                                    <span class="font-bold text-base text-[#3A2518]">R1,650.00</span>
+                                    <button @click="cart.push({name: 'Executive Leather Laptop Briefcase', price: 1650})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Laptop Bag (Slim Tote Style) -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Medium_luggage_travel bag.jpeg') }}" alt="Laptop Bag" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Laptops</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Laptop Bag (Slim Tote Style)</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Sleek, low-profile leather laptop carrier with carry handles.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R600.00</span>
-                                    <button @click="cart.push({name: 'Laptop Bag (Slim Tote Style)', price: 600})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Laptop Bag (Buckled Straps) -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Large_Luggage_travel bag.jpeg') }}" alt="Laptop Bag" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Laptops</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Laptop Bag (Buckled Straps)</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Classic executive briefcase featuring decorative front leather buckle straps.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R750.00</span>
-                                    <button @click="cart.push({name: 'Laptop Bag (Buckled Straps)', price: 750})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Laptop Sleeve -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Pencil bag.jpeg') }}" alt="Laptop Sleeve" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Laptops</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Laptop Sleeve</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Minimalist flap-over leather sleeve to protect your device.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R575.00</span>
-                                    <button @click="cart.push({name: 'Laptop Sleeve', price: 575})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
 
@@ -629,117 +75,23 @@
                         <h3 class="text-2xl font-serif font-bold text-[#3A2518] tracking-wide">Backpacks</h3>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        
-                        <!-- Backpack (Drawstring) -->
+                        <!-- Backpack Product -->
                         <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
                             <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Sling bag (smal).jpeg') }}" alt="Backpack" class="w-full h-full object-cover">
+                                <img src="{{ url_for('static', filename='Large_Luggage_travel bag.jpeg') }}" alt="Artisan Leather Backpack" class="w-full h-full object-cover">
                                 <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Backpacks</span>
                             </div>
                             <div class="p-6 flex flex-col flex-grow justify-between">
                                 <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Backpack (Drawstring Top)</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Casual leather backpack with secure drawstring and flap closure.</p>
+                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Artisan Leather Backpack</h4>
+                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Comfortable padded shoulder straps with durable full-grain leather construction.</p>
                                 </div>
                                 <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R735.00</span>
-                                    <button @click="cart.push({name: 'Backpack (Drawstring Top)', price: 735})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
+                                    <span class="font-bold text-base text-[#3A2518]">R1,550.00</span>
+                                    <button @click="cart.push({name: 'Artisan Leather Backpack', price: 1550})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Backpack (Buckle Flap) -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Large_Luggage_travel bag.jpeg') }}" alt="Backpack" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Backpacks</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Backpack (Buckle Flap)</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Structured vintage-style school/travel rucksack.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R665.00</span>
-                                    <button @click="cart.push({name: 'Backpack (Buckle Flap)', price: 665})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Backpack (Small / Medium / Large Options) -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Large_Luggage_travel bag.jpeg') }}" alt="Backpack Sizing" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Backpacks</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Classic Leather Backpack (S / M / L)</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-2">Available in three sizes to fit your exact carry needs.</p>
-                                    <div class="text-xs text-[#3A2518] font-medium mb-4">Small: R575 | Medium: R690 | Large: R770</div>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF] gap-2">
-                                    <button @click="cart.push({name: 'Classic Leather Backpack (Small)', price: 575})" class="bg-[#C29B38] text-white font-semibold px-2 py-1.5 rounded-sm text-[11px] hover:bg-[#D4AC45] transition">Add Small</button>
-                                    <button @click="cart.push({name: 'Classic Leather Backpack (Medium)', price: 690})" class="bg-[#C29B38] text-white font-semibold px-2 py-1.5 rounded-sm text-[11px] hover:bg-[#D4AC45] transition">Add Medium</button>
-                                    <button @click="cart.push({name: 'Classic Leather Backpack (Large)', price: 770})" class="bg-[#C29B38] text-white font-semibold px-2 py-1.5 rounded-sm text-[11px] hover:bg-[#D4AC45] transition">Add Large</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Backpack (Zip Top) -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Medium_luggage_travel bag.jpeg') }}" alt="Backpack" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Backpacks</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Backpack (Front Pocket & Zip)</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Rounded top zip backpack with convenient exterior storage pocket.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R805.00</span>
-                                    <button @click="cart.push({name: 'Backpack (Front Pocket & Zip)', price: 805})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Backpack with Handles -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Medium_luggage_travel bag.jpeg') }}" alt="Backpack with Handles" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Backpacks</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Backpack with Handles</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Dual-purpose backpack featuring convenient top tote handles.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R655.00</span>
-                                    <button @click="cart.push({name: 'Backpack with Handles', price: 655})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Baby Backpack / Diaper Bag -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Large_Luggage_travel bag.jpeg') }}" alt="Baby Backpack / Diaper Bag" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Backpacks</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Baby Backpack / Diaper Bag</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Spacious, highly organized leather baby bag built for parents on the move.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R920.00</span>
-                                    <button @click="cart.push({name: 'Baby Backpack / Diaper Bag', price: 920})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
 
@@ -749,198 +101,127 @@
                         <h3 class="text-2xl font-serif font-bold text-[#3A2518] tracking-wide">Home & Leisure</h3>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        
-                        <!-- Wine Bag (Double Bottle) -->
+                        <!-- Home Product -->
                         <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
                             <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Large_Luggage_travel bag.jpeg') }}" alt="Wine Bag (Double Bottle)" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Home & Leisure</span>
+                                <img src="{{ url_for('static', filename='Toiletries_makup bag.jpeg') }}" alt="Leather Coaster Set & Holder" class="w-full h-full object-cover">
+                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Home</span>
                             </div>
                             <div class="p-6 flex flex-col flex-grow justify-between">
                                 <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Wine Bag (Double Bottle)</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Padded genuine leather carrier for two bottles of fine wine.</p>
+                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Leather Coaster Set & Holder</h4>
+                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Handcrafted genuine leather coasters with matching storage holder.</p>
                                 </div>
                                 <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R550.00</span>
-                                    <button @click="cart.push({name: 'Wine Bag (Double Bottle)', price: 550})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
+                                    <span class="font-bold text-base text-[#3A2518]">R250.00</span>
+                                    <button @click="cart.push({name: 'Leather Coaster Set & Holder', price: 250})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Wine Bag (Single Bottle) -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Medium_luggage_travel bag.jpeg') }}" alt="Wine Bag (Single Bottle)" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Home & Leisure</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Wine Bag (Single Bottle)</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Elegant single-bottle leather carrier with carry handle.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R365.00</span>
-                                    <button @click="cart.push({name: 'Wine Bag (Single Bottle)', price: 365})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Cooler Bag -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Large_Luggage_travel bag.jpeg') }}" alt="Cooler Bag" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Home & Leisure</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Cooler Bag</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Insulated genuine leather cooler bag for picnics and outings.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R750.00</span>
-                                    <button @click="cart.push({name: 'Cooler Bag', price: 750})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Leather Apron -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Large_Luggage_travel bag.jpeg') }}" alt="Leather Apron" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Home & Leisure</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Leather Apron</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Durable handcrafted leather apron for cooking, crafting, or woodworking.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R825.00</span>
-                                    <button @click="cart.push({name: 'Leather Apron', price: 825})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
 
-                <!-- 8. BELTS & LEATHER CARE SECTION -->
+                <!-- 8. BELTS & CARE SECTION -->
                 <div x-show="activeCategory === 'all' || activeCategory === 'belts'" class="space-y-6">
                     <div class="border-b-2 border-[#C29B38] pb-2">
-                        <h3 class="text-2xl font-serif font-bold text-[#3A2518] tracking-wide">Belts & Leather Care Essentials</h3>
+                        <h3 class="text-2xl font-serif font-bold text-[#3A2518] tracking-wide">Belts & Care</h3>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        
-                        <!-- Black Belts -->
+                        <!-- Belt Product -->
                         <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
                             <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Pencil bag.jpeg') }}" alt="Black Belts" class="w-full h-full object-cover">
+                                <img src="{{ url_for('static', filename='Pencil bag.jpeg') }}" alt="Classic Full-Grain Leather Belt" class="w-full h-full object-cover">
                                 <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Belts</span>
                             </div>
                             <div class="p-6 flex flex-col flex-grow justify-between">
                                 <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Black Leather Belt</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Solid genuine leather belt with robust metal buckle.</p>
+                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Classic Full-Grain Leather Belt</h4>
+                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Durable solid leather belt with a solid brass buckle.</p>
                                 </div>
                                 <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R200.00</span>
-                                    <button @click="cart.push({name: 'Black Leather Belt', price: 200})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
+                                    <span class="font-bold text-base text-[#3A2518]">R380.00</span>
+                                    <button @click="cart.push({name: 'Classic Full-Grain Leather Belt', price: 380})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Brown Belts -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Pencil bag.jpeg') }}" alt="Brown Belts" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Belts</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Brown / Tan Leather Belt</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Classic full-grain leather belt for casual or formal wear.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R200.00</span>
-                                    <button @click="cart.push({name: 'Brown / Tan Leather Belt', price: 200})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Leather Care Cream & Microfibre Cloth Kit -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Pencil bag.jpeg') }}" alt="Leather Care Kit" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Care Essentials</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Leather Care Cream & Microfibre Cloth Kit</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Includes 30ml Leather Care Cream, Premium Microfibre Cloth, and Care Card.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R59.00</span>
-                                    <button @click="cart.push({name: 'Leather Care Cream & Microfibre Cloth Kit', price: 59})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
 
             </div>
 
-            <!-- Cart Sidebar -->
-            <div class="lg:col-span-1">
-                <div class="bg-[#FDFBF7] p-6 rounded-sm border border-[#E2D8CC] shadow-xs sticky top-24">
-                    <h3 class="font-serif font-bold text-xl text-[#3A2518] mb-4 pb-2 border-b border-[#EFEADF]">Your Inquiry Cart</h3>
-                    
+            <!-- Cart / Order Inquiry Sidebar -->
+            <div class="bg-[#FDFBF7] border border-[#E2D8CC] p-6 rounded-sm shadow-xs sticky top-24 space-y-6">
+                <div class="border-b border-[#EFEADF] pb-4">
+                    <h3 class="font-serif font-bold text-xl text-[#3A2518]">Order Inquiry List</h3>
+                    <p class="text-xs text-[#6B4F3B] mt-1">Review your selected items and submit your inquiry.</p>
+                </div>
+
+                <div class="space-y-4 max-h-80 overflow-y-auto">
                     <template x-if="cart.length === 0">
-                        <p class="text-sm text-[#6B4F3B] italic font-light py-4">Your cart is currently empty. Select items to begin your order inquiry.</p>
+                        <p class="text-xs text-[#8A623A] italic text-center py-8">Your cart is currently empty. Select items from the catalog.</p>
                     </template>
-
-                    <template x-if="cart.length > 0">
-                        <div>
-                            <ul class="space-y-3 mb-6 max-h-72 overflow-y-auto pr-1">
-                                <template x-for="(item, index) in cart" :key="index">
-                                    <li class="flex justify-between items-center text-sm text-[#3A2518] border-b border-[#F7F3EC] pb-2">
-                                        <div>
-                                            <span class="font-medium text-xs" x-text="item.name"></span>
-                                            <div class="text-[11px] text-[#8A623A]" x-text="'R' + item.price + '.00'"></div>
-                                        </div>
-                                        <button @click="cart.splice(index, 1)" class="text-red-700 hover:text-red-900 text-xs font-bold px-1.5 py-0.5">✕</button>
-                                    </li>
-                                </template>
-                            </ul>
-
-                            <div class="pt-4 border-t border-[#EFEADF] mb-6 flex justify-between items-center">
-                                <span class="font-semibold text-sm text-[#3A2518]">Total Estimate:</span>
-                                <span class="font-bold text-lg text-[#3A2518]" x-text="'R' + cart.reduce((sum, item) => sum + item.price, 0) + '.00'"></span>
+                    <template x-for="(item, index) in cart" :key="index">
+                        <div class="flex justify-between items-center bg-[#F7F3EC] p-3 rounded-xs border border-[#EFEADF]">
+                            <div>
+                                <h5 class="text-xs font-semibold text-[#3A2518]" x-text="item.name"></h5>
+                                <span class="text-[11px] text-[#8A623A]" x-text="'R' + item.price.toFixed(2)"></span>
                             </div>
-
-                            <button onclick="alert('Order inquiry submitted successfully! Annuschka will contact you shortly at lummisannuschka001@gmail.com.')" class="w-full bg-[#3A2518] text-[#F7F3EC] font-semibold py-3 rounded-sm text-xs uppercase tracking-widest hover:bg-[#5C4033] transition shadow-xs">
-                                Submit Order Inquiry
-                            </button>
+                            <button @click="cart.splice(index, 1)" class="text-red-700 hover:text-red-900 text-xs font-bold px-2 py-1">×</button>
                         </div>
                     </template>
                 </div>
+
+                <div class="border-t border-[#EFEADF] pt-4 space-y-2">
+                    <div class="flex justify-between text-sm font-bold text-[#3A2518]">
+                        <span>Total (ZAR):</span>
+                        <span x-text="'R' + cart.reduce((sum, item) => sum + item.price, 0).toFixed(2)"></span>
+                    </div>
+                </div>
+
+                <form @submit.prevent="alert('Inquiry submitted successfully!')" class="space-y-4 pt-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-[#3A2518] mb-1">Your Name</label>
+                        <input type="text" required class="w-full px-3 py-2 text-xs bg-[#F7F3EC] border border-[#E2D8CC] rounded-xs focus:outline-none focus:border-[#C29B38]">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-[#3A2518] mb-1">Email Address</label>
+                        <input type="email" required class="w-full px-3 py-2 text-xs bg-[#F7F3EC] border border-[#E2D8CC] rounded-xs focus:outline-none focus:border-[#C29B38]">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-[#3A2518] mb-1">Phone Number</label>
+                        <input type="tel" required class="w-full px-3 py-2 text-xs bg-[#F7F3EC] border border-[#E2D8CC] rounded-xs focus:outline-none focus:border-[#C29B38]">
+                    </div>
+                    <button type="submit" class="w-full bg-[#3A2518] text-white py-2.5 text-xs font-semibold uppercase tracking-widest rounded-xs hover:bg-[#5C4033] transition">Submit Order Inquiry</button>
+                </form>
             </div>
 
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-[#3A2518] text-[#E8E0D2] py-12 px-8 mt-16">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm gap-6">
+    <footer class="bg-[#3A2518] text-[#EFEADF] py-12 px-6 mt-20">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-xs font-light">
             <div>
-                <h4 class="text-white font-serif font-bold text-lg">Leather by Annuschka</h4>
-                <p class="text-[#D0C5B4] font-light text-xs mt-1">Genuine Leather • Quality Craftsmanship • Timeless Style</p>
+                <h4 class="font-serif font-bold text-base text-white mb-3">Leather by Annuschka</h4>
+                <p class="text-[#D3C5B4] leading-relaxed">Handcrafted genuine leather goods made with precision, passion, and timeless style.</p>
             </div>
-            <div class="text-center md:text-right text-xs text-[#A89684] font-light">
-                <p>Phone: 076 430 7990 | Email: lummisannuschka001@gmail.com</p>
-                <p class="mt-1">&copy; 2026 Leather by Annuschka. All rights reserved.</p>
+            <div>
+                <h4 class="font-serif font-bold text-base text-white mb-3">Quick Links</h4>
+                <ul class="space-y-2 text-[#D3C5B4]">
+                    <li><a href="/" class="hover:text-white transition">Home</a></li>
+                    <li><a href="/shop" class="hover:text-white transition">Shop Catalog</a></li>
+                    <li><a href="/#about" class="hover:text-white transition">Our Story</a></li>
+                    <li><a href="/#contact" class="hover:text-white transition">Contact & Custom Orders</a></li>
+                </ul>
             </div>
+            <div>
+                <h4 class="font-serif font-bold text-base text-white mb-3">Contact</h4>
+                <p class="text-[#D3C5B4] leading-relaxed">Reach out for custom leather creations, bespoke commissions, and inquiries.</p>
+                <p class="mt-3 text-white font-semibold">South Africa</p>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto border-t border-[#5C4033] mt-8 pt-6 text-center text-[11px] text-[#A89886]">
+            &copy; 2026 Leather by Annuschka. All rights reserved.
         </div>
     </footer>
 
