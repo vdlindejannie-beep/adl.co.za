@@ -4,430 +4,265 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shop Catalog | Leather by Annuschka</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Alpine.js CDN -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F7F3EC; color: #3A2518; }
-        h1, h2, h3, h4, .font-serif { font-family: 'Playfair Display', serif; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        h1, h2, h3, .font-serif { font-family: 'Playfair Display', serif; }
     </style>
 </head>
-<body class="bg-[#F7F3EC] text-[#3A2518] flex flex-col min-h-screen">
+<body class="bg-[#FAF9F6] text-[#2C221E] antialiased" x-data="shopApp()">
 
-    <!-- Header Navigation -->
-    <header class="bg-[#3A2518] text-[#F7F3EC] py-4 px-6 sticky top-0 z-50 shadow-md">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <a href="/" class="flex items-center space-x-3">
-                <span class="font-serif text-xl tracking-wider text-white">Leather by Annuschka</span>
+    <!-- Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-[#2C221E]/95 backdrop-blur-md text-[#FAF9F6] border-b border-[#4A3B32]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-3">
+                <span class="font-serif text-xl sm:text-2xl font-bold tracking-wider text-[#D4AF37]">Leather by Annuschka</span>
             </a>
-            <nav class="hidden md:flex space-x-6 text-xs uppercase tracking-widest text-[#D3C5B4]">
-                <a href="/" class="hover:text-white transition">Home</a>
-                <a href="/shop" class="text-white font-semibold border-b border-[#C29B38] pb-0.5">Shop Catalog</a>
-                <a href="/#about" class="hover:text-white transition">Our Story</a>
-                <a href="/#contact" class="hover:text-white transition">Contact & Custom Orders</a>
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium tracking-wide">
+                <a href="/" class="hover:text-[#D4AF37] transition">Home</a>
+                <a href="/shop" class="text-[#D4AF37] transition">Shop Catalog</a>
+                <a href="/#contact" class="hover:text-[#D4AF37] transition">Contact</a>
             </nav>
-            <a href="/" class="text-xs uppercase tracking-widest text-[#C29B38] hover:underline">&larr; Back to Home</a>
+            <div class="flex items-center gap-4">
+                <button @click="cartOpen = true" class="relative bg-[#3D302A] border border-[#524138] text-[#FAF9F6] px-5 py-2.5 rounded-full font-semibold text-sm hover:bg-[#4A3B32] transition flex items-center gap-2">
+                    <i class="fa-solid fa-bag-shopping text-[#D4AF37]"></i>
+                    <span>Cart</span>
+                    <span class="bg-[#D4AF37] text-[#2C221E] text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center" x-text="cartItemCount">0</span>
+                </button>
+            </div>
         </div>
     </header>
 
-    <!-- Main Shop Container with Alpine.js State -->
-    <main class="flex-grow max-w-7xl mx-auto px-6 py-12 w-full" x-data="{ activeCategory: 'all', cart: [], name: '', email: '', phone: '' }">
-        
-        <!-- Page Title & Description -->
-        <div class="text-center max-w-2xl mx-auto mb-12">
-            <h1 class="font-serif text-4xl md:text-5xl font-bold text-[#3A2518] mb-4">Full Product Collection</h1>
-            <p class="text-sm text-[#6B4F3B]">Explore our complete catalog organized by collection. Select items to add to your order inquiry list (Prices in ZAR).</p>
+    <!-- Header Banner -->
+    <section class="bg-[#2C221E] text-white py-16 text-center">
+        <div class="max-w-4xl mx-auto px-4">
+            <span class="text-xs uppercase tracking-widest text-[#D4AF37] font-semibold bg-[#3D302A] px-3 py-1.5 rounded-full inline-block mb-3">Handcrafted Artisan Catalog</span>
+            <h1 class="text-4xl sm:text-5xl font-bold font-serif">Explore Our Leather Collection</h1>
+            <p class="text-[#D3C5BD] mt-3">Select your preferred color, size, and add items to your cart to submit an inquiry.</p>
+        </div>
+    </section>
+
+    <!-- Main Content & Filters -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Category Filter Tabs -->
+        <div class="flex flex-wrap items-center justify-center gap-2 mb-12">
+            <button @click="selectedCategory = 'All'" :class="selectedCategory === 'All' ? 'bg-[#2C221E] text-[#D4AF37]' : 'bg-white text-gray-700 border border-gray-200'" class="px-5 py-2 rounded-full text-sm font-semibold transition shadow-sm">All Items</button>
+            <template x-for="category in categories" :key="category">
+                <button @click="selectedCategory = category" :class="selectedCategory === category ? 'bg-[#2C221E] text-[#D4AF37]' : 'bg-white text-gray-700 border border-gray-200'" class="px-5 py-2 rounded-full text-sm font-semibold transition shadow-sm" x-text="category"></button>
+            </template>
         </div>
 
-        <!-- Category Filter Buttons -->
-        <div class="flex flex-wrap justify-center gap-2 mb-12">
-            <button @click="activeCategory = 'all'" :class="activeCategory === 'all' ? 'bg-[#3A2518] text-white' : 'bg-[#EFEADF] text-[#3A2518] hover:bg-[#E2D8CC]'" class="px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-xs transition">All Products</button>
-            <button @click="activeCategory = 'travel'" :class="activeCategory === 'travel' ? 'bg-[#3A2518] text-white' : 'bg-[#EFEADF] text-[#3A2518] hover:bg-[#E2D8CC]'" class="px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-xs transition">Travel Bags</button>
-            <button @click="activeCategory = 'everyday'" :class="activeCategory === 'everyday' ? 'bg-[#3A2518] text-white' : 'bg-[#EFEADF] text-[#3A2518] hover:bg-[#E2D8CC]'" class="px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-xs transition">Everyday Essentials</button>
-            <button @click="activeCategory = 'slings'" :class="activeCategory === 'slings' ? 'bg-[#3A2518] text-white' : 'bg-[#EFEADF] text-[#3A2518] hover:bg-[#E2D8CC]'" class="px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-xs transition">Sling Bags</button>
-            <button @click="activeCategory = 'handbags'" :class="activeCategory === 'handbags' ? 'bg-[#3A2518] text-white' : 'bg-[#EFEADF] text-[#3A2518] hover:bg-[#E2D8CC]'" class="px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-xs transition">Handbags</button>
-            <button @click="activeCategory = 'laptops'" :class="activeCategory === 'laptops' ? 'bg-[#3A2518] text-white' : 'bg-[#EFEADF] text-[#3A2518] hover:bg-[#E2D8CC]'" class="px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-xs transition">Laptop Bags</button>
-            <button @click="activeCategory = 'backpacks'" :class="activeCategory === 'backpacks' ? 'bg-[#3A2518] text-white' : 'bg-[#EFEADF] text-[#3A2518] hover:bg-[#E2D8CC]'" class="px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-xs transition">Backpacks</button>
-            <button @click="activeCategory = 'home'" :class="activeCategory === 'home' ? 'bg-[#3A2518] text-white' : 'bg-[#EFEADF] text-[#3A2518] hover:bg-[#E2D8CC]'" class="px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-xs transition">Home & Leisure</button>
-            <button @click="activeCategory = 'belts'" :class="activeCategory === 'belts' ? 'bg-[#3A2518] text-white' : 'bg-[#EFEADF] text-[#3A2518] hover:bg-[#E2D8CC]'" class="px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-xs transition">Belts & Care</button>
-        </div>
-
-        <!-- Layout: Catalog Grid + Inquiry Sidebar -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-            
-            <!-- Products Catalog Column -->
-            <div class="lg:col-span-2 space-y-16">
-
-                <!-- 1. TRAVEL BAGS SECTION -->
-                <div x-show="activeCategory === 'all' || activeCategory === 'travel'" class="space-y-6">
-                    <div class="border-b-2 border-[#C29B38] pb-2">
-                        <h3 class="text-2xl font-serif font-bold text-[#3A2518] tracking-wide">Travel Bags</h3>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Product 1 -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Large_Luggage_travel bag.jpeg') }}" alt="Large Luggage / Travel Bag" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Travel</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Large Luggage / Travel Bag</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Spacious genuine leather travel companion for long journeys.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R1,725.00</span>
-                                    <button @click="cart.push({name: 'Large Luggage / Travel Bag', price: 1725})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Product 2 -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Medium_luggage_travel bag.jpeg') }}" alt="Medium Luggage / Travel Bag" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Travel</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Medium Luggage / Travel Bag</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Ideal mid-size weekender bag combining elegance and utility.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R1,150.00</span>
-                                    <button @click="cart.push({name: 'Medium Luggage / Travel Bag', price: 1150})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 2. EVERYDAY ESSENTIALS SECTION -->
-                <div x-show="activeCategory === 'all' || activeCategory === 'everyday'" class="space-y-6">
-                    <div class="border-b-2 border-[#C29B38] pb-2">
-                        <h3 class="text-2xl font-serif font-bold text-[#3A2518] tracking-wide">Everyday Essentials</h3>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Product -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Toiletries_makup bag.jpeg') }}" alt="Leather Toiletry & Makeup Bag" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Essentials</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Leather Toiletry & Makeup Bag</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Handcrafted waterproof-lined leather pouch for grooming essentials.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R450.00</span>
-                                    <button @click="cart.push({name: 'Leather Toiletry & Makeup Bag', price: 450})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 3. SLING BAGS SECTION -->
-                <div x-show="activeCategory === 'all' || activeCategory === 'slings'" class="space-y-6">
-                    <div class="border-b-2 border-[#C29B38] pb-2">
-                        <h3 class="text-2xl font-serif font-bold text-[#3A2518] tracking-wide">Sling Bags</h3>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Sling Product 1 -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Slingba-Sachel (medium).jpeg') }}" alt="Medium Leather Sling Satchel" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Slings</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Medium Leather Sling Satchel</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Versatile crossbody satchel with adjustable leather strap.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R950.00</span>
-                                    <button @click="cart.push({name: 'Medium Leather Sling Satchel', price: 950})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Sling Product 2 -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Sling bag-small.jpeg') }}" alt="Compact Leather Sling Bag" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Slings</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Compact Leather Sling Bag</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Lightweight and minimalist crossbody bag for daily essentials.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R780.00</span>
-                                    <button @click="cart.push({name: 'Compact Leather Sling Bag', price: 780})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 4. HANDBAGS SECTION -->
-                <div x-show="activeCategory === 'all' || activeCategory === 'handbags'" class="space-y-6">
-                    <div class="border-b-2 border-[#C29B38] pb-2">
-                        <h3 class="text-2xl font-serif font-bold text-[#3A2518] tracking-wide">Handbags</h3>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Handbag Product 1 -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Medium_luggage_travel bag.jpeg') }}" alt="Classic Leather Handbag" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Handbags</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Classic Leather Handbag</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Elegant structured everyday handbag with dual top handles.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R1,350.00</span>
-                                    <button @click="cart.push({name: 'Classic Leather Handbag', price: 1350})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Handbag Product 2 -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Slingba-Sachel (medium).jpeg') }}" alt="Structured Tote Handbag" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Handbags</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Structured Tote Handbag</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Spacious artisan tote designed for daily elegance.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R1,480.00</span>
-                                    <button @click="cart.push({name: 'Structured Tote Handbag', price: 1480})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 5. LAPTOP BAGS SECTION -->
-                <div x-show="activeCategory === 'all' || activeCategory === 'laptops'" class="space-y-6">
-                    <div class="border-b-2 border-[#C29B38] pb-2">
-                        <h3 class="text-2xl font-serif font-bold text-[#3A2518] tracking-wide">Laptop Bags</h3>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Laptop Bag Product -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Large_Luggage_travel bag.jpeg') }}" alt="Executive Leather Laptop Briefcase" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Laptops</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Executive Leather Laptop Briefcase</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Padded interior compartment designed to protect up to 15-inch laptops.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R1,650.00</span>
-                                    <button @click="cart.push({name: 'Executive Leather Laptop Briefcase', price: 1650})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 6. BACKPACKS SECTION -->
-                <div x-show="activeCategory === 'all' || activeCategory === 'backpacks'" class="space-y-6">
-                    <div class="border-b-2 border-[#C29B38] pb-2">
-                        <h3 class="text-2xl font-serif font-bold text-[#3A2518] tracking-wide">Backpacks</h3>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Backpack Product -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Large_Luggage_travel bag.jpeg') }}" alt="Artisan Leather Backpack" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Backpacks</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Artisan Leather Backpack</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Comfortable padded shoulder straps with durable full-grain leather construction.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R1,550.00</span>
-                                    <button @click="cart.push({name: 'Artisan Leather Backpack', price: 1550})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 7. HOME & LEISURE SECTION -->
-                <div x-show="activeCategory === 'all' || activeCategory === 'home'" class="space-y-6">
-                    <div class="border-b-2 border-[#C29B38] pb-2">
-                        <h3 class="text-2xl font-serif font-bold text-[#3A2518] tracking-wide">Home & Leisure</h3>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Home Product -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Toiletries_makup bag.jpeg') }}" alt="Leather Coaster Set & Holder" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Home</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Leather Coaster Set & Holder</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Handcrafted genuine leather coasters with matching storage holder.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R250.00</span>
-                                    <button @click="cart.push({name: 'Leather Coaster Set & Holder', price: 250})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 8. BELTS & CARE SECTION -->
-                <div x-show="activeCategory === 'all' || activeCategory === 'belts'" class="space-y-6">
-                    <div class="border-b-2 border-[#C29B38] pb-2">
-                        <h3 class="text-2xl font-serif font-bold text-[#3A2518] tracking-wide">Belts & Care</h3>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Belt Product -->
-                        <div class="bg-[#FDFBF7] rounded-sm border border-[#E2D8CC] shadow-xs overflow-hidden flex flex-col justify-between">
-                            <div class="relative h-64 bg-[#EFEADF]">
-                                <img src="{{ url_for('static', filename='Pencil bag.jpeg') }}" alt="Classic Full-Grain Leather Belt" class="w-full h-full object-cover">
-                                <span class="absolute top-3 left-3 bg-[#3A2518]/80 text-[#F7F3EC] text-[10px] tracking-widest uppercase px-2 py-1 font-semibold rounded-xs">Belts</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
-                                <div>
-                                    <h4 class="font-serif font-bold text-lg text-[#3A2518] mb-1">Classic Full-Grain Leather Belt</h4>
-                                    <p class="text-xs text-[#6B4F3B] font-light mb-4">Durable solid leather belt with a solid brass buckle.</p>
-                                </div>
-                                <div class="flex items-center justify-between pt-4 border-t border-[#EFEADF]">
-                                    <span class="font-bold text-base text-[#3A2518]">R380.00</span>
-                                    <button @click="cart.push({name: 'Classic Full-Grain Leather Belt', price: 380})" class="bg-[#C29B38] text-white font-semibold px-3 py-1.5 rounded-sm text-xs hover:bg-[#D4AC45] transition">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Cart / Order Inquiry Sidebar -->
-            <div class="bg-[#FDFBF7] border border-[#E2D8CC] p-6 rounded-sm shadow-xs sticky top-24 space-y-6">
-                <div class="border-b border-[#EFEADF] pb-4">
-                    <h3 class="font-serif font-bold text-xl text-[#3A2518]">Order Inquiry List</h3>
-                    <p class="text-xs text-[#6B4F3B] mt-1">Review your selected items and submit your inquiry.</p>
-                </div>
-
-                <div class="space-y-4 max-h-80 overflow-y-auto">
-                    <template x-if="cart.length === 0">
-                        <p class="text-xs text-[#8A623A] italic text-center py-8">Your cart is currently empty. Select items from the catalog.</p>
-                    </template>
-                    <template x-for="(item, index) in cart" :key="index">
-                        <div class="flex justify-between items-center bg-[#F7F3EC] p-3 rounded-xs border border-[#EFEADF]">
-                            <div>
-                                <h5 class="text-xs font-semibold text-[#3A2518]" x-text="item.name"></h5>
-                                <span class="text-[11px] text-[#8A623A]" x-text="'R' + item.price.toFixed(2)"></span>
-                            </div>
-                            <button @click="cart.splice(index, 1)" class="text-red-700 hover:text-red-900 text-xs font-bold px-2 py-1">×</button>
-                        </div>
-                    </template>
-                </div>
-
-                <div class="border-t border-[#EFEADF] pt-4 space-y-2">
-                    <div class="flex justify-between text-sm font-bold text-[#3A2518]">
-                        <span>Total (ZAR):</span>
-                        <span x-text="'R' + cart.reduce((sum, item) => sum + item.price, 0).toFixed(2)"></span>
-                    </div>
-                </div>
-
-                <form @submit.prevent="
-                    if (cart.length === 0) {
-                        alert('Please add items to your cart before checking out.');
-                        return;
-                    }
-                    fetch('/submit-inquiry', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            name: name,
-                            email: email,
-                            phone: phone,
-                            cart: cart,
-                            total: cart.reduce((sum, item) => sum + item.price, 0)
-                        })
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert('Thank you, ' + name + '! Your order inquiry has been sent. Annuschka will contact you shortly.');
-                            cart = [];
-                            name = '';
-                            email = '';
-                            phone = '';
-                        } else {
-                            alert('Error submitting checkout. Please try again.');
-                        }
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        alert('Network error. Please check your connection.');
-                    })
-                " class="space-y-4 pt-2">
+        <!-- Product Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <template x-for="product in filteredProducts" :key="product.id">
+                <div class="bg-white rounded-2xl shadow-md border border-[#E2D8CD] overflow-hidden flex flex-col justify-between transition hover:shadow-xl">
                     <div>
-                        <label class="block text-xs font-semibold text-[#3A2518] mb-1">Your Name</label>
-                        <input type="text" x-model="name" required class="w-full px-3 py-2 text-xs bg-[#F7F3EC] border border-[#E2D8CC] rounded-xs focus:outline-none focus:border-[#C29B38]">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-[#3A2518] mb-1">Email Address</label>
-                        <input type="email" x-model="email" required class="w-full px-3 py-2 text-xs bg-[#F7F3EC] border border-[#E2D8CC] rounded-xs focus:outline-none focus:border-[#C29B38]">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-[#3A2518] mb-1">Phone Number</label>
-                        <input type="tel" x-model="phone" required class="w-full px-3 py-2 text-xs bg-[#F7F3EC] border border-[#E2D8CC] rounded-xs focus:outline-none focus:border-[#C29B38]">
-                    </div>
-                    <button type="submit" class="w-full bg-[#3A2518] text-white py-2.5 text-xs font-semibold uppercase tracking-widest rounded-xs hover:bg-[#5C4033] transition">Checkout</button>
-                </form>
-            </div>
+                        <!-- Image Carousel / Viewer -->
+                        <div class="relative h-64 bg-gray-100 overflow-hidden" x-data="{ activeImageIndex: 0 }">
+                            <img :src="'/static/' + product.images[activeImageIndex]" :alt="product.name" class="w-full h-full object-cover transition duration-300">
+                            <template x-if="product.images.length > 1">
+                                <div class="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
+                                    <template x-for="(img, idx) in product.images" :key="idx">
+                                        <button @click="activeImageIndex = idx" :class="activeImageIndex === idx ? 'bg-[#D4AF37] w-6' : 'bg-white/70 w-2.5'" class="h-2.5 rounded-full transition-all shadow"></button>
+                                    </template>
+                                </div>
+                            </template>
+                            <span class="absolute top-3 left-3 bg-[#2C221E]/80 backdrop-blur-sm text-[#D4AF37] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider" x-text="product.category"></span>
+                        </div>
 
+                        <!-- Product Info -->
+                        <div class="p-6">
+                            <h3 class="font-serif text-xl font-bold text-[#2C221E]" x-text="product.name"></h3>
+                            <p class="text-sm text-gray-600 mt-2 font-light" x-text="product.description"></p>
+                            
+                            <!-- Price -->
+                            <div class="mt-4 text-lg font-bold text-[#2C221E]">
+                                R <span x-text="getProductPrice(product)"></span>
+                            </div>
+
+                            <!-- Size Selector -->
+                            <template x-if="product.sizes && product.sizes.length > 0">
+                                <div class="mt-4">
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Select Size</label>
+                                    <select x-model="selectedSizes[product.id]" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#D4AF37] focus:outline-none">
+                                        <template x-for="size in product.sizes" :key="size">
+                                            <option :value="size" x-text="size"></option>
+                                        </template>
+                                    </select>
+                                </div>
+                            </template>
+
+                            <!-- Color Selector -->
+                            <template x-if="product.colors && product.colors.length > 0">
+                                <div class="mt-4">
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Select Color / Shade</label>
+                                    <select x-model="selectedColors[product.id]" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#D4AF37] focus:outline-none">
+                                        <template x-for="color in product.colors" :key="color">
+                                            <option :value="color" x-text="color"></option>
+                                        </template>
+                                    </select>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Add to Cart Action -->
+                    <div class="p-6 pt-0">
+                        <button @click="addToCart(product)" class="w-full bg-[#2C221E] text-white py-3 rounded-xl font-semibold text-sm hover:bg-[#3D302A] transition flex items-center justify-center gap-2 shadow">
+                            <i class="fa-solid fa-cart-plus text-[#D4AF37]"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </template>
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-[#3A2518] text-[#EFEADF] py-12 px-6 mt-20">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-xs font-light">
-            <div>
-                <h4 class="font-serif font-bold text-base text-white mb-3">Leather by Annuschka</h4>
-                <p class="text-[#D3C5B4] leading-relaxed">Handcrafted genuine leather goods made with precision, passion, and timeless style.</p>
-            </div>
-            <div>
-                <h4 class="font-serif font-bold text-base text-white mb-3">Quick Links</h4>
-                <ul class="space-y-2 text-[#D3C5B4]">
-                    <li><a href="/" class="hover:text-white transition">Home</a></li>
-                    <li><a href="/shop" class="hover:text-white transition">Shop Catalog</a></li>
-                    <li><a href="/#about" class="hover:text-white transition">Our Story</a></li>
-                    <li><a href="/#contact" class="hover:text-white transition">Contact & Custom Orders</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="font-serif font-bold text-base text-white mb-3">Contact</h4>
-                <p class="text-[#D3C5B4] leading-relaxed">Reach out for custom leather creations, bespoke commissions, and inquiries.</p>
-                <p class="mt-3 text-white font-semibold">South Africa</p>
-            </div>
-        </div>
-        <div class="max-w-7xl mx-auto border-t border-[#5C4033] mt-8 pt-6 text-center text-[11px] text-[#A89886]">
-            &copy; 2026 Leather by Annuschka. All rights reserved.
-        </div>
-    </footer>
+    <!-- Cart Drawer Modal -->
+    <div x-show="cartOpen" class="fixed inset-0 z-50 overflow-hidden" style="display: none;">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" @click="cartOpen = false"></div>
+        <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
+            <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col justify-between">
+                <!-- Drawer Header -->
+                <div class="p-6 bg-[#2C221E] text-white flex items-center justify-between">
+                    <h2 class="font-serif text-2xl font-bold text-[#D4AF37]">Cart</h2>
+                    <button @click="cartOpen = false" class="text-gray-400 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
+                </div>
 
+                <!-- Cart Items List -->
+                <div class="p-6 flex-1 overflow-y-auto space-y-4">
+                    <template x-if="cart.length === 0">
+                        <div class="text-center py-20 text-gray-400">
+                            <i class="fa-solid fa-basket-shopping text-5xl mb-3 text-gray-300"></i>
+                            <p>Your cart is currently empty.</p>
+                        </div>
+                    </template>
+                    <template x-for="(item, index) in cart" :key="index">
+                        <div class="flex items-center justify-between bg-[#FAF9F6] p-4 rounded-xl border border-[#E2D8CD]">
+                            <div class="flex-1 pr-3">
+                                <h4 class="font-bold text-sm text-[#2C221E]" x-text="item.name"></h4>
+                                <p class="text-xs text-gray-500 mt-0.5">
+                                    <template x-if="item.size"><span class="font-semibold" x-text="'Size: ' + item.size + ' | '"></span></template>
+                                    <template x-if="item.color"><span class="font-semibold" x-text="'Color: ' + item.color"></span></template>
+                                </p>
+                                <p class="text-xs font-bold text-[#D4AF37] mt-1" x-text="'R ' + item.price + ' x ' + item.quantity"></p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="flex items-center border border-gray-300 rounded-lg bg-white">
+                                    <button @click="updateQuantity(index, -1)" class="px-2.5 py-1 text-gray-600 hover:bg-gray-100">-</button>
+                                    <span class="px-2.5 text-xs font-bold" x-text="item.quantity"></span>
+                                    <button @click="updateQuantity(index, 1)" class="px-2.5 py-1 text-gray-600 hover:bg-gray-100">+</button>
+                                </div>
+                                <button @click="removeFromCart(index)" class="text-red-500 hover:text-red-700 text-sm"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Drawer Footer & Checkout Button -->
+                <div class="p-6 bg-[#FAF9F6] border-t border-[#E2D8CD] space-y-4">
+                    <div class="flex items-center justify-between text-lg font-bold">
+                        <span>Subtotal:</span>
+                        <span class="text-[#2C221E]" x-text="'R ' + cartTotal"></span>
+                    </div>
+                    <p class="text-xs text-gray-500">Shipping, shade preferences, and special delivery instructions will be collected at checkout.</p>
+                    <button @click="proceedToCheckout" :disabled="cart.length === 0" class="w-full bg-[#D4AF37] text-[#2C221E] py-3.5 rounded-xl font-bold text-sm hover:bg-[#C5A028] transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg">
+                        Proceed to Checkout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alpine.js Application Logic -->
+    <script>
+        const productsData = {{ products | tojson | safe }};
+        const categories = [...new Set(productsData.map(p => p.category))];
+
+        function shopApp() {
+            return {
+                products: productsData,
+                categories: categories,
+                selectedCategory: 'All',
+                cartOpen: false,
+                cart: JSON.parse(localStorage.getItem('annuschka_cart')) || [],
+                selectedSizes: {},
+                selectedColors: {},
+
+                init() {
+                    this.products.forEach(p => {
+                        if (p.sizes && p.sizes.length > 0) this.selectedSizes[p.id] = p.sizes[0];
+                        if (p.colors && p.colors.length > 0) this.selectedColors[p.id] = p.colors[0];
+                    });
+                },
+
+                get filteredProducts() {
+                    if (this.selectedCategory === 'All') return this.products;
+                    return this.products.filter(p => p.category === this.selectedCategory);
+                },
+
+                getProductPrice(product) {
+                    if (product.price_variants && this.selectedSizes[product.id]) {
+                        return product.price_variants[this.selectedSizes[product.id]] || product.price;
+                    }
+                    return product.price;
+                },
+
+                addToCart(product) {
+                    const size = this.selectedSizes[product.id] || '';
+                    const color = this.selectedColors[product.id] || '';
+                    const price = this.getProductPrice(product);
+
+                    const existingItem = this.cart.find(item => item.id === product.id && item.size === size && item.color === color);
+                    if (existingItem) {
+                        existingItem.quantity += 1;
+                    } else {
+                        this.cart.push({
+                            id: product.id,
+                            name: product.name,
+                            price: price,
+                            size: size,
+                            color: color,
+                            quantity: 1
+                        });
+                    }
+                    this.saveCart();
+                    this.cartOpen = true;
+                },
+
+                updateQuantity(index, change) {
+                    this.cart[index].quantity += change;
+                    if (this.cart[index].quantity <= 0) {
+                        this.cart.splice(index, 1);
+                    }
+                    this.saveCart();
+                },
+
+                removeFromCart(index) {
+                    this.cart.splice(index, 1);
+                    this.saveCart();
+                },
+
+                saveCart() {
+                    localStorage.setItem('annuschka_cart', JSON.stringify(this.cart));
+                },
+
+                get cartItemCount() {
+                    return this.cart.reduce((sum, item) => sum + item.quantity, 0);
+                },
+
+                get cartTotal() {
+                    return this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                },
+
+                proceedToCheckout() {
+                    localStorage.setItem('annuschka_cart', JSON.stringify(this.cart));
+                    window.location.href = '/checkout';
+                }
+            }
+        }
+    </script>
 </body>
 </html>

@@ -1,137 +1,472 @@
 import os
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from flask import Flask, redirect, render_template, request, session, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 
 app = Flask(__name__)
-# Use environment variable for secret key in production, with a secure fallback for local testing
-app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'your_random_secret_key_here')
+app.secret_key = 'leather-by-annuschka-secret-key'
 
-# Mock product database (Update with Annuschka's actual leather products)
+# In-memory database for reviews and orders
+REVIEWS = [
+    {"name": "Marike v.d. Merwe", "rating": 5, "comment": "Absolute top quality! The leather backpack exceeded all my expectations.", "date": "August 2026"},
+    {"name": "Pieter B.", "rating": 5, "comment": "Brought the medium travel bag for a weekend trip. Beautiful craftsmanship and smells amazing.", "date": "August 2026"}
+]
+
+ORDERS = []
+
 PRODUCTS = [
-    {'id': 1, 'name': 'Leather Bag', 'price': 1200.00, 'image': 'bag.jpg'},
-    # Add your other products here
+    # Travel Bags
+    {
+        "id": "large-luggage",
+        "name": "Large Luggage / Travel Bag",
+        "category": "Travel Bags",
+        "price": 1725,
+        "images": ["Large_Luggage_travel bag.jpeg"],
+        "description": "Spacious handcrafted large travel bag built for durability and long journeys.",
+        "colors": [],
+        "sizes": []
+    },
+    {
+        "id": "medium-luggage",
+        "name": "Medium Luggage / Travel Bag",
+        "category": "Travel Bags",
+        "price": 1150,
+        "images": ["Medium_luggage_travel bag.jpeg", "Medium_luggage_travel bag1.jpeg"],
+        "description": "Versatile medium luggage piece available in two classic shades.",
+        "colors": ["Dark", "Light"],
+        "sizes": []
+    },
+    {
+        "id": "small-travel-bag",
+        "name": "Small Travel Bag / Overnight Bag",
+        "category": "Travel Bags",
+        "price": 680,
+        "images": ["Medium_luggage_travel bag1.jpeg"],
+        "description": "Compact overnight travel bag for short trips.",
+        "colors": ["Dark", "Light"],
+        "sizes": []
+    },
+    {
+        "id": "overnight-bag",
+        "name": "Overnight Bag",
+        "category": "Travel Bags",
+        "price": 1275,
+        "images": ["Overnight Bag.jpeg"],
+        "description": "Premium overnight bag crafted with exceptional leather quality.",
+        "colors": [],
+        "sizes": []
+    },
+    {
+        "id": "medium-travel-bag-dokters",
+        "name": "Medium Travel Bag / Doctor's Bag",
+        "category": "Travel Bags",
+        "price": 910,
+        "images": ["Medium Travel Bag _Dokters bag.jpeg"],
+        "description": "Classic structured doctor's style travel bag in two color options.",
+        "colors": ["Dark", "Light"],
+        "sizes": []
+    },
+
+    # Everyday Essentials
+    {
+        "id": "toiletries-makeup-bag",
+        "name": "Toiletries / Makeup Bag",
+        "category": "Everyday Essentials",
+        "price": 450,
+        "images": ["Toiletries_makup bag.jpeg"],
+        "description": "Handcrafted toiletries and makeup bag. Available in 4 shades of brown (specify preference in comment).",
+        "colors": ["Shade 1 (Light Brown)", "Shade 2 (Medium Brown)", "Shade 3 (Dark Brown)", "Shade 4 (Rich Chestnut)"],
+        "sizes": []
+    },
+    {
+        "id": "coin-purse",
+        "name": "Coin Purse (Medium or Large)",
+        "category": "Everyday Essentials",
+        "price": 55,
+        "images": ["Coin purse medium 1.jpeg", "Coin purse medium.jpeg", "Coin purse Large.jpeg", "Coin purse Large 1.jpeg"],
+        "description": "Handcrafted coin purse available in Medium and Large across multiple shades of brown.",
+        "colors": ["Multiple Shades of Brown"],
+        "sizes": ["Medium", "Large"],
+        "price_variants": {"Medium": 55, "Large": 65}
+    },
+    {
+        "id": "pencil-bag",
+        "name": "Pencil Bag",
+        "category": "Everyday Essentials",
+        "price": 175,
+        "images": ["Pencil bag.jpeg", "Pencil bag 1.jpeg", "Pencil bag 2.jpeg"],
+        "description": "Sturdy leather pencil bag available in light, medium, or dark colors.",
+        "colors": ["Light", "Medium", "Dark"],
+        "sizes": []
+    },
+
+    # Sling Bags
+    {
+        "id": "sling-bag-small",
+        "name": "Sling Bag (Small)",
+        "category": "Sling Bags",
+        "price": 250,
+        "images": ["Sling bag (smal).jpeg"],
+        "description": "Compact and stylish small leather sling bag.",
+        "colors": [],
+        "sizes": []
+    },
+    {
+        "id": "sling-bag-satchel-medium",
+        "name": "Sling Bag / Satchel (Medium)",
+        "category": "Sling Bags",
+        "price": 435,
+        "images": ["Slingba-Sachel (medium).jpeg"],
+        "description": "Medium-sized leather satchel / sling bag for everyday carry.",
+        "colors": [],
+        "sizes": []
+    },
+    {
+        "id": "sling-bag-satchel-large",
+        "name": "Sling Bag / Satchel (Large)",
+        "category": "Sling Bags",
+        "price": 500,
+        "images": ["Slingba-Sachel (large).jpeg"],
+        "description": "Large leather satchel / sling bag offering generous storage.",
+        "colors": [],
+        "sizes": []
+    },
+    {
+        "id": "anti-theft-sling-bag",
+        "name": "Anti-Theft Sling Bag",
+        "category": "Sling Bags",
+        "price": 365,
+        "images": ["Anti-theft sling bag.jpeg"],
+        "description": "Secure anti-theft design leather sling bag.",
+        "colors": [],
+        "sizes": []
+    },
+    {
+        "id": "cross-body-sling-bag",
+        "name": "Cross Body Sling Bag",
+        "category": "Sling Bags",
+        "price": 620,
+        "images": ["Cross Bosy Sling Bag.jpeg"],
+        "description": "Comfortable and elegant cross-body leather sling bag.",
+        "colors": [],
+        "sizes": []
+    },
+    {
+        "id": "adjustable-cross-body-moon-bag",
+        "name": "Adjustable Cross Body Bag / Moon Bag",
+        "category": "Sling Bags",
+        "price": 655,
+        "images": ["Adjustable Cross bode Bag_Moon Bag.jpeg"],
+        "description": "Versatile moon bag with adjustable strap, available in dark or light.",
+        "colors": ["Dark", "Light"],
+        "sizes": []
+    },
+    {
+        "id": "slingbag-with-bow",
+        "name": "Slingbag with Bow",
+        "category": "Sling Bags",
+        "price": 245,
+        "images": ["Slingbag with bow.jpeg", "closeup.jpeg"],
+        "description": "Charming sling bag accented with a leather bow detail. Available in light and dark.",
+        "colors": ["Light", "Dark"],
+        "sizes": []
+    },
+    {
+        "id": "sling-bag",
+        "name": "Sling Bag",
+        "category": "Sling Bags",
+        "price": 550,
+        "images": ["Sling Bag.jpeg"],
+        "description": "Classic everyday leather sling bag.",
+        "colors": [],
+        "sizes": []
+    },
+    {
+        "id": "sling-bag-2",
+        "name": "Sling Bag 2",
+        "category": "Sling Bags",
+        "price": 640,
+        "images": ["Sling Bag 2.jpeg"],
+        "description": "Alternative design premium leather sling bag.",
+        "colors": [],
+        "sizes": []
+    },
+    {
+        "id": "cellphone-sling-bag",
+        "name": "Cellphone Sling Bag",
+        "category": "Sling Bags",
+        "price": 240,
+        "images": ["Celphone slingbag.jpeg"],
+        "description": "Minimalist cellphone sling bag available in dark, medium, and light.",
+        "colors": ["Dark", "Medium", "Light"],
+        "sizes": []
+    },
+
+    # Handbags
+    {
+        "id": "handbag-5",
+        "name": "Handbag",
+        "category": "Handbags",
+        "price": 650,
+        "images": ["Handbag 5.jpeg"],
+        "description": "Exquisite handcrafted leather handbag.",
+        "colors": [],
+        "sizes": []
+    },
+    {
+        "id": "handbag-4",
+        "name": "Handbag",
+        "category": "Handbags",
+        "price": 450,
+        "images": ["Handbag 4.jpeg"],
+        "description": "Timeless leather handbag design.",
+        "colors": [],
+        "sizes": []
+    },
+    {
+        "id": "handbag-3",
+        "name": "Handbag",
+        "category": "Handbags",
+        "price": 300,
+        "images": ["Handbag 3.jpeg"],
+        "description": "Compact everyday leather handbag.",
+        "colors": [],
+        "sizes": []
+    },
+    {
+        "id": "handbag-2",
+        "name": "Handbag",
+        "category": "Handbags",
+        "price": 700,
+        "images": ["Handbag 2.jpeg"],
+        "description": "Spacious premium leather handbag.",
+        "colors": [],
+        "sizes": []
+    },
+    {
+        "id": "handbag-1",
+        "name": "Handbag",
+        "category": "Handbags",
+        "price": 610,
+        "images": ["Handbag 1.jpeg"],
+        "description": "Elegantly crafted signature leather handbag.",
+        "colors": [],
+        "sizes": []
+    },
+
+    # Laptop bags
+    {
+        "id": "laptop-bag-1",
+        "name": "Laptop Bag",
+        "category": "Laptop bags",
+        "price": 750,
+        "images": ["Laptop bag 1.jpeg"],
+        "description": "Professional padded leather laptop bag.",
+        "colors": [],
+        "sizes": []
+    },
+    {
+        "id": "laptop-bag-2",
+        "name": "Laptop Bag",
+        "category": "Laptop bags",
+        "price": 600,
+        "images": ["Laptop bag 2.jpeg"],
+        "description": "Sleek and slim leather laptop bag.",
+        "colors": [],
+        "sizes": []
+    },
+    {
+        "id": "laptop-bag-3",
+        "name": "Laptop Bag",
+        "category": "Laptop bags",
+        "price": 750,
+        "images": ["Laptop bag 3.jpeg"],
+        "description": "Executive full-grain leather laptop bag.",
+        "colors": [],
+        "sizes": []
+    },
+    {
+        "id": "laptop-sleeve",
+        "name": "Laptop Sleeve",
+        "category": "Laptop bags",
+        "price": 575,
+        "images": ["Laptop sleeve 2.jpeg", "Laptop sleeve 1.jpeg"],
+        "description": "Protective handcrafted leather laptop sleeve with dual image views.",
+        "colors": [],
+        "sizes": []
+    },
+
+    # Backpacks
+    {
+        "id": "backpack-1",
+        "name": "Backpack",
+        "category": "Backpacks",
+        "price": 735,
+        "images": ["Backpac 1.jpeg"],
+        "description": "Rugged everyday leather backpack.",
+        "colors": [],
+        "sizes": []
+    },
+    {
+        "id": "backpack-2",
+        "name": "Backpack",
+        "category": "Backpacks",
+        "price": 665,
+        "images": ["Backpac 2.jpeg"],
+        "description": "Comfortable and stylish leather backpack.",
+        "colors": [],
+        "sizes": []
+    },
+    {
+        "id": "backpack-3",
+        "name": "Backpack",
+        "category": "Backpacks",
+        "price": 575,
+        "images": ["Backpac 3.jpeg"],
+        "description": "Multi-size leather backpack available in Small (R575), Medium (R690), and Large (R770).",
+        "colors": [],
+        "sizes": ["Small", "Medium", "Large"],
+        "price_variants": {"Small": 575, "Medium": 690, "Large": 770}
+    },
+    {
+        "id": "backpack-4",
+        "name": "Backpack",
+        "category": "Backpacks",
+        "price": 805,
+        "images": ["Backpac 4.jpeg"],
+        "description": "Large capacity premium leather backpack.",
+        "colors": [],
+        "sizes": []
+    },
+    {
+        "id": "backpack-with-handles",
+        "name": "Backpack with Handles",
+        "category": "Backpacks",
+        "price": 655,
+        "images": ["Backpac with Handles.jpeg"],
+        "description": "Versatile leather backpack featuring top carry handles.",
+        "colors": [],
+        "sizes": []
+    },
+    {
+        "id": "baby-backpack-diaper-bag",
+        "name": "Baby Backpack / Diaper Bag",
+        "category": "Backpacks",
+        "price": 920,
+        "images": ["Baby backpack_diaper bag.jpeg"],
+        "description": "Thoughtfully designed leather diaper bag / baby backpack. Available in light or dark.",
+        "colors": ["Light", "Dark"],
+        "sizes": []
+    },
+
+    # Home & Leisure
+    {
+        "id": "wine-bag-double",
+        "name": "Wine Bag (Double Bottle)",
+        "category": "Home & Leisure",
+        "price": 550,
+        "images": ["Wine Bag (Double Bottle).jpeg"],
+        "description": "Padded leather double wine bottle carrier.",
+        "colors": [],
+        "sizes": []
+    },
+    {
+        "id": "wine-bag-single",
+        "name": "Wine Bag (Single Bottle)",
+        "category": "Home & Leisure",
+        "price": 356,
+        "images": ["Wine Bag (Single bottle).jpeg"],
+        "description": "Elegant single wine bottle leather carrier.",
+        "colors": [],
+        "sizes": []
+    },
+    {
+        "id": "cooler-bag",
+        "name": "Cooler Bag",
+        "category": "Home & Leisure",
+        "price": 750,
+        "images": ["Cooler bag.jpeg"],
+        "description": "Insulated premium leather cooler bag.",
+        "colors": [],
+        "sizes": []
+    },
+    {
+        "id": "leather-apron",
+        "name": "Leather Apron",
+        "category": "Home & Leisure",
+        "price": 825,
+        "images": ["Leather Apron.jpeg"],
+        "description": "Durable handcrafted leather apron. Available in light and dark.",
+        "colors": ["Light", "Dark"],
+        "sizes": []
+    },
+
+    # Belts
+    {
+        "id": "leather-belt",
+        "name": "Leather Belt",
+        "category": "Belts",
+        "price": 200,
+        "images": [
+            "Screenshot 2026-08-14 140410.jpeg",
+            "Screenshot 2026-08-14 140415.jpeg",
+            "Screenshot 2026-08-14 140419.jpeg",
+            "Screenshot 2026-08-14 140423.jpeg",
+            "Screenshot 2026-08-14 140428.jpeg",
+            "Screenshot 2026-08-14 140432.jpeg",
+            "Screenshot 2026-08-14 140436.jpeg",
+            "Screenshot 2026-08-14 140441.jpeg"
+        ],
+        "description": "Classic full-grain leather belt. Multiple photos available to browse.",
+        "colors": [],
+        "sizes": []
+    },
+
+    # Leather care
+    {
+        "id": "leather-care-cream",
+        "name": "Leather Care Cream with Microfiber Cloth",
+        "category": "Leather care",
+        "price": 59,
+        "images": ["Screenshot 2026-08-14 140829.jpeg"],
+        "description": "Premium leather care cream paired with a soft microfiber cloth to nourish and protect your leather items.",
+        "colors": [],
+        "sizes": []
+    }
 ]
 
 @app.route('/')
 def index():
-    return render_template('index.html', products=PRODUCTS)
+    return render_template('index.html', reviews=REVIEWS)
 
 @app.route('/shop')
 def shop():
     return render_template('shop.html', products=PRODUCTS)
 
-@app.route('/dashboard')
-def dashboard():
-    return render_template('dashboard.html')
-
-@app.route('/add_to_cart/<int:product_id>')
-def add_to_cart(product_id):
-    if 'cart' not in session:
-        session['cart'] = []
-    
-    product = next((p for p in PRODUCTS if p['id'] == product_id), None)
-    if product:
-        session['cart'].append(product)
-        session.modified = True
-    return redirect(url_for('cart'))
-
-@app.route('/cart')
-def cart():
-    return render_template('cart.html', cart=session.get('cart', []))
-
 @app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
     if request.method == 'POST':
-        # 1. Capture customer shipping details
-        shipping_details = {
-            'name': request.form.get('name'),
-            'address': request.form.get('address'),
-            'delivery_method': request.form.get('delivery_method')
+        data = request.form
+        order = {
+            "name": data.get("name"),
+            "email": data.get("email"),
+            "phone": data.get("phone"),
+            "address": data.get("address"),
+            "comment": data.get("comment"),
+            "items": data.get("items_json")
         }
-        session['shipping'] = shipping_details
-        
-        # Calculate total amount from cart
-        total_amount = sum(p['price'] for p in session.get('cart', []))
-        
-        # Fetch Payfast merchant credentials securely from environment variables
-        merchant_id = os.environ.get('PAYFAST_MERCHANT_ID', 'YOUR_MERCHANT_ID')
-        
-        # 2. Render Payfast redirect template
-        return render_template('payfast_redirect.html', 
-                               merchant_id=merchant_id, 
-                               amount=total_amount,
-                               item_name="Leather by Annuschka Order")
+        ORDERS.append(order)
+        flash("Order inquiry submitted successfully! Annuschka will contact you shortly.", "success")
+        return redirect(url_for('index'))
     return render_template('checkout.html')
 
-@app.route('/payfast/itn', methods=['POST'])
-def payfast_itn():
-    """
-    Payfast calls this endpoint automatically in the background 
-    once a payment has been successfully processed.
-    """
-    data = request.form.to_dict()
-    
-    # Check if Payfast reports the payment as complete
-    if data.get('payment_status') == 'COMPLETE':
-        shipping_info = session.get('shipping', {})
-        customer_name = shipping_info.get('name', 'Unknown Customer')
-        delivery_address = shipping_info.get('address', 'Local Pickup')
-        delivery_method = shipping_info.get('delivery_method', 'courier')
-        
-        cart_items = session.get('cart', [])
-        item_summary = ", ".join([item['name'] for item in cart_items])
-        total_amount = data.get('amount_gross', '0.00')
-        
-        # Trigger the email notification
-        send_order_email(customer_name, delivery_address, delivery_method, item_summary, total_amount)
-        
-        # Clear cart and shipping info after successful completion
-        session.pop('cart', None)
-        session.pop('shipping', None)
-        
-    return '', 200
-
-def send_order_email(name, address, delivery_method, items, amount):
-    """
-    Sends an email notification with the order details using Python's smtplib.
-    """
-    sender_email = os.environ.get('MAIL_USERNAME')
-    sender_password = os.environ.get('MAIL_PASSWORD')
-    receiver_email = os.environ.get('NOTIFICATION_EMAIL', sender_email)
-    
-    if not sender_email or not sender_password:
-        print("Email credentials not configured.")
-        return
-
-    msg = MIMEMultipart()
-    msg['From'] = sender_email
-    msg['To'] = receiver_email
-    msg['Subject'] = f"New Paid Order: {name} - Leather by Annuschka"
-    
-    body = f"""
-    New order successfully paid via Payfast!
-    
-    Customer Name: {name}
-    Fulfillment Type: {delivery_method.upper()}
-    Delivery Address: {address}
-    
-    Items Purchased: {items}
-    Total Paid: R{amount}
-    
-    Please prepare this order for shipping or pickup.
-    """
-    msg.attach(MIMEText(body, 'plain'))
-    
-    try:
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()
-        server.login(sender_email, sender_password)
-        server.sendmail(sender_email, receiver_email, msg.as_string())
-        server.quit()
-    except Exception as e:
-        print(f"Failed to send order email: {e}")
+@app.route('/add_review', methods=['POST'])
+def add_review():
+    name = request.form.get("reviewer_name")
+    rating = int(request.form.get("rating", 5))
+    comment = request.form.get("comment")
+    if name and comment:
+        REVIEWS.insert(0, {"name": name, "rating": rating, "comment": comment, "date": "August 2026"})
+        flash("Thank you for your review!", "success")
+    return redirect(url_for('index') + "#reviews")
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5000)

@@ -1,13 +1,120 @@
-<form method="POST">
-    <input type="text" name="name" placeholder="Full Name" required>
-    <input type="text" name="address" placeholder="Shipping Address">
-    
-    <label>
-        <input type="radio" name="delivery_method" value="courier" checked> Courier
-    </label>
-    <label>
-        <input type="radio" name="delivery_method" value="pickup"> Pickup
-    </label>
-    
-    <button type="submit">Pay with Payfast</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Leather by Annuschka</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        h1, h2, h3, .font-serif { font-family: 'Playfair Display', serif; }
+    </style>
+</head>
+<body class="bg-[#FAF9F6] text-[#2C221E] antialiased" x-data="checkoutApp()">
+
+    <!-- Header -->
+    <header class="bg-[#2C221E] text-white py-6 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+            <a href="/shop" class="flex items-center gap-2 text-sm text-[#D3C5BD] hover:text-[#D4AF37]">
+                <i class="fa-solid fa-arrow-left"></i> Back to Shop
+            </a>
+            <span class="font-serif text-xl font-bold tracking-wider text-[#D4AF37]">Leather by Annuschka</span>
+            <div></div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            
+            <!-- Checkout Details Form -->
+            <div class="bg-white p-8 rounded-3xl shadow-lg border border-[#E2D8CD]">
+                <h2 class="font-serif text-2xl font-bold mb-6 text-[#2C221E]">Shipping & Contact Details</h2>
+                <form action="/checkout" method="POST" class="space-y-6" @submit="prepareSubmission">
+                    <input type="hidden" name="items_json" x-model="itemsJson">
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                        <input type="text" name="name" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#D4AF37] focus:outline-none" placeholder="Jan van der Linde">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                        <input type="email" name="email" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#D4AF37] focus:outline-none" placeholder="jan@example.com">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                        <input type="tel" name="phone" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#D4AF37] focus:outline-none" placeholder="+27 82 123 4567">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Shipping Address Line</label>
+                        <input type="text" name="address" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#D4AF37] focus:outline-none" placeholder="Street address, city, postal code">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Comment / Special Delivery Instructions / Custom Requests</label>
+                        <textarea name="comment" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#D4AF37] focus:outline-none" placeholder="Mention preferred brown shade, custom embossing, or delivery notes..."></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full bg-[#D4AF37] text-[#2C221E] py-4 rounded-xl font-bold text-base hover:bg-[#C5A028] transition shadow-lg">
+                        Complete Order Inquiry
+                    </button>
+                </form>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="bg-[#2C221E] text-white p-8 rounded-3xl shadow-xl flex flex-col justify-between">
+                <div>
+                    <h2 class="font-serif text-2xl font-bold mb-6 text-[#D4AF37]">Order Summary</h2>
+                    <div class="space-y-4 max-h-96 overflow-y-auto pr-2">
+                        <template x-for="item in cart" :key="item.id + item.size + item.color">
+                            <div class="flex justify-between items-center bg-[#3D302A] p-4 rounded-xl border border-[#524138]">
+                                <div>
+                                    <h4 class="font-bold text-sm text-white" x-text="item.name"></h4>
+                                    <p class="text-xs text-[#D3C5BD] mt-0.5">
+                                        <template x-if="item.size"><span x-text="'Size: ' + item.size + ' | '"></span></template>
+                                        <template x-if="item.color"><span x-text="'Color: ' + item.color"></span></template>
+                                        <span x-text="'Qty: ' + item.quantity"></span>
+                                    </p>
+                                </div>
+                                <span class="font-bold text-[#D4AF37]" x-text="'R ' + (item.price * item.quantity)"></span>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <div class="mt-8 pt-6 border-t border-[#524138] space-y-4">
+                    <div class="flex justify-between items-center text-lg font-bold">
+                        <span>Total Amount:</span>
+                        <span class="text-[#D4AF37]" x-text="'R ' + cartTotal"></span>
+                    </div>
+                    <p class="text-xs text-[#D3C5BD]">Annuschka will review your order inquiry and contact you to confirm final payment and delivery details.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        function checkoutApp() {
+            return {
+                cart: JSON.parse(localStorage.getItem('annuschka_cart')) || [],
+                itemsJson: '',
+
+                get cartTotal() {
+                    return this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                },
+
+                prepareSubmission() {
+                    this.itemsJson = JSON.stringify(this.cart);
+                    localStorage.removeItem('annuschka_cart');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
