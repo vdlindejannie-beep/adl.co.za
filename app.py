@@ -12,7 +12,7 @@ PRODUCTS = [
         "name": "Large Luggage / Travel Bag",
         "category": "Travel & Luggage",
         "price": 3850.00,
-        "image": "Screenshot 2026-08-14 142732.jpeg",
+        "image": "Large_luggage_travel bag.png",
         "description": "Spacious premium full-grain leather travel bag designed for extended journeys.",
         "colors": ["Cognac", "Dark Brown", "Black"],
         "sizes": ["Standard (Large)"],
@@ -73,7 +73,7 @@ PRODUCTS = [
         "name": "Sling Bag / Satchel (Medium)",
         "category": "Handbags & Slings",
         "price": 1650.00,
-        "image": "Slingba-Sachel (medium).png",
+        "image": "Sling bag - Satchel (medium).png",
         "description": "Medium everyday leather satchel combining elegance and practicality.",
         "colors": ["Cognac", "Dark Brown", "Black"],
         "sizes": ["Medium"],
@@ -301,27 +301,18 @@ PRODUCTS = [
     },
     {
         "id": 30,
-        "name": "Laptop Sleeve 1",
+        "name": "Leather Laptop Sleeve",
         "category": "Backpacks & Laptop Bags",
         "price": 1200.00,
         "image": "Laptop sleeve 1.png",
-        "description": "Minimalist protective leather laptop sleeve.",
-        "colors": ["Cognac", "Dark Brown", "Black"],
-        "sizes": ["13 inch", "15 inch"],
-    },
-    {
-        "id": 31,
-        "name": "Laptop Sleeve 2",
-        "category": "Backpacks & Laptop Bags",
-        "price": 1250.00,
-        "image": "Laptop sleeve 2.png",
-        "description": "Handcrafted leather sleeve with magnetic closure flap.",
+        "images": ["Laptop sleeve 1.png", "Laptop sleeve 2.png"],
+        "description": "Minimalist protective leather laptop sleeve shown in two style variations.",
         "colors": ["Cognac", "Dark Brown", "Black"],
         "sizes": ["13 inch", "15 inch"],
     },
     # Small Goods & Accessories
     {
-        "id": 32,
+        "id": 31,
         "name": "Coin Purse Large",
         "category": "Small Goods & Accessories",
         "price": 450.00,
@@ -331,7 +322,7 @@ PRODUCTS = [
         "sizes": ["Standard"],
     },
     {
-        "id": 33,
+        "id": 32,
         "name": "Coin Purse Medium",
         "category": "Small Goods & Accessories",
         "price": 350.00,
@@ -341,7 +332,7 @@ PRODUCTS = [
         "sizes": ["Standard"],
     },
     {
-        "id": 34,
+        "id": 33,
         "name": "Pencil Bag",
         "category": "Small Goods & Accessories",
         "price": 380.00,
@@ -351,7 +342,7 @@ PRODUCTS = [
         "sizes": ["Standard"],
     },
     {
-        "id": 35,
+        "id": 34,
         "name": "Toiletries & Makeup Bag",
         "category": "Small Goods & Accessories",
         "price": 950.00,
@@ -362,7 +353,7 @@ PRODUCTS = [
     },
     # Home, Leisure & Care
     {
-        "id": 36,
+        "id": 35,
         "name": "Leather Apron",
         "category": "Home, Leisure & Care",
         "price": 1850.00,
@@ -372,7 +363,7 @@ PRODUCTS = [
         "sizes": ["Standard"],
     },
     {
-        "id": 37,
+        "id": 36,
         "name": "Cooler Bag",
         "category": "Home, Leisure & Care",
         "price": 2400.00,
@@ -382,7 +373,7 @@ PRODUCTS = [
         "sizes": ["Standard"],
     },
     {
-        "id": 38,
+        "id": 37,
         "name": "Wine Bag (Single Bottle)",
         "category": "Home, Leisure & Care",
         "price": 850.00,
@@ -392,7 +383,7 @@ PRODUCTS = [
         "sizes": ["Standard"],
     },
     {
-        "id": 39,
+        "id": 38,
         "name": "Wine Bag (Double Bottle)",
         "category": "Home, Leisure & Care",
         "price": 1250.00,
