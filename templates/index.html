@@ -1,84 +1,212 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leather by Annuschka - Timeless Leather Goods</title>
+    <title>Leather by Annuschka | Handcrafted Artisan Leather Goods</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #241c17; color: #f3efe6; font-family: 'Inter', sans-serif; }
-        .gold-accent { color: #d4af37; }
-        .gold-bg { background-color: #d4af37; }
-        .gold-border { border-color: #d4af37; }
-        .card-bg { background-color: #2e241e; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        h1, h2, h3, .font-serif { font-family: 'Playfair Display', serif; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between">
+<body class="bg-[#FAF9F6] text-[#2C221E] antialiased">
 
-    <!-- Navbar -->
-    <nav class="bg-[#1c1512] border-b border-[#3a2d26] py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50">
-        <a href="{{ url_for('index') }}" class="text-2xl font-serif gold-accent font-bold tracking-wider">Leather by Annuschka</a>
-        <div class="hidden md:flex space-x-8 text-sm uppercase tracking-widest">
-            <a href="{{ url_for('index') }}" class="hover:text-[#d4af37] transition">Home</a>
-            <a href="{{ url_for('shop') }}" class="hover:text-[#d4af37] transition">Shop Catalog</a>
-            <a href="{{ url_for('cart') }}" class="hover:text-[#d4af37] transition"><i class="fa fa-shopping-cart"></i> Cart</a>
-        </div>
-        <a href="{{ url_for('shop') }}" class="gold-bg text-[#1c1512] px-5 py-2 rounded-full font-semibold text-sm hover:opacity-90 transition">
-            Shop Now
-        </a>
-    </nav>
-
-    <!-- Hero Section -->
-    <header class="max-w-7xl mx-auto px-6 py-16 md:py-24 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        <div>
-            <span class="text-xs uppercase tracking-widest gold-bg text-[#1c1512] px-3 py-1 rounded font-semibold inline-block mb-6">Handcrafted in South Africa</span>
-            <h1 class="text-4xl md:text-6xl font-serif font-bold leading-tight mb-6">
-                Timeless Leather Goods <span class="gold-accent">Crafted to Last</span>
-            </h1>
-            <p class="text-gray-300 text-lg mb-8 leading-relaxed">
-                Welcome to our artisan studio. Discover handcrafted travel luggage, everyday bags, and unique leather pieces made with passion, durability, and unmatched quality.
-            </p>
-            <div class="flex flex-wrap gap-4">
-                <a href="{{ url_for('shop') }}" class="gold-bg text-[#1c1512] px-8 py-3 rounded-full font-bold hover:opacity-90 transition">
-                    Explore Full Catalog
-                </a>
-                <a href="https://wa.me/27764307990" target="_blank" class="border border-[#d4af37] gold-accent px-8 py-3 rounded-full font-bold hover:bg-[#d4af37] hover:text-[#1c1512] transition flex items-center gap-2">
-                    <i class="fab fa-whatsapp"></i> Connect with Annuschka
+    <!-- Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-[#2C221E]/95 backdrop-blur-md text-[#FAF9F6] border-b border-[#4A3B32]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-3 group">
+                <span class="font-serif text-xl sm:text-2xl font-bold tracking-wider text-[#D4AF37] group-hover:text-[#F3E5AB] transition">Leather by Annuschka</span>
+            </a>
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium tracking-wide">
+                <a href="/" class="hover:text-[#D4AF37] transition">Home</a>
+                <a href="/shop" class="hover:text-[#D4AF37] transition">Shop Catalog</a>
+                <a href="#collection" class="hover:text-[#D4AF37] transition">Collection</a>
+                <a href="#reviews" class="hover:text-[#D4AF37] transition">Reviews</a>
+                <a href="#contact" class="hover:text-[#D4AF37] transition">Contact & WhatsApp</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <a href="/shop" class="bg-[#D4AF37] text-[#2C221E] px-5 py-2.5 rounded-full font-semibold text-sm hover:bg-[#C5A028] transition shadow-md">
+                    <i class="fa-solid fa-bag-shopping mr-2"></i> Shop Now
                 </a>
             </div>
-        </div>
-
-        <!-- Hero Card - Logo Only in Right Box -->
-        <div class="card-bg p-8 rounded-2xl border border-[#3a2d26] shadow-2xl flex justify-center items-center min-h-[350px]">
-            <img src="{{ url_for('static', filename='Logo.jpeg') }}" alt="Leather by Annuschka Logo" class="max-h-64 object-contain rounded-full shadow-lg">
         </div>
     </header>
 
-    <!-- Studio Details Section -->
-    <section class="bg-[#1c1512] py-16 border-t border-[#3a2d26]">
-        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
-            <div class="p-6">
-                <i class="fa fa-shipping-fast gold-accent text-3xl mb-4"></i>
-                <h3 class="font-serif text-xl font-bold mb-2">Local Shipping</h3>
-                <p class="text-gray-400 text-sm">She ships locally across South Africa for now with care and tracked delivery.</p>
+    <!-- Hero Section -->
+    <section class="relative bg-[#2C221E] text-[#FAF9F6] py-20 lg:py-32 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6">
+                <span class="text-xs uppercase tracking-widest text-[#D4AF37] font-semibold bg-[#3D302A] px-3 py-1.5 rounded-full inline-block">Handcrafted in South Africa</span>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight font-serif">
+                    Timeless Leather Goods <span class="text-[#D4AF37]">Crafted to Last</span>
+                </h1>
+                <p class="text-lg text-[#D3C5BD] leading-relaxed font-light">
+                    Welcome to our artisan studio. Discover handcrafted travel luggage, everyday bags, and unique leather pieces made with passion, durability, and unmatched quality.
+                </p>
+                <div class="pt-4 flex flex-wrap gap-4">
+                    <a href="/shop" class="bg-[#D4AF37] text-[#2C221E] px-8 py-3.5 rounded-full font-bold text-sm hover:bg-[#C5A028] transition shadow-lg transform hover:-translate-y-0.5">
+                        Explore Full Catalog
+                    </a>
+                    <a href="#contact" class="border border-[#6B574C] text-[#FAF9F6] px-8 py-3.5 rounded-full font-medium text-sm hover:bg-[#3D302A] transition">
+                        Connect with Annuschka
+                    </a>
+                </div>
             </div>
-            <div class="p-6">
-                <i class="fa fa-envelope gold-accent text-3xl mb-4"></i>
-                <h3 class="font-serif text-xl font-bold mb-2">Direct Contact</h3>
-                <p class="text-gray-400 text-sm">Reach out directly at lummisannuschka001@gmail.com or via WhatsApp.</p>
+            <!-- Logo Only in Hero Right Column (Box Removed & Doubled in Size) -->
+            <div class="relative flex justify-center items-center">
+                <img src="{{ url_for('static', filename='Logo.jpeg') }}" alt="Leather by Annuschka Logo" class="w-80 h-80 sm:w-96 sm:h-96 md:w-[28rem] md:h-[28rem] object-contain rounded-full border-4 border-[#D4AF37] p-3 bg-[#2C221E] shadow-2xl">
             </div>
-            <div class="p-6">
-                <i class="fa fa-gem gold-accent text-3xl mb-4"></i>
-                <h3 class="font-serif text-xl font-bold mb-2">Master Craftsmanship</h3>
-                <p class="text-gray-400 text-sm">Every single piece is meticulously handcrafted with full-grain leather and solid hardware.</p>
+        </div>
+    </section>
+
+    <!-- The Artisan Collection -->
+    <section id="collection" class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+            <span class="text-xs uppercase tracking-widest text-[#8C6D4F] font-bold">Featured Showcase</span>
+            <h2 class="text-3xl sm:text-4xl font-bold font-serif mt-2">The Artisan Collection</h2>
+            <p class="text-gray-600 mt-3">Click any collection image below to explore and shop our handmade leather selections.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <a href="/shop" class="group relative rounded-2xl overflow-hidden shadow-lg bg-white block transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
+                <div class="h-80 w-full overflow-hidden">
+                    <img src="{{ url_for('static', filename='Collection1.jpeg') }}" alt="Travel & Luggage" class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
+                    <span class="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">Travel & Everyday</span>
+                    <h3 class="text-2xl font-serif font-bold mt-1">Luggage & Bags</h3>
+                    <p class="text-xs text-gray-300 mt-1 flex items-center gap-1">Shop Collection <i class="fa-solid fa-arrow-right text-[#D4AF37]"></i></p>
+                </div>
+            </a>
+
+            <a href="/shop" class="group relative rounded-2xl overflow-hidden shadow-lg bg-white block transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
+                <div class="h-80 w-full overflow-hidden">
+                    <img src="{{ url_for('static', filename='Collection2.jpeg') }}" alt="Sling Bags & Essentials" class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
+                    <span class="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">Accessories</span>
+                    <h3 class="text-2xl font-serif font-bold mt-1">Sling Bags & Wallets</h3>
+                    <p class="text-xs text-gray-300 mt-1 flex items-center gap-1">Shop Collection <i class="fa-solid fa-arrow-right text-[#D4AF37]"></i></p>
+                </div>
+            </a>
+
+            <a href="/shop" class="group relative rounded-2xl overflow-hidden shadow-lg bg-white block transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
+                <div class="h-80 w-full overflow-hidden">
+                    <img src="{{ url_for('static', filename='Collection3.jpeg') }}" alt="Home & Leather Care" class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
+                    <span class="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">Lifestyle & Care</span>
+                    <h3 class="text-2xl font-serif font-bold mt-1">Home, Aprons & Care</h3>
+                    <p class="text-xs text-gray-300 mt-1 flex items-center gap-1">Shop Collection <i class="fa-solid fa-arrow-right text-[#D4AF37]"></i></p>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Customer Reviews Section -->
+    <section id="reviews" class="py-20 bg-[#F3EFEA] border-y border-[#E2D8CD]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="text-xs uppercase tracking-widest text-[#8C6D4F] font-bold">Testimonials</span>
+                <h2 class="text-3xl sm:text-4xl font-bold font-serif mt-2">Customer Reviews</h2>
+                <p class="text-gray-600 mt-3">See what our valued patrons have to say about their handcrafted leather pieces.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+                {% for review in reviews %}
+                <div class="bg-white p-8 rounded-2xl shadow-md border border-[#E2D8CD] flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-1 text-[#D4AF37] mb-4">
+                            {% for i in range(review.rating) %}
+                            <i class="fa-solid fa-star"></i>
+                            {% endfor %}
+                        </div>
+                        <p class="text-gray-700 italic font-light">"{{ review.comment }}"</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between">
+                        <span class="font-bold text-[#2C221E] text-sm">{{ review.name }}</span>
+                        <span class="text-xs text-gray-400">{{ review.date }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="max-w-xl mx-auto bg-white p-8 rounded-2xl shadow-lg border border-[#E2D8CD]">
+                <h3 class="text-2xl font-serif font-bold text-center mb-6">Leave Your Review</h3>
+                <form action="/add_review" method="POST" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+                        <input type="text" name="reviewer_name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Rating</label>
+                        <select name="rating" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:outline-none">
+                            <option value="5">5 Stars - Exceptional Quality</option>
+                            <option value="4">4 Stars - Very Satisfied</option>
+                            <option value="3">3 Stars - Good</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Your Review</label>
+                        <textarea name="comment" rows="3" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:outline-none" placeholder="Share your experience..."></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-[#2C221E] text-white py-3 rounded-lg font-semibold hover:bg-[#3D302A] transition">
+                        Submit Review
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact & WhatsApp Section -->
+    <section id="contact" class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-[#2C221E] text-[#FAF9F6] rounded-3xl p-8 sm:p-16 shadow-2xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6">
+                <span class="text-xs uppercase tracking-widest text-[#D4AF37] font-bold bg-[#3D302A] px-3 py-1.5 rounded-full inline-block">Direct Communication</span>
+                <h2 class="text-3xl sm:text-4xl font-bold font-serif">Connect Directly with Annuschka</h2>
+                <p class="text-[#D3C5BD] leading-relaxed">
+                    Have a custom leather design in mind, a question about sizing or color shades, or need assistance with an order inquiry? Reach out instantly via WhatsApp!
+                </p>
+                <div class="pt-4">
+                    <a href="https://wa.me/27764307990?text=Hey%20I%20got%20your%20info%20on%20your%20webpage%20and%20have%20the%20following%20enquiry..." target="_blank" class="inline-flex items-center gap-3 bg-[#25D366] text-white px-8 py-4 rounded-full font-bold text-base hover:bg-[#20ba5a] transition shadow-xl transform hover:-translate-y-0.5">
+                        <i class="fa-brands fa-whatsapp text-2xl"></i> Chat on WhatsApp with Annuschka
+                    </a>
+                </div>
+            </div>
+            <div class="bg-[#3D302A] p-8 rounded-2xl border border-[#524138] space-y-6">
+                <h3 class="font-serif text-2xl font-bold text-[#D4AF37]">Studio Details</h3>
+                <ul class="space-y-4 text-[#D3C5BD]">
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-location-dot text-[#D4AF37] mt-1"></i>
+                        <span>Handcrafted in South Africa, shipped nationwide locally.</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-clock text-[#D4AF37] mt-1"></i>
+                        <span>Monday – Friday: 08:00 – 17:00</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-envelope text-[#D4AF37] mt-1"></i>
+                        <span>lummisannuschka001@gmail.com</span>
+                    </li>
+                </ul>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-[#18110e] py-8 text-center text-xs text-gray-400 border-t border-[#3a2d26]">
-        <p>&copy; 2026 Leather by Annuschka. All rights reserved. | Contact: lummisannuschka001@gmail.com | WhatsApp: +27 76 430 7990</p>
+    <footer class="bg-[#1F1815] text-gray-400 py-12 border-t border-[#332924]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <p class="text-sm">&copy; 2026 Leather by Annuschka. All rights reserved.</p>
+            <div class="flex items-center gap-6 text-sm">
+                <a href="/" class="hover:text-[#D4AF37] transition">Home</a>
+                <a href="/shop" class="hover:text-[#D4AF37] transition">Shop Catalog</a>
+                <a href="#contact" class="hover:text-[#D4AF37] transition">Contact</a>
+            </div>
+        </div>
     </footer>
 
 </body>
