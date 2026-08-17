@@ -14,7 +14,8 @@
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between">
-    <!-- Navbar (unchanged) -->
+
+    <!-- Navbar -->
     <nav class="bg-[#1c1512] border-b border-[#3a2d26] py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50">
         <a href="{{ url_for('index') }}" class="text-2xl font-serif gold-accent font-bold tracking-wider">Leather by Annuschka</a>
         <div class="hidden md:flex space-x-8 text-sm uppercase tracking-widest">
@@ -27,17 +28,40 @@
         </a>
     </nav>
 
+    <!-- Shop Content -->
     <main class="max-w-7xl mx-auto px-6 py-12 flex-grow w-full">
         <div class="text-center mb-10">
             <h1 class="text-3xl md:text-5xl font-serif font-bold mb-4">The Artisan Collection</h1>
             <p class="text-gray-400">Explore our handcrafted full-grain leather goods.</p>
         </div>
 
-        <!-- Filter & Search (unchanged) -->
+        <!-- Filter & Search Bar -->
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-10">
+            <div class="flex flex-wrap gap-2 justify-center">
+                {% for cat in categories %}
+                <a href="{{ url_for('shop', category=cat) }}" class="px-4 py-2 rounded-full text-sm font-semibold transition {% if selected_category == cat %} gold-bg text-[#1c1512] {% else %} card-bg text-gray-300 hover:bg-[#3a2d26] {% endif %}">
+                    {{ cat }}
+                </a>
+                {% endfor %}
+            </div>
+            <form action="{{ url_for('shop') }}" method="GET" class="flex w-full md:w-auto">
+                <input type="text" name="q" value="{{ search_query }}" placeholder="Search products..." class="px-4 py-2 rounded-l-lg card-bg border border-[#3a2d26] text-white focus:outline-none focus:border-[#d4af37]">
+                <button type="submit" class="gold-bg text-[#1c1512] px-5 rounded-r-lg font-semibold"><i class="fa fa-search"></i></button>
+            </form>
+        </div>
 
-        <!-- Flash Messages (unchanged) -->
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="mb-6 p-4 rounded-lg bg-[#3a2d26] gold-accent border border-[#d4af37] text-center">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
-        <!-- Travel & Luggage -->
+        <!-- TRAVEL & LUGGAGE -->
         <h2 class="text-2xl font-serif font-bold gold-accent border-b border-[#3a2d26] pb-2 mb-6">Travel & Luggage</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {% for product in travel_products %}
@@ -84,46 +108,278 @@
             {% endfor %}
         </div>
 
-        <!-- Everyday Essentials -->
-        <!-- (same pattern with your products) -->
+        <!-- EVERYDAY ESSENTIALS -->
         <h2 class="text-2xl font-serif font-bold gold-accent border-b border-[#3a2d26] pb-2 mb-6">Everyday Essentials</h2>
-        <!-- ... Toiletries, Coin Purse, Pencil Bag ... -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Toiletries / Makeup Bag -->
+            <div class="card-bg rounded-xl border border-[#3a2d26] overflow-hidden flex flex-col justify-between shadow-xl">
+                <div>
+                    <div class="h-64 bg-[#1c1512] overflow-hidden flex items-center justify-center p-2 gap-2">
+                        {% for img in toiletries.images %}
+                        <img src="{{ url_for('static', filename=img) }}" alt="{{ toiletries.name }}" class="max-h-full w-1/2 object-contain rounded border border-[#3a2d26]">
+                        {% endfor %}
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs uppercase tracking-widest gold-accent font-semibold">{{ toiletries.category }}</span>
+                        <h3 class="text-xl font-serif font-bold mt-1 mb-2">{{ toiletries.name }}</h3>
+                        <p class="text-gray-400 text-sm mb-4">{{ toiletries.description }}</p>
+                        <p class="text-lg font-bold gold-accent">R {{ "%.2f"|format(toiletries.price) }}</p>
+                    </div>
+                </div>
+                <div class="p-6 pt-0">
+                    <form action="{{ url_for('add_to_cart', product_id=toiletries.id) }}" method="POST" class="space-y-3">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-xs text-gray-400 block mb-1">Color</label>
+                                <select name="color" class="w-full bg-[#1c1512] border border-[#3a2d26] rounded px-2 py-1 text-sm text-white">
+                                    {% for c in toiletries.colors %}
+                                    <option value="{{ c }}">{{ c }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs text-gray-400 block mb-1">Size/Spec</label>
+                                <select name="size" class="w-full bg-[#1c1512] border border-[#3a2d26] rounded px-2 py-1 text-sm text-white">
+                                    {% for s in toiletries.sizes %}
+                                    <option value="{{ s }}">{{ s }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full gold-bg text-[#1c1512] py-2 rounded-lg font-bold text-sm hover:opacity-90 transition">
+                            <i class="fa fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </form>
+                </div>
+            </div>
 
-        <!-- Sling Bags -->
-        <!-- ... all your Sling Bag products ... -->
+            <!-- Coin Purse -->
+            <div class="card-bg rounded-xl border border-[#3a2d26] overflow-hidden flex flex-col justify-between shadow-xl">
+                <div>
+                    <div class="h-64 bg-[#1c1512] overflow-hidden flex items-center justify-center p-2 gap-2">
+                        {% for img in coin_purses.images %}
+                        <img src="{{ url_for('static', filename=img) }}" alt="{{ coin_purses.name }}" class="max-h-full w-1/2 object-contain rounded border border-[#3a2d26]">
+                        {% endfor %}
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs uppercase tracking-widest gold-accent font-semibold">{{ coin_purses.category }}</span>
+                        <h3 class="text-xl font-serif font-bold mt-1 mb-2">{{ coin_purses.name }}</h3>
+                        <p class="text-gray-400 text-sm mb-4">{{ coin_purses.description }}</p>
+                        <p class="text-lg font-bold gold-accent">R {{ "%.2f"|format(coin_purses.price) }}</p>
+                    </div>
+                </div>
+                <div class="p-6 pt-0">
+                    <form action="{{ url_for('add_to_cart', product_id=coin_purses.id) }}" method="POST" class="space-y-3">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-xs text-gray-400 block mb-1">Color</label>
+                                <select name="color" class="w-full bg-[#1c1512] border border-[#3a2d26] rounded px-2 py-1 text-sm text-white">
+                                    {% for c in coin_purses.colors %}
+                                    <option value="{{ c }}">{{ c }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs text-gray-400 block mb-1">Size/Spec</label>
+                                <select name="size" class="w-full bg-[#1c1512] border border-[#3a2d26] rounded px-2 py-1 text-sm text-white">
+                                    {% for s in coin_purses.sizes %}
+                                    <option value="{{ s }}">{{ s }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full gold-bg text-[#1c1512] py-2 rounded-lg font-bold text-sm hover:opacity-90 transition">
+                            <i class="fa fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </form>
+                </div>
+            </div>
 
-        <!-- Handbags -->
-        <!-- ... all your Handbag products ... -->
+            <!-- Pencil Bag -->
+            <div class="card-bg rounded-xl border border-[#3a2d26] overflow-hidden flex flex-col justify-between shadow-xl">
+                <div>
+                    <div class="h-64 bg-[#1c1512] overflow-hidden flex items-center justify-center p-2 gap-2">
+                        {% for img in pencil_bags.images %}
+                        <img src="{{ url_for('static', filename=img) }}" alt="{{ pencil_bags.name }}" class="max-h-full w-1/2 object-contain rounded border border-[#3a2d26]">
+                        {% endfor %}
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs uppercase tracking-widest gold-accent font-semibold">{{ pencil_bags.category }}</span>
+                        <h3 class="text-xl font-serif font-bold mt-1 mb-2">{{ pencil_bags.name }}</h3>
+                        <p class="text-gray-400 text-sm mb-4">{{ pencil_bags.description }}</p>
+                        <p class="text-lg font-bold gold-accent">R {{ "%.2f"|format(pencil_bags.price) }}</p>
+                    </div>
+                </div>
+                <div class="p-6 pt-0">
+                    <form action="{{ url_for('add_to_cart', product_id=pencil_bags.id) }}" method="POST" class="space-y-3">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-xs text-gray-400 block mb-1">Color</label>
+                                <select name="color" class="w-full bg-[#1c1512] border border-[#3a2d26] rounded px-2 py-1 text-sm text-white">
+                                    {% for c in pencil_bags.colors %}
+                                    <option value="{{ c }}">{{ c }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs text-gray-400 block mb-1">Size/Spec</label>
+                                <select name="size" class="w-full bg-[#1c1512] border border-[#3a2d26] rounded px-2 py-1 text-sm text-white">
+                                    {% for s in pencil_bags.sizes %}
+                                    <option value="{{ s }}">{{ s }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full gold-bg text-[#1c1512] py-2 rounded-lg font-bold text-sm hover:opacity-90 transition">
+                            <i class="fa fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
 
-        <!-- Laptop Bags -->
-        <!-- ... all your Laptop products ... -->
+        <!-- SLING BAGS -->
+        <h2 class="text-2xl font-serif font-bold gold-accent border-b border-[#3a2d26] pb-2 mb-6">Sling Bags</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for product in sling_bags %}
+            <div class="card-bg rounded-xl border border-[#3a2d26] overflow-hidden flex flex-col justify-between shadow-xl">
+                <!-- product card code (same as above) -->
+                <div>
+                    <div class="h-64 bg-[#1c1512] overflow-hidden flex items-center justify-center p-2 gap-2">
+                        {% for img in product.images %}
+                        <img src="{{ url_for('static', filename=img) }}" alt="{{ product.name }}" class="max-h-full w-1/2 object-contain rounded border border-[#3a2d26]">
+                        {% endfor %}
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs uppercase tracking-widest gold-accent font-semibold">{{ product.category }}</span>
+                        <h3 class="text-xl font-serif font-bold mt-1 mb-2">{{ product.name }}</h3>
+                        <p class="text-gray-400 text-sm mb-4">{{ product.description }}</p>
+                        <p class="text-lg font-bold gold-accent">R {{ "%.2f"|format(product.price) }}</p>
+                    </div>
+                </div>
+                <div class="p-6 pt-0">
+                    <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST" class="space-y-3">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-xs text-gray-400 block mb-1">Color</label>
+                                <select name="color" class="w-full bg-[#1c1512] border border-[#3a2d26] rounded px-2 py-1 text-sm text-white">
+                                    {% for c in product.colors %}
+                                    <option value="{{ c }}">{{ c }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs text-gray-400 block mb-1">Size/Spec</label>
+                                <select name="size" class="w-full bg-[#1c1512] border border-[#3a2d26] rounded px-2 py-1 text-sm text-white">
+                                    {% for s in product.sizes %}
+                                    <option value="{{ s }}">{{ s }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full gold-bg text-[#1c1512] py-2 rounded-lg font-bold text-sm hover:opacity-90 transition">
+                            <i class="fa fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
 
-        <!-- Backpacks -->
-        <!-- ... all your Backpack products ... -->
+        <!-- HAND BAGS -->
+        <h2 class="text-2xl font-serif font-bold gold-accent border-b border-[#3a2d26] pb-2 mb-6">Handbags</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for product in handbags %}
+            <!-- product card code -->
+            {% endfor %}
+        </div>
 
-        <!-- Home & Leisure -->
-        <!-- ... all your Home products ... -->
+        <!-- LAPTOP BAGS -->
+        <h2 class="text-2xl font-serif font-bold gold-accent border-b border-[#3a2d26] pb-2 mb-6">Laptop Bags</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for product in laptop_bags %}
+            <!-- product card code -->
+            {% endfor %}
+        </div>
 
-        <!-- Belts (new) -->
+        <!-- BACKPACKS -->
+        <h2 class="text-2xl font-serif font-bold gold-accent border-b border-[#3a2d26] pb-2 mb-6">Backpacks</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for product in backpacks %}
+            <!-- product card code -->
+            {% endfor %}
+        </div>
+
+        <!-- HOME & LEISURE -->
+        <h2 class="text-2xl font-serif font-bold gold-accent border-b border-[#3a2d26] pb-2 mb-6">Home & Leisure</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for product in home_products %}
+            <!-- product card code -->
+            {% endfor %}
+        </div>
+
+        <!-- BELTS (NEW) -->
         <h2 class="text-2xl font-serif font-bold gold-accent border-b border-[#3a2d26] pb-2 mb-6">Belts</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {% for product in belts %}
-            <!-- product card exactly as above -->
+            <div class="card-bg rounded-xl border border-[#3a2d26] overflow-hidden flex flex-col justify-between shadow-xl">
+                <div>
+                    <div class="h-64 bg-[#1c1512] overflow-hidden flex items-center justify-center p-2 gap-2">
+                        {% for img in product.images %}
+                        <img src="{{ url_for('static', filename=img) }}" alt="{{ product.name }}" class="max-h-full w-1/2 object-contain rounded border border-[#3a2d26]">
+                        {% endfor %}
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs uppercase tracking-widest gold-accent font-semibold">{{ product.category }}</span>
+                        <h3 class="text-xl font-serif font-bold mt-1 mb-2">{{ product.name }}</h3>
+                        <p class="text-lg font-bold gold-accent">R {{ "%.2f"|format(product.price) }}</p>
+                    </div>
+                </div>
+                <div class="p-6 pt-0">
+                    <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST" class="space-y-3">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-xs text-gray-400 block mb-1">Color</label>
+                                <select name="color" class="w-full bg-[#1c1512] border border-[#3a2d26] rounded px-2 py-1 text-sm text-white">
+                                    {% for c in product.colors %}
+                                    <option value="{{ c }}">{{ c }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs text-gray-400 block mb-1">Size/Spec</label>
+                                <select name="size" class="w-full bg-[#1c1512] border border-[#3a2d26] rounded px-2 py-1 text-sm text-white">
+                                    {% for s in product.sizes %}
+                                    <option value="{{ s }}">{{ s }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full gold-bg text-[#1c1512] py-2 rounded-lg font-bold text-sm hover:opacity-90 transition">
+                            <i class="fa fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </form>
+                </div>
+            </div>
             {% endfor %}
         </div>
 
-        <!-- Leather Care (new) -->
+        <!-- LEATHER CARE (NEW) -->
         <h2 class="text-2xl font-serif font-bold gold-accent border-b border-[#3a2d26] pb-2 mb-6">Leather Care</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {% for product in leather_care %}
-            <!-- product card exactly as above -->
-            {% endfor %}
+            <div class="card-bg rounded-xl border border-[#3a2d26] overflow-hidden flex flex-col justify-between shadow-xl">
+                <!-- product card code -->
+                {% endfor %}
+            </div>
         </div>
+
     </main>
 
-    <!-- Footer (unchanged) -->
+    <!-- Footer -->
     <footer class="bg-[#18110e] py-8 text-center text-xs text-gray-400 border-t border-[#3a2d26]">
         <p>&copy; 2026 Leather by Annuschka. All rights reserved. | Contact: lummisannuschka001@gmail.com | WhatsApp: +27 76 430 7990</p>
     </footer>
+
 </body>
 </html>
