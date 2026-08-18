@@ -1,67 +1,113 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leather by Annuschka - Handcrafted Leather Goods</title>
+    <title>Leather by Annuschka | Handcrafted Artisan Leather Goods</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        h1, h2, h3, .font-serif { font-family: 'Playfair Display', serif; }
+    </style>
 </head>
-<body class="bg-[#241c17] text-[#f3efe6] min-h-screen flex flex-col justify-between">
+<body class="bg-[#FAF9F6] text-[#2C221E] antialiased">
 
-    <!-- Sticky Navigation Banner -->
-    <nav class="sticky top-0 z-50 bg-[#1c1512] border-b border-[#3a2d26] py-4 px-6 md:px-12">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-            <a href="/" class="text-2xl font-serif text-[#d4af37] font-bold tracking-wide">
-                Leather by Annuschka
+    <!-- Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-[#2C221E]/95 backdrop-blur-md text-[#FAF9F6] border-b border-[#4A3B32]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-3 group">
+                <span class="font-serif text-xl sm:text-2xl font-bold tracking-wider text-[#D4AF37] group-hover:text-[#F3E5AB] transition">Leather by Annuschka</span>
             </a>
-
-            <div class="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-300">
-                <a href="/" class="text-[#d4af37] font-semibold">Home</a>
-                <a href="/shop" class="hover:text-[#d4af37] transition">Shop Catalog</a>
-                <a href="#collection" class="hover:text-[#d4af37] transition">Collection</a>
-                <a href="#reviews" class="hover:text-[#d4af37] transition">Reviews</a>
-                <a href="#contact" class="hover:text-[#d4af37] transition">Contact</a>
-                <a href="https://wa.me/27821234567" target="_blank" class="hover:text-[#d4af37] transition flex items-center gap-1">
-                    WhatsApp 💬
-                </a>
-                <a href="/cart" class="bg-[#3a2d26] text-[#d4af37] border border-[#d4af37] px-3 py-1 rounded font-semibold hover:bg-[#d4af37] hover:text-[#1c1512] transition">
-                    Cart 🛒
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium tracking-wide">
+                <a href="/" class="hover:text-[#D4AF37] transition">Home</a>
+                <a href="/shop" class="hover:text-[#D4AF37] transition">Shop Catalog</a>
+                <a href="#collection" class="hover:text-[#D4AF37] transition">Collection</a>
+                <a href="#reviews" class="hover:text-[#D4AF37] transition">Reviews</a>
+                <a href="#contact" class="hover:text-[#D4AF37] transition">Contact & WhatsApp</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <a href="/shop" class="bg-[#D4AF37] text-[#2C221E] px-5 py-2.5 rounded-full font-semibold text-sm hover:bg-[#C5A028] transition shadow-md">
+                    <i class="fa-solid fa-bag-shopping mr-2"></i> Shop Now
                 </a>
             </div>
         </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <header class="relative bg-[#1c1512] border-b border-[#3a2d26] py-20 px-6 text-center">
-        <div class="max-w-3xl mx-auto">
-            <h1 class="text-4xl md:text-5xl font-serif font-bold text-[#d4af37] mb-4">Timeless Handcrafted Leather Goods</h1>
-            <p class="text-lg text-gray-300 mb-8">Premium full-grain leather accessories, bespoke bags, and artisan travel gear built to last a lifetime.</p>
-            <a href="/shop" class="inline-block bg-[#d4af37] text-[#1c1512] font-bold text-lg px-8 py-3 rounded hover:opacity-90 transition">
-                Explore Full Catalog
-            </a>
-        </div>
     </header>
 
-    <!-- Collection Preview Section -->
-    <section id="collection" class="max-w-7xl mx-auto px-6 py-16">
-        <h2 class="text-3xl font-serif font-bold text-[#d4af37] mb-8 text-center">Featured Categories</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <a href="/shop?category=Travel Bags" class="bg-[#2e241e] border border-[#3a2d26] p-8 rounded-xl text-center hover:border-[#d4af37] transition group">
-                <h3 class="text-2xl font-serif font-bold text-white mb-2 group-hover:text-[#d4af37]">Travel Bags</h3>
-                <p class="text-xs text-gray-400">Luggage, doctor bags, overnight carriers.</p>
+    <!-- Hero Section -->
+    <section class="relative bg-[#2C221E] text-[#FAF9F6] py-20 lg:py-32 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6">
+                <span class="text-xs uppercase tracking-widest text-[#D4AF37] font-semibold bg-[#3D302A] px-3 py-1.5 rounded-full inline-block">Handcrafted in South Africa</span>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight font-serif">
+                    Timeless Leather Goods <span class="text-[#D4AF37]">Crafted to Last</span>
+                </h1>
+                <p class="text-lg text-[#D3C5BD] leading-relaxed font-light">
+                    Welcome to our artisan studio. Discover handcrafted travel luggage, everyday bags, and unique leather pieces made with passion, durability, and unmatched quality.
+                </p>
+                <div class="pt-4 flex flex-wrap gap-4">
+                    <a href="/shop" class="bg-[#D4AF37] text-[#2C221E] px-8 py-3.5 rounded-full font-bold text-sm hover:bg-[#C5A028] transition shadow-lg transform hover:-translate-y-0.5">
+                        Explore Full Catalog
+                    </a>
+                    <a href="#contact" class="border border-[#6B574C] text-[#FAF9F6] px-8 py-3.5 rounded-full font-medium text-sm hover:bg-[#3D302A] transition">
+                        Connect with Annuschka
+                    </a>
+                </div>
+            </div>
+            <!-- Logo Only in Hero Right Column (Box Removed & Doubled in Size) -->
+            <div class="relative flex justify-center items-center">
+                <img src="{{ url_for('static', filename='Logo.jpeg') }}" alt="Leather by Annuschka Logo" class="w-80 h-80 sm:w-96 sm:h-96 md:w-[28rem] md:h-[28rem] object-contain rounded-full border-4 border-[#D4AF37] p-3 bg-[#2C221E] shadow-2xl">
+            </div>
+        </div>
+    </section>
+
+    <!-- The Artisan Collection -->
+    <section id="collection" class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+            <span class="text-xs uppercase tracking-widest text-[#8C6D4F] font-bold">Featured Showcase</span>
+            <h2 class="text-3xl sm:text-4xl font-bold font-serif mt-2">The Artisan Collection</h2>
+            <p class="text-gray-600 mt-3">Click any collection image below to explore and shop our handmade leather selections.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <a href="/shop" class="group relative rounded-2xl overflow-hidden shadow-lg bg-white block transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
+                <div class="h-80 w-full overflow-hidden">
+                    <img src="{{ url_for('static', filename='Collection1.jpeg') }}" alt="Travel & Luggage" class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
+                    <span class="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">Travel & Everyday</span>
+                    <h3 class="text-2xl font-serif font-bold mt-1">Luggage & Bags</h3>
+                    <p class="text-xs text-gray-300 mt-1 flex items-center gap-1">Shop Collection <i class="fa-solid fa-arrow-right text-[#D4AF37]"></i></p>
+                </div>
             </a>
-            <a href="/shop?category=Sling Bags" class="bg-[#2e241e] border border-[#3a2d26] p-8 rounded-xl text-center hover:border-[#d4af37] transition group">
-                <h3 class="text-2xl font-serif font-bold text-white mb-2 group-hover:text-[#d4af37]">Sling Bags</h3>
-                <p class="text-xs text-gray-400">Cross-body, anti-theft, moon bags.</p>
+
+            <a href="/shop" class="group relative rounded-2xl overflow-hidden shadow-lg bg-white block transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
+                <div class="h-80 w-full overflow-hidden">
+                    <img src="{{ url_for('static', filename='Collection2.jpeg') }}" alt="Sling Bags & Essentials" class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
+                    <span class="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">Accessories</span>
+                    <h3 class="text-2xl font-serif font-bold mt-1">Sling Bags & Wallets</h3>
+                    <p class="text-xs text-gray-300 mt-1 flex items-center gap-1">Shop Collection <i class="fa-solid fa-arrow-right text-[#D4AF37]"></i></p>
+                </div>
             </a>
-            <a href="/shop?category=Belts" class="bg-[#2e241e] border border-[#3a2d26] p-8 rounded-xl text-center hover:border-[#d4af37] transition group">
-                <h3 class="text-2xl font-serif font-bold text-white mb-2 group-hover:text-[#d4af37]">Leather Belts</h3>
-                <p class="text-xs text-gray-400">Handcrafted full-grain belts in black & brown.</p>
+
+            <a href="/shop" class="group relative rounded-2xl overflow-hidden shadow-lg bg-white block transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
+                <div class="h-80 w-full overflow-hidden">
+                    <img src="{{ url_for('static', filename='Collection3.jpeg') }}" alt="Home & Leather Care" class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
+                    <span class="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">Lifestyle & Care</span>
+                    <h3 class="text-2xl font-serif font-bold mt-1">Home, Aprons & Care</h3>
+                    <p class="text-xs text-gray-300 mt-1 flex items-center gap-1">Shop Collection <i class="fa-solid fa-arrow-right text-[#D4AF37]"></i></p>
+                </div>
             </a>
         </div>
     </section>
 
-    <!-- Reviews Section -->
+<!-- Reviews Section -->
     <section id="reviews" class="bg-[#1c1512] border-t border-b border-[#3a2d26] py-16 px-6">
         <div class="max-w-4xl mx-auto">
             <h2 class="text-3xl font-serif font-bold text-[#d4af37] mb-8 text-center">Customer Reviews</h2>
@@ -123,15 +169,50 @@
         </div>
     </section>
 
-    <!-- Contact & Footer Section -->
-    <footer id="contact" class="bg-[#1c1512] py-12 px-6 border-t border-[#3a2d26] text-center text-sm text-gray-400">
-        <div class="max-w-xl mx-auto space-y-4">
-            <h3 class="text-2xl font-serif font-bold text-[#d4af37]">Get in Touch</h3>
-            <p>For custom orders and queries, reach out directly via WhatsApp.</p>
-            <a href="https://wa.me/27821234567" target="_blank" class="inline-block bg-[#d4af37] text-[#1c1512] font-bold px-6 py-2 rounded hover:opacity-90 transition">
-                Chat on WhatsApp 💬
-            </a>
-            <p class="text-xs text-gray-500 pt-6">&copy; 2026 Leather by Annuschka. All rights reserved.</p>
+    <!-- Contact & WhatsApp Section -->
+    <section id="contact" class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-[#2C221E] text-[#FAF9F6] rounded-3xl p-8 sm:p-16 shadow-2xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6">
+                <span class="text-xs uppercase tracking-widest text-[#D4AF37] font-bold bg-[#3D302A] px-3 py-1.5 rounded-full inline-block">Direct Communication</span>
+                <h2 class="text-3xl sm:text-4xl font-bold font-serif">Connect Directly with Annuschka</h2>
+                <p class="text-[#D3C5BD] leading-relaxed">
+                    Have a custom leather design in mind, a question about sizing or color shades, or need assistance with an order inquiry? Reach out instantly via WhatsApp!
+                </p>
+                <div class="pt-4">
+                    <a href="https://wa.me/27764307990?text=Hey%20I%20got%20your%20info%20on%20your%20webpage%20and%20have%20the%20following%20enquiry..." target="_blank" class="inline-flex items-center gap-3 bg-[#25D366] text-white px-8 py-4 rounded-full font-bold text-base hover:bg-[#20ba5a] transition shadow-xl transform hover:-translate-y-0.5">
+                        <i class="fa-brands fa-whatsapp text-2xl"></i> Chat on WhatsApp with Annuschka
+                    </a>
+                </div>
+            </div>
+            <div class="bg-[#3D302A] p-8 rounded-2xl border border-[#524138] space-y-6">
+                <h3 class="font-serif text-2xl font-bold text-[#D4AF37]">Studio Details</h3>
+                <ul class="space-y-4 text-[#D3C5BD]">
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-location-dot text-[#D4AF37] mt-1"></i>
+                        <span>Handcrafted in South Africa, shipped nationwide locally.</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-clock text-[#D4AF37] mt-1"></i>
+                        <span>Monday – Friday: 08:00 – 17:00</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-envelope text-[#D4AF37] mt-1"></i>
+                        <span>leatherbyannuschka@gmail.com</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[#1F1815] text-gray-400 py-12 border-t border-[#332924]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <p class="text-sm">&copy; 2026 Leather by Annuschka. All rights reserved.</p>
+            <div class="flex items-center gap-6 text-sm">
+                <a href="/" class="hover:text-[#D4AF37] transition">Home</a>
+                <a href="/shop" class="hover:text-[#D4AF37] transition">Shop Catalog</a>
+                <a href="#contact" class="hover:text-[#D4AF37] transition">Contact</a>
+            </div>
         </div>
     </footer>
 
