@@ -9,32 +9,6 @@ PAYFAST_MERCHANT_ID = "36712149"
 PAYFAST_MERCHANT_KEY = "ur6ctzlgqfwbo"
 PAYFAST_URL = "https://www.payfast.co.za/eng/process"  # Use https://sandbox.payfast.co.za/eng/process during testing
 
-# In-memory reviews list
-REVIEWS = [
-    {"name": "Sarah M.", "rating": 5, "comment": "Absolutely beautiful leather quality! Bought the overnight bag."},
-    {"name": "Johan K.", "rating": 5, "comment": "Sturdy belt and fast delivery. Very impressed."}
-]
-
-@app.route('/')
-def index():
-    return render_template('index.html', reviews=REVIEWS)
-
-@app.route('/add_review', methods=['POST'])
-def add_review():
-    name = request.form.get('name', 'Anonymous').strip()
-    rating = int(request.form.get('rating', 5))
-    comment = request.form.get('comment', '').strip()
-    
-    if comment:
-        REVIEWS.append({
-            "name": name if name else "Anonymous",
-            "rating": rating,
-            "comment": comment
-        })
-        flash("Thank you! Your review has been submitted.", "success")
-        
-    return redirect(url_for('index') + '#reviews')
-
 PRODUCTS = [
     # 1. Travel Bags
     {"id": 1, "name": "Large Luggage / Travel Bag", "category": "Travel Bags", "price": 1725.00, "images": ["Large_Luggage_travel bag.jpeg"], "description": "Spacious full-grain leather travel bag built for extended travel.", "colors": [], "sizes": []},
@@ -94,14 +68,14 @@ PRODUCTS = [
         "category": "Belts", 
         "price": 200.00, 
         "images": [
-            "Screenshot 2026-08-14 140410.png", 
-            "Screenshot 2026-08-14 140415.png", 
-            "Screenshot 2026-08-14 140419.png", 
-            "Screenshot 2026-08-14 140423.png", 
-            "Screenshot 2026-08-14 140428.png", 
-            "Screenshot 2026-08-14 140432.png", 
-            "Screenshot 2026-08-14 140436.png", 
-            "Screenshot 2026-08-14 140441.png"
+            "Screenshot 2026-08-14 140410.jpeg", 
+            "Screenshot 2026-08-14 140415.jpeg", 
+            "Screenshot 2026-08-14 140419.jpeg", 
+            "Screenshot 2026-08-14 140423.jpeg", 
+            "Screenshot 2026-08-14 140428.jpeg", 
+            "Screenshot 2026-08-14 140432.jpeg", 
+            "Screenshot 2026-08-14 140436.jpeg", 
+            "Screenshot 2026-08-14 140441.jpeg"
         ], 
         "description": "Handmade full-grain leather belt.", 
         "colors": ["Black", "Brown"], 
@@ -109,25 +83,36 @@ PRODUCTS = [
     },
 
     # 9. Leather Care
-    {"id": 39, "name": "Leather Care Cream with Microfiber Cloth", "category": "Leather Care", "price": 59.00, "images": ["Screenshot 2026-08-14 140829.png"], "description": "Specialized leather conditioning cream complete with microfiber application cloth.", "colors": [], "sizes": []}
+    {"id": 39, "name": "Leather Care Cream with Microfiber Cloth", "category": "Leather Care", "price": 59.00, "images": ["Screenshot 2026-08-14 140829.jpeg"], "description": "Specialized leather conditioning cream complete with microfiber application cloth.", "colors": [], "sizes": []}
 ]
 
-ORDERS = [
-    {
-        "id": "ORD-2026-01",
-        "items": "Large Luggage / Travel Bag (1), Pencil Bag (1)",
-        "subtotal": 1900.00,
-        "transport": 100.00,
-        "sales_excl_transport": 1900.00,
-        "investor_cut": 190.00
-    }
+REVIEWS = [
+    {"name": "Sarah M.", "rating": 5, "comment": "Absolutely beautiful leather quality! Bought the overnight bag and it gets so many compliments."},
+    {"name": "Johan K.", "rating": 5, "comment": "Sturdy belt and fast delivery. Very impressed with the craftsmanship."}
 ]
 
+ORDERS = []
 CATEGORIES = ["All", "Travel Bags", "Everyday Essentials", "Sling Bags", "Handbags", "Laptop Bags", "Backpacks", "Home & Leisure", "Belts", "Leather Care"]
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', reviews=REVIEWS)
+
+@app.route('/add_review', methods=['POST'])
+def add_review():
+    name = request.form.get('name', 'Anonymous').strip()
+    rating = int(request.form.get('rating', 5))
+    comment = request.form.get('comment', '').strip()
+    
+    if comment:
+        REVIEWS.append({
+            "name": name if name else "Anonymous",
+            "rating": rating,
+            "comment": comment
+        })
+        flash("Thank you! Your review has been submitted successfully.", "success")
+        
+    return redirect(url_for('index') + '#reviews')
 
 @app.route('/shop')
 def shop():
@@ -213,7 +198,6 @@ def checkout():
         order_id = f"ORD-2026-{len(ORDERS) + 1:02d}"
         item_summary = ", ".join([f"{item['name']} ({item['quantity']})" for item in cart_items])
         
-        # Save temporary order details in session to verify upon PayFast return
         session['pending_order'] = {
             "id": order_id,
             "items": item_summary,
@@ -223,7 +207,6 @@ def checkout():
             "investor_cut": round(subtotal * 0.10, 2)
         }
 
-        # Render PayFast redirect form
         return render_template(
             'payfast_redirect.html',
             payfast_url=PAYFAST_URL,
@@ -254,7 +237,6 @@ def payment_success():
 
 @app.route('/payfast_itn', methods=['POST'])
 def payfast_itn():
-    # ITN Webhook Listener for async PayFast notifications
     return "", 200
 
 @app.route('/dashboard')
