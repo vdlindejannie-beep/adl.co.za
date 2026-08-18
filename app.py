@@ -137,6 +137,21 @@ def add_to_cart(product_id):
         session['cart'] = cart
         flash(f"Added {product['name']} to cart!", "success")
     return redirect(url_for('cart'))
+@app.route('/update_cart/<int:index>', methods=['POST'])
+def update_cart(index):
+    cart = session.get('cart', [])
+    if 0 <= index < len(cart):
+        action = request.form.get('action')
+        if action == 'increase':
+            cart[index]['quantity'] += 1
+        elif action == 'decrease':
+            cart[index]['quantity'] -= 1
+            if cart[index]['quantity'] <= 0:
+                cart.pop(index)
+        elif action == 'remove':
+            cart.pop(index)
+        session['cart'] = cart
+    return redirect(url_for('cart'))
 
 @app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
