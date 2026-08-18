@@ -62,7 +62,6 @@ PRODUCTS = [
     {"id": 37, "name": "Leather Apron", "category": "Home & Leisure", "price": 825.00, "images": ["Leather Apron.png"], "description": "Heavy-duty handcrafted leather apron.", "colors": ["Light", "Dark"], "sizes": []},
 
     # 8. Belts
-    # 8. Belts
     {
         "id": 38, 
         "name": "Leather Belt", 
@@ -84,7 +83,7 @@ PRODUCTS = [
     },
 
     # 9. Leather Care
-    {"id": 39, "name": "Leather Care Cream with Microfiber Cloth", "category": "Leather Care", "price": 59.00, "images": ["Screenshot 2026-08-14 140829.jpeg"], "description": "Specialized leather conditioning cream complete with microfiber application cloth.", "colors": [], "sizes": []}
+    {"id": 39, "name": "Leather Care Cream with Microfiber Cloth", "category": "Leather Care", "price": 59.00, "images": ["Screenshot 2026-08-14 140829.png"], "description": "Specialized leather conditioning cream complete with microfiber application cloth.", "colors": [], "sizes": []}
 ]
 
 ORDERS = [
