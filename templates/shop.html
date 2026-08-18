@@ -29,8 +29,21 @@
         </div>
 
         <!-- Product Grid -->
+        {% set ns = namespace(last_category='') %}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for product in products %}
+            
+            <!-- Dynamic Category Heading for "All" Tab -->
+            {% if selected_category == 'All' and not search_query %}
+                {% if product.category != ns.last_category %}
+                    <div class="col-span-full {{ 'mt-0' if loop.first else 'mt-10' }} mb-2">
+                        <h2 class="text-2xl font-serif font-bold text-[#d4af37] mb-3">{{ product.category }}</h2>
+                        <hr class="border-[#3a2d26]">
+                    </div>
+                    {% set ns.last_category = product.category %}
+                {% endif %}
+            {% endif %}
+
             <div class="bg-[#2e241e] rounded-xl border border-[#3a2d26] p-5 flex flex-col justify-between">
                 <div>
                     <!-- Main Product Image -->
@@ -97,6 +110,12 @@
                 </form>
             </div>
             {% endfor %}
+            
+            {% if products|length == 0 %}
+            <div class="col-span-full py-10 text-center">
+                <p class="text-gray-400">No products found matching your search.</p>
+            </div>
+            {% endif %}
         </div>
     </main>
 
