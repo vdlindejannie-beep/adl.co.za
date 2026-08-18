@@ -13,13 +13,13 @@ PRODUCTS = [
     # 1. Travel Bags
     {"id": 1, "name": "Large Luggage / Travel Bag", "category": "Travel Bags", "price": 1725.00, "images": ["Large_Luggage_travel bag.jpeg"], "description": "Spacious full-grain leather travel bag built for extended travel.", "colors": [], "sizes": []},
     {"id": 2, "name": "Medium Luggage / Travel Bag", "category": "Travel Bags", "price": 1150.00, "images": ["Medium_luggage_travel bag.png", "Medium_luggage_travel bag1.png"], "description": "Versatile weekend travel bag with sturdy handles.", "colors": ["Dark", "Light"], "sizes": []},
-    {"id": 3, "name": "Small Travel Bag / Overnight Bag", "category": "Travel Bags", "price": 680.00, "images": ["Medium_luggage_travel bag1.png", "Small_luggage_travel bag1.jpeg"], "description": "Compact travel companion for short trips and daily use.", "colors": ["Dark", "Light"], "sizes": []},
+    {"id": 3, "name": "Small Travel Bag / Overnight Bag", "category": "Travel Bags", "price": 680.00, "images": ["Medium_luggage_travel bag1.png"], "description": "Compact travel companion for short trips and daily use.", "colors": ["Dark", "Light"], "sizes": []},
     {"id": 4, "name": "Overnight Bag", "category": "Travel Bags", "price": 1275.00, "images": ["Overnight Bag.png"], "description": "Classic structured leather overnight bag.", "colors": [], "sizes": []},
     {"id": 5, "name": "Medium Travel Bag / Doctor's Bag", "category": "Travel Bags", "price": 910.00, "images": ["Medium Travel Bag _Dokters bag.png"], "description": "Vintage wide-frame doctor's bag style travel carrier.", "colors": ["Dark", "Light"], "sizes": []},
 
     # 2. Everyday Essentials
-    {"id": 6, "name": "Toiletries / Makeup Bag", "category": "Everyday Essentials", "price": 450.00, "images": ["Toiletries_makup bag.jpeg"], "description": "Handcrafted leather toilet bag. Please specify preferred brown shade in comments.", "colors": ["Shade 1 (Light)", "Shade 2 (Medium)", "Shade 3 (Dark)", "Shade 4 (Deep)"], "sizes": []},
-    {"id": 7, "name": "Coin Purse (Medium or Large)", "category": "Everyday Essentials", "price": 55.00, "images": ["Coin purse medium.jpeg", "Coin purse medium 1.jpeg", "Coin purse Large.jpeg", "Coin purse Large 1.jpeg"], "description": "Genuine leather coin purse available in multiple brown shades.", "colors": ["Light Brown", "Medium Brown", "Dark Brown"], "sizes": ["Medium (R55)", "Large (R65)"], "size_prices": {"Medium (R55)": 55.00, "Large (R65)": 65.00}},
+    {"id": 6, "name": "Toiletries / Makeup Bag", "category": "Everyday Essentials", "price": 450.00, "images": ["Toiletries_makup bag.jpeg"], "description": "Handcrafted leather toilet bag. Please specify preferred brown shade.", "colors": ["Shade 1", "Shade 2", "Shade 3", "Shade 4"], "sizes": []},
+    {"id": 7, "name": "Coin Purse", "category": "Everyday Essentials", "price": 55.00, "images": ["Coin purse medium 1.jpeg", "Coin purse medium.jpeg", "Coin purse Large.jpeg", "Coin purse Large 1.jpeg"], "description": "Genuine leather coin purse available in multiple brown shades.", "colors": ["Light Brown", "Medium Brown", "Dark Brown"], "sizes": ["Medium (R55)", "Large (R65)"], "size_prices": {"Medium (R55)": 55.00, "Large (R65)": 65.00}},
     {"id": 8, "name": "Pencil Bag", "category": "Everyday Essentials", "price": 175.00, "images": ["Pencil bag.jpeg", "Pencil bag 1.jpeg", "Pencil bag 2.jpeg"], "description": "Durable zipped leather pencil case.", "colors": ["Light", "Medium", "Dark"], "sizes": []},
 
     # 3. Sling Bags
@@ -50,7 +50,7 @@ PRODUCTS = [
     # 6. Backpacks
     {"id": 28, "name": "Backpack 1", "category": "Backpacks", "price": 735.00, "images": ["Backpac 1.png"], "description": "Handcrafted leather backpack.", "colors": [], "sizes": []},
     {"id": 29, "name": "Backpack 2", "category": "Backpacks", "price": 665.00, "images": ["Backpac 2.png"], "description": "Durable daily leather backpack.", "colors": [], "sizes": []},
-    {"id": 30, "name": "Backpack 3", "category": "Backpacks", "price": 575.00, "images": ["Backpac 3.png"], "description": "Versatile leather backpack available in Small, Medium, or Large.", "colors": [], "sizes": ["Small (R575)", "Medium (R690)", "Large (R770)"], "size_prices": {"Small (R575)": 575.00, "Medium (R690)": 690.00, "Large (R770)": 770.00}},
+    {"id": 30, "name": "Backpack 3", "category": "Backpacks", "price": 575.00, "images": ["Backpac 3.png"], "description": "Versatile leather backpack.", "colors": [], "sizes": ["Small (R575)", "Medium (R690)", "Large (R770)"], "size_prices": {"Small (R575)": 575.00, "Medium (R690)": 690.00, "Large (R770)": 770.00}},
     {"id": 31, "name": "Backpack 4", "category": "Backpacks", "price": 805.00, "images": ["Backpac 4.png"], "description": "Spacious premium leather backpack.", "colors": [], "sizes": []},
     {"id": 32, "name": "Backpack with Handles", "category": "Backpacks", "price": 655.00, "images": ["Backpac with Handles.png"], "description": "Convertible backpack with top carry handles.", "colors": [], "sizes": []},
     {"id": 33, "name": "Baby Backpack / Diaper Bag", "category": "Backpacks", "price": 920.00, "images": ["Baby backpack_diaper bag.png"], "description": "Stylish and functional leather diaper backpack.", "colors": ["Light", "Dark"], "sizes": []},
@@ -62,10 +62,29 @@ PRODUCTS = [
     {"id": 37, "name": "Leather Apron", "category": "Home & Leisure", "price": 825.00, "images": ["Leather Apron.png"], "description": "Heavy-duty handcrafted leather apron.", "colors": ["Light", "Dark"], "sizes": []},
 
     # 8. Belts
-    {"id": 38, "name": "Leather Belt", "category": "Belts", "price": 200.00, "images": ["Screenshot 2026-08-14 140410.png"], "description": "Handmade full-grain leather belt.", "colors": [], "sizes": []},
+    # 8. Belts
+    {
+        "id": 38, 
+        "name": "Leather Belt", 
+        "category": "Belts", 
+        "price": 200.00, 
+        "images": [
+            "Screenshot 2026-08-14 140410.jpeg", 
+            "Screenshot 2026-08-14 140415.jpeg", 
+            "Screenshot 2026-08-14 140419.jpeg", 
+            "Screenshot 2026-08-14 140423.jpeg", 
+            "Screenshot 2026-08-14 140428.jpeg", 
+            "Screenshot 2026-08-14 140432.jpeg", 
+            "Screenshot 2026-08-14 140436.jpeg", 
+            "Screenshot 2026-08-14 140441.jpeg"
+        ], 
+        "description": "Handmade full-grain leather belt.", 
+        "colors": ["Black", "Brown"], 
+        "sizes": ["Small (30-32\")", "Medium (34-36\")", "Large (38-40\")", "X-Large (42-44\")"]
+    },
 
     # 9. Leather Care
-    {"id": 39, "name": "Leather Care Cream with Microfiber Cloth", "category": "Leather Care", "price": 59.00, "images": ["Screenshot 2026-08-14 140829.png"], "description": "Specialized leather conditioning cream complete with microfiber application cloth.", "colors": [], "sizes": []}
+    {"id": 39, "name": "Leather Care Cream with Microfiber Cloth", "category": "Leather Care", "price": 59.00, "images": ["Screenshot 2026-08-14 140829.jpeg"], "description": "Specialized leather conditioning cream complete with microfiber application cloth.", "colors": [], "sizes": []}
 ]
 
 ORDERS = [
@@ -137,6 +156,7 @@ def add_to_cart(product_id):
         session['cart'] = cart
         flash(f"Added {product['name']} to cart!", "success")
     return redirect(url_for('cart'))
+
 @app.route('/update_cart/<int:index>', methods=['POST'])
 def update_cart(index):
     cart = session.get('cart', [])

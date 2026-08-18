@@ -59,7 +59,7 @@
                         </span>
                     </div>
 
-                    <!-- Multiple Image Thumbnails -->
+<!-- Multiple Image Thumbnails -->
                     {% if product.images|length > 1 %}
                     <div class="flex space-x-2 mb-4 overflow-x-auto pb-1">
                         {% for img in product.images %}
@@ -68,7 +68,7 @@
                              data-images="{{ product.images | tojson | forceescape }}"
                              data-index="{{ loop.index0 }}"
                              onclick="openLightbox(JSON.parse(this.dataset.images), parseInt(this.dataset.index))"
-                             class="w-12 h-12 object-cover rounded border border-[#3a2d26] hover:border-[#d4af37] cursor-pointer transition">
+                             class="w-12 h-12 flex-shrink-0 object-cover rounded border border-[#3a2d26] hover:border-[#d4af37] cursor-pointer transition">
                         {% endfor %}
                     </div>
                     {% endif %}
