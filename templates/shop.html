@@ -35,9 +35,11 @@
                 <div>
                     <!-- Main Product Image -->
                     <div class="relative group cursor-pointer overflow-hidden rounded-lg bg-[#1c1512] mb-3 h-64 flex items-center justify-center border border-[#3a2d26]">
-                        <img src="{{ url_for('static', filename='images/' + product.images[0]) }}" 
+                        <img src="{{ url_for('static', filename=product.images[0]) }}" 
                              alt="{{ product.name }}" 
-                             onclick="openLightbox({{ product.images | tojson | forceescape }}, 0)" 
+                             data-images="{{ product.images | tojson | forceescape }}"
+                             data-index="0"
+                             onclick="openLightbox(JSON.parse(this.dataset.images), parseInt(this.dataset.index))" 
                              class="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105">
                         <span class="absolute bottom-2 right-2 bg-black/70 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
                             🔍 Click to view
@@ -48,9 +50,11 @@
                     {% if product.images|length > 1 %}
                     <div class="flex space-x-2 mb-4 overflow-x-auto pb-1">
                         {% for img in product.images %}
-                        <img src="{{ url_for('static', filename='images/' + img) }}" 
+                        <img src="{{ url_for('static', filename=img) }}" 
                              alt="{{ product.name }} thumbnail" 
-                             onclick="openLightbox({{ product.images | tojson | forceescape }}, {{ loop.index0 }})"
+                             data-images="{{ product.images | tojson | forceescape }}"
+                             data-index="{{ loop.index0 }}"
+                             onclick="openLightbox(JSON.parse(this.dataset.images), parseInt(this.dataset.index))"
                              class="w-12 h-12 object-cover rounded border border-[#3a2d26] hover:border-[#d4af37] cursor-pointer transition">
                         {% endfor %}
                     </div>
@@ -143,7 +147,7 @@
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
 
-            imgEl.src = "/static/images/" + currentImages[currentIndex];
+            imgEl.src = "/static/" + currentImages[currentIndex];
             
             if (currentImages.length > 1) {
                 counterEl.innerText = (currentIndex + 1) + " / " + currentImages.length;
