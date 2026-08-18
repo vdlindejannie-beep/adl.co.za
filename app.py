@@ -9,6 +9,32 @@ PAYFAST_MERCHANT_ID = "36712149"
 PAYFAST_MERCHANT_KEY = "ur6ctzlgqfwbo"
 PAYFAST_URL = "https://www.payfast.co.za/eng/process"  # Use https://sandbox.payfast.co.za/eng/process during testing
 
+# In-memory reviews list
+REVIEWS = [
+    {"name": "Sarah M.", "rating": 5, "comment": "Absolutely beautiful leather quality! Bought the overnight bag."},
+    {"name": "Johan K.", "rating": 5, "comment": "Sturdy belt and fast delivery. Very impressed."}
+]
+
+@app.route('/')
+def index():
+    return render_template('index.html', reviews=REVIEWS)
+
+@app.route('/add_review', methods=['POST'])
+def add_review():
+    name = request.form.get('name', 'Anonymous').strip()
+    rating = int(request.form.get('rating', 5))
+    comment = request.form.get('comment', '').strip()
+    
+    if comment:
+        REVIEWS.append({
+            "name": name if name else "Anonymous",
+            "rating": rating,
+            "comment": comment
+        })
+        flash("Thank you! Your review has been submitted.", "success")
+        
+    return redirect(url_for('index') + '#reviews')
+
 PRODUCTS = [
     # 1. Travel Bags
     {"id": 1, "name": "Large Luggage / Travel Bag", "category": "Travel Bags", "price": 1725.00, "images": ["Large_Luggage_travel bag.jpeg"], "description": "Spacious full-grain leather travel bag built for extended travel.", "colors": [], "sizes": []},
