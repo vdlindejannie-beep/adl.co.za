@@ -3,164 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shop - Leather by Annuschka</title>
+    <title>Shop Catalog - Leather by Annuschka</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #241c17; color: #f3efe6; font-family: 'Inter', sans-serif; }
+        .gold-accent { color: #d4af37; }
+        .gold-bg { background-color: #d4af37; }
+        .card-bg { background-color: #2e241e; }
+    </style>
 </head>
-<body class="bg-[#241c17] text-[#f3efe6] min-h-screen flex flex-col justify-between">
+<body class="min-h-screen flex flex-col justify-between">
 
-    <!-- Navigation -->
-    <nav class="bg-[#1c1512] border-b border-[#3a2d26] py-4 px-6 md:px-12 flex justify-between items-center">
-        <a href="/" class="text-2xl font-serif text-[#d4af37] font-bold">Leather by Annuschka</a>
-        <a href="/cart" class="text-sm text-gray-300 hover:text-[#d4af37]">Cart 🛒</a>
+    <!-- Navbar -->
+    <nav class="bg-[#1c1512] border-b border-[#3a2d26] py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50">
+        <a href="{{ url_for('index') }}" class="text-2xl font-serif gold-accent font-bold tracking-wider">Leather by Annuschka</a>
+        <div class="hidden md:flex space-x-8 text-sm uppercase tracking-widest">
+            <a href="{{ url_for('index') }}" class="hover:text-[#d4af37] transition">Home</a>
+            <a href="{{ url_for('shop') }}" class="gold-accent font-bold transition">Shop Catalog</a>
+            <a href="{{ url_for('cart') }}" class="hover:text-[#d4af37] transition"><i class="fa fa-shopping-cart"></i> Cart</a>
+            <a href="{{ url_for('dashboard') }}" class="hover:text-[#d4af37] transition"><i class="fa fa-chart-line"></i> Dashboard</a>
+        </div>
+        <a href="{{ url_for('cart') }}" class="gold-bg text-[#1c1512] px-4 py-2 rounded-full font-semibold text-sm">
+            <i class="fa fa-shopping-cart"></i> Cart
+        </a>
     </nav>
 
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-6 py-10 w-full">
-        <h1 class="text-3xl font-serif font-bold text-[#d4af37] mb-6">Product Catalog</h1>
-
-        <!-- Category Filters -->
-        <div class="flex flex-wrap gap-2 mb-8">
-            {% for cat in categories %}
-            <a href="/shop?category={{ cat }}" 
-               class="px-4 py-2 rounded-full text-xs font-semibold border transition {{ 'bg-[#d4af37] text-[#1c1512] border-[#d4af37]' if selected_category == cat else 'border-[#3a2d26] text-gray-300 hover:border-[#d4af37]' }}">
-                {{ cat }}
-            </a>
-            {% endfor %}
+    <!-- Shop Content -->
+    <main class="max-w-7xl mx-auto px-6 py-12 flex-grow w-full">
+        <div class="text-center mb-10">
+            <h1 class="text-3xl md:text-5xl font-serif font-bold mb-4">The Artisan Collection</h1>
+            <p class="text-gray-400">Explore our handcrafted full-grain leather goods.</p>
         </div>
 
-        <!-- Product Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {% for product in products %}
-            <div class="bg-[#2e241e] rounded-xl border border-[#3a2d26] p-5 flex flex-col justify-between">
-                <div>
-                    <!-- Main Product Image -->
-                    <div class="relative group cursor-pointer overflow-hidden rounded-lg bg-[#1c1512] mb-3 h-64 flex items-center justify-center border border-[#3a2d26]">
-                        <img src="{{ url_for('static', filename='images/' + product.images[0]) }}" 
-                             alt="{{ product.name }}" 
-                             onclick="openLightbox({{ product.images | tojson | forceescape }}, 0)" 
-                             class="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105">
-                        <span class="absolute bottom-2 right-2 bg-black/70 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
-                            🔍 Click to view
-                        </span>
-                    </div>
-
-                    <!-- Multiple Image Thumbnails -->
-                    {% if product.images|length > 1 %}
-                    <div class="flex space-x-2 mb-4 overflow-x-auto pb-1">
-                        {% for img in product.images %}
-                        <img src="{{ url_for('static', filename='images/' + img) }}" 
-                             alt="{{ product.name }} thumbnail" 
-                             onclick="openLightbox({{ product.images | tojson | forceescape }}, {{ loop.index0 }})"
-                             class="w-12 h-12 object-cover rounded border border-[#3a2d26] hover:border-[#d4af37] cursor-pointer transition">
-                        {% endfor %}
-                    </div>
-                    {% endif %}
-
-                    <h3 class="font-serif text-lg font-bold text-white mb-1">{{ product.name }}</h3>
-                    <p class="text-xs text-gray-400 mb-3 line-clamp-2">{{ product.description }}</p>
-                </div>
-
-                <form action="/add_to_cart/{{ product.id }}" method="POST" class="mt-4 border-t border-[#3a2d26] pt-4 space-y-3">
-                    <div class="flex items-center justify-between">
-                        <span class="text-xl font-bold text-[#d4af37]">R {{ "%.2f"|format(product.price) }}</span>
-                    </div>
-
-                    {% if product.colors %}
-                    <div>
-                        <label class="block text-[10px] text-gray-400 mb-1">Color Options:</label>
-                        <select name="color" class="w-full bg-[#1c1512] border border-[#3a2d26] text-xs text-white rounded px-2 py-1">
-                            {% for color in product.colors %}
-                            <option value="{{ color }}">{{ color }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    {% endif %}
-
-                    {% if product.sizes %}
-                    <div>
-                        <label class="block text-[10px] text-gray-400 mb-1">Size Options:</label>
-                        <select name="size" class="w-full bg-[#1c1512] border border-[#3a2d26] text-xs text-white rounded px-2 py-1">
-                            {% for size in product.sizes %}
-                            <option value="{{ size }}">{{ size }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    {% endif %}
-
-                    <button type="submit" class="w-full bg-[#d4af37] text-[#1c1512] font-bold py-2 rounded text-sm hover:opacity-90 transition">
-                        Add to Cart
-                    </button>
-                </form>
+        <!-- Filter & Search Bar -->
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-10">
+            <div class="flex flex-wrap gap-2 justify-center">
+                {% for cat in categories %}
+                <a href="{{ url_for('shop', category=cat) }}" class="px-4 py-2 rounded-full text-xs md:text-sm font-semibold transition {% if selected_category == cat %} gold-bg text-[#1c1512] {% else %} card-bg text-gray-300 hover:bg-[#3a2d26] {% endif %}">
+                    {{ cat }}
+                </a>
+                {% endfor %}
             </div>
-            {% endfor %}
+            <form action="{{ url_for('shop') }}" method="GET" class="flex w-full md:w-auto">
+                <input type="text" name="q" value="{{ search_query }}" placeholder="Search products..." class="px-4 py-2 rounded-l-lg card-bg border border-[#3a2d26] text-white focus:outline-none focus:border-[#d4af37]">
+                <button type="submit" class="gold-bg text-[#1c1512] px-5 rounded-r-lg font-semibold"><i class="fa fa-search"></i></button>
+            </form>
         </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="mb-6 p-4 rounded-lg bg-[#3a2d26] gold-accent border border-[#d4af37] text-center">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Products Display -->
+        {% set active_categories = ['Travel Bags', 'Everyday Essentials', 'Sling Bags', 'Handbags', 'Laptop Bags', 'Backpacks', 'Home & Leisure', 'Belts', 'Leather Care'] %}
+        
+        {% if selected_category == 'All' and not search_query %}
+            {% for cat in active_categories %}
+                {% set cat_products = products | selectattr('category', 'equalto', cat) | list %}
+                {% if cat_products %}
+                    <div class="mb-12">
+                        <h2 class="text-2xl font-serif font-bold gold-accent border-b border-[#3a2d26] pb-2 mb-6">{{ cat }}</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {% for product in cat_products %}
+                            <div class="card-bg rounded-xl border border-[#3a2d26] overflow-hidden flex flex-col justify-between shadow-xl">
+                                <div>
+                                    <!-- Image Display supporting multiple images -->
+                                    <div class="h-64 bg-[#1c1512] overflow-hidden flex items-center justify-center p-2 gap-2">
+                                        {% for img in product.images %}
+                                        <img src="{{ url_for('static', filename=img) }}" alt="{{ product.name }}" class="max-h-full {% if product.images|length > 1 %}w-1/2{% else %}w-full{% endif %} object-contain rounded p-1">
+                                        {% endfor %}
+                                    </div>
+                                    
+                                    <div class="p-6">
+                                        <span class="text-xs uppercase tracking-widest gold-accent font-semibold">{{ product.category }}</span>
+                                        <h3 class="text-xl font-serif font-bold mt-1 mb-2">{{ product.name }}</h3>
+                                        <p class="text-gray-400 text-sm mb-4">{{ product.description }}</p>
+                                        <p class="text-lg font-bold gold-accent">R {{ "%.2f"|format(product.price) }}</p>
+                                    </div>
+                                </div>
+                                <div class="p-6 pt-0">
+                                    <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST" class="space-y-3">
+                                        {% if product.colors or product.sizes %}
+                                        <div class="grid grid-cols-2 gap-2">
+                                            {% if product.colors %}
+                                            <div>
+                                                <label class="text-xs text-gray-400 block mb-1">Color / Shade</label>
+                                                <select name="color" class="w-full bg-[#1c1512] border border-[#3a2d26] rounded px-2 py-1 text-sm text-white">
+                                                    {% for c in product.colors %}
+                                                    <option value="{{ c }}">{{ c }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            {% endif %}
+                                            {% if product.sizes %}
+                                            <div>
+                                                <label class="text-xs text-gray-400 block mb-1">Size Option</label>
+                                                <select name="size" class="w-full bg-[#1c1512] border border-[#3a2d26] rounded px-2 py-1 text-sm text-white">
+                                                    {% for s in product.sizes %}
+                                                    <option value="{{ s }}">{{ s }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        {% endif %}
+                                        <button type="submit" class="w-full gold-bg text-[#1c1512] py-2 rounded-lg font-bold text-sm hover:opacity-90 transition mt-2">
+                                            <i class="fa fa-cart-plus"></i> Add to Cart
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <!-- Single Filtered Category View -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {% for product in products %}
+                <div class="card-bg rounded-xl border border-[#3a2d26] overflow-hidden flex flex-col justify-between shadow-xl">
+                    <div>
+                        <div class="h-64 bg-[#1c1512] overflow-hidden flex items-center justify-center p-2 gap-2">
+                            {% for img in product.images %}
+                            <img src="{{ url_for('static', filename=img) }}" alt="{{ product.name }}" class="max-h-full {% if product.images|length > 1 %}w-1/2{% else %}w-full{% endif %} object-contain rounded p-1">
+                            {% endfor %}
+                        </div>
+
+                        <div class="p-6">
+                            <span class="text-xs uppercase tracking-widest gold-accent font-semibold">{{ product.category }}</span>
+                            <h3 class="text-xl font-serif font-bold mt-1 mb-2">{{ product.name }}</h3>
+                            <p class="text-gray-400 text-sm mb-4">{{ product.description }}</p>
+                            <p class="text-lg font-bold gold-accent">R {{ "%.2f"|format(product.price) }}</p>
+                        </div>
+                    </div>
+                    <div class="p-6 pt-0">
+                        <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST" class="space-y-3">
+                            {% if product.colors or product.sizes %}
+                            <div class="grid grid-cols-2 gap-2">
+                                {% if product.colors %}
+                                <div>
+                                    <label class="text-xs text-gray-400 block mb-1">Color / Shade</label>
+                                    <select name="color" class="w-full bg-[#1c1512] border border-[#3a2d26] rounded px-2 py-1 text-sm text-white">
+                                        {% for c in product.colors %}
+                                        <option value="{{ c }}">{{ c }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                {% endif %}
+                                {% if product.sizes %}
+                                <div>
+                                    <label class="text-xs text-gray-400 block mb-1">Size Option</label>
+                                    <select name="size" class="w-full bg-[#1c1512] border border-[#3a2d26] rounded px-2 py-1 text-sm text-white">
+                                        {% for s in product.sizes %}
+                                        <option value="{{ s }}">{{ s }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                            <button type="submit" class="w-full gold-bg text-[#1c1512] py-2 rounded-lg font-bold text-sm hover:opacity-90 transition mt-2">
+                                <i class="fa fa-cart-plus"></i> Add to Cart
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% else %}
+                <div class="col-span-full text-center py-16">
+                    <p class="text-gray-400 text-lg">No products found matching your criteria.</p>
+                </div>
+                {% endfor %}
+            </div>
+        {% endif %}
     </main>
 
-    <!-- Interactive Lightbox Modal -->
-    <div id="lightboxModal" class="fixed inset-0 bg-black/90 z-50 hidden flex flex-col items-center justify-center p-4">
-        <button onclick="closeLightbox()" class="absolute top-6 right-6 text-white text-3xl font-bold hover:text-[#d4af37]">&times;</button>
-        
-        <div class="relative max-w-4xl w-full flex items-center justify-center">
-            <button id="prevBtn" onclick="changeImage(-1)" class="absolute left-2 bg-[#1c1512]/80 hover:bg-[#d4af37] text-white hover:text-black p-3 rounded-full text-xl font-bold transition select-none">
-                &#10094;
-            </button>
-            
-            <img id="lightboxImg" src="" alt="Enlarged view" class="max-h-[80vh] max-w-full object-contain rounded-lg border border-[#3a2d26]">
-            
-            <button id="nextBtn" onclick="changeImage(1)" class="absolute right-2 bg-[#1c1512]/80 hover:bg-[#d4af37] text-white hover:text-black p-3 rounded-full text-xl font-bold transition select-none">
-                &#10095;
-            </button>
-        </div>
+    <!-- Footer -->
+    <footer class="bg-[#18110e] py-8 text-center text-xs text-gray-400 border-t border-[#3a2d26]">
+        <p>&copy; 2026 Leather by Annuschka. All rights reserved. | Contact: leatherbyannuschka@gmail.com | WhatsApp: +27 76 430 7990</p>
+    </footer>
 
-        <p id="lightboxCounter" class="text-sm text-gray-300 mt-4 font-mono"></p>
-    </div>
-
-    <script>
-        let currentImages = [];
-        let currentIndex = 0;
-
-        function openLightbox(imagesList, index) {
-            currentImages = imagesList;
-            currentIndex = index;
-            updateLightbox();
-            document.getElementById('lightboxModal').classList.remove('hidden');
-        }
-
-        function closeLightbox() {
-            document.getElementById('lightboxModal').classList.add('hidden');
-        }
-
-        function changeImage(direction) {
-            currentIndex += direction;
-            if (currentIndex < 0) currentIndex = currentImages.length - 1;
-            if (currentIndex >= currentImages.length) currentIndex = 0;
-            updateLightbox();
-        }
-
-        function updateLightbox() {
-            const imgEl = document.getElementById('lightboxImg');
-            const counterEl = document.getElementById('lightboxCounter');
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
-
-            imgEl.src = "/static/images/" + currentImages[currentIndex];
-            
-            if (currentImages.length > 1) {
-                counterEl.innerText = (currentIndex + 1) + " / " + currentImages.length;
-                prevBtn.classList.remove('hidden');
-                nextBtn.classList.remove('hidden');
-            } else {
-                counterEl.innerText = "";
-                prevBtn.classList.add('hidden');
-                nextBtn.classList.add('hidden');
-            }
-        }
-
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeLightbox();
-            if (e.key === 'ArrowLeft') changeImage(-1);
-            if (e.key === 'ArrowRight') changeImage(1);
-        });
-    </script>
 </body>
 </html>
