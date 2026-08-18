@@ -75,11 +75,28 @@
                             {% for product in cat_products %}
                             <div class="card-bg rounded-xl border border-[#3a2d26] overflow-hidden flex flex-col justify-between shadow-xl">
                                 <div>
-                                    <!-- Image Display supporting multiple images -->
-                                    <div class="h-64 bg-[#1c1512] overflow-hidden flex items-center justify-center p-2 gap-2">
-                                        {% for img in product.images %}
-                                        <img src="{{ url_for('static', filename=img) }}" alt="{{ product.name }}" class="max-h-full {% if product.images|length > 1 %}w-1/2{% else %}w-full{% endif %} object-contain rounded p-1">
-                                        {% endfor %}
+                                    <!-- Image Display with Lightbox Trigger & Multi-Thumbnail Strip -->
+                                    <div class="bg-[#1c1512] p-3 border-b border-[#3a2d26]">
+                                        <div class="h-56 w-full flex items-center justify-center relative group cursor-pointer" 
+                                             onclick="openLightbox({{ product.images | tojson | forceescape }}, 0)">
+                                            <img src="{{ url_for('static', filename=('images/' + product.images[0]) if not product.images[0].startswith('images/') else product.images[0]) }}" 
+                                                 alt="{{ product.name }}" 
+                                                 class="max-h-full max-w-full object-contain rounded transition duration-300 group-hover:scale-105">
+                                            <span class="absolute bottom-2 right-2 bg-black/75 text-xs text-[#d4af37] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+                                                <i class="fa fa-search-plus"></i> Click to enlarge
+                                            </span>
+                                        </div>
+                                        
+                                        {% if product.images|length > 1 %}
+                                        <div class="flex gap-2 mt-3 overflow-x-auto pb-1 justify-center">
+                                            {% for img in product.images %}
+                                            <img src="{{ url_for('static', filename=('images/' + img) if not img.startswith('images/') else img) }}" 
+                                                 alt="{{ product.name }} thumbnail" 
+                                                 onclick="openLightbox({{ product.images | tojson | forceescape }}, {{ loop.index0 }})" 
+                                                 class="w-12 h-12 object-cover rounded border border-[#3a2d26] hover:border-[#d4af37] cursor-pointer transition">
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
                                     </div>
                                     
                                     <div class="p-6">
@@ -132,10 +149,28 @@
                 {% for product in products %}
                 <div class="card-bg rounded-xl border border-[#3a2d26] overflow-hidden flex flex-col justify-between shadow-xl">
                     <div>
-                        <div class="h-64 bg-[#1c1512] overflow-hidden flex items-center justify-center p-2 gap-2">
-                            {% for img in product.images %}
-                            <img src="{{ url_for('static', filename=img) }}" alt="{{ product.name }}" class="max-h-full {% if product.images|length > 1 %}w-1/2{% else %}w-full{% endif %} object-contain rounded p-1">
-                            {% endfor %}
+                        <!-- Image Display with Lightbox Trigger & Multi-Thumbnail Strip -->
+                        <div class="bg-[#1c1512] p-3 border-b border-[#3a2d26]">
+                            <div class="h-56 w-full flex items-center justify-center relative group cursor-pointer" 
+                                 onclick="openLightbox({{ product.images | tojson | forceescape }}, 0)">
+                                <img src="{{ url_for('static', filename=('images/' + product.images[0]) if not product.images[0].startswith('images/') else product.images[0]) }}" 
+                                     alt="{{ product.name }}" 
+                                     class="max-h-full max-w-full object-contain rounded transition duration-300 group-hover:scale-105">
+                                <span class="absolute bottom-2 right-2 bg-black/75 text-xs text-[#d4af37] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+                                    <i class="fa fa-search-plus"></i> Click to enlarge
+                                </span>
+                            </div>
+                            
+                            {% if product.images|length > 1 %}
+                            <div class="flex gap-2 mt-3 overflow-x-auto pb-1 justify-center">
+                                {% for img in product.images %}
+                                <img src="{{ url_for('static', filename=('images/' + img) if not img.startswith('images/') else img) }}" 
+                                     alt="{{ product.name }} thumbnail" 
+                                     onclick="openLightbox({{ product.images | tojson | forceescape }}, {{ loop.index0 }})" 
+                                     class="w-12 h-12 object-cover rounded border border-[#3a2d26] hover:border-[#d4af37] cursor-pointer transition">
+                                {% endfor %}
+                            </div>
+                            {% endif %}
                         </div>
 
                         <div class="p-6">
@@ -190,6 +225,78 @@
     <footer class="bg-[#18110e] py-8 text-center text-xs text-gray-400 border-t border-[#3a2d26]">
         <p>&copy; 2026 Leather by Annuschka. All rights reserved. | Contact: leatherbyannuschka@gmail.com | WhatsApp: +27 76 430 7990</p>
     </footer>
+
+    <!-- Fullscreen Lightbox Modal -->
+    <div id="lightboxModal" class="fixed inset-0 bg-black/90 z-50 hidden flex flex-col items-center justify-center p-4">
+        <button onclick="closeLightbox()" class="absolute top-6 right-6 text-white text-3xl font-bold hover:text-[#d4af37] z-50 focus:outline-none">&times;</button>
+        
+        <div class="relative max-w-4xl w-full flex items-center justify-center">
+            <button id="prevBtn" onclick="changeImage(-1)" class="absolute left-2 bg-[#1c1512]/80 hover:bg-[#d4af37] text-white hover:text-black p-3 rounded-full text-xl font-bold transition select-none z-10 focus:outline-none">
+                &#10094;
+            </button>
+            
+            <img id="lightboxImg" src="" alt="Enlarged view" class="max-h-[80vh] max-w-full object-contain rounded-lg border border-[#3a2d26]">
+            
+            <button id="nextBtn" onclick="changeImage(1)" class="absolute right-2 bg-[#1c1512]/80 hover:bg-[#d4af37] text-white hover:text-black p-3 rounded-full text-xl font-bold transition select-none z-10 focus:outline-none">
+                &#10095;
+            </button>
+        </div>
+
+        <p id="lightboxCounter" class="text-sm gold-accent mt-4 font-mono"></p>
+    </div>
+
+    <script>
+        let currentImages = [];
+        let currentIndex = 0;
+
+        function openLightbox(imagesList, index) {
+            currentImages = imagesList;
+            currentIndex = index;
+            updateLightbox();
+            document.getElementById('lightboxModal').classList.remove('hidden');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightboxModal').classList.add('hidden');
+        }
+
+        function changeImage(direction) {
+            currentIndex += direction;
+            if (currentIndex < 0) currentIndex = currentImages.length - 1;
+            if (currentIndex >= currentImages.length) currentIndex = 0;
+            updateLightbox();
+        }
+
+        function updateLightbox() {
+            const imgEl = document.getElementById('lightboxImg');
+            const counterEl = document.getElementById('lightboxCounter');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            let imgPath = currentImages[currentIndex];
+            if (!imgPath.startsWith('images/')) {
+                imgPath = 'images/' + imgPath;
+            }
+
+            imgEl.src = "/static/" + imgPath;
+            
+            if (currentImages.length > 1) {
+                counterEl.innerText = (currentIndex + 1) + " / " + currentImages.length;
+                prevBtn.classList.remove('hidden');
+                nextBtn.classList.remove('hidden');
+            } else {
+                counterEl.innerText = "";
+                prevBtn.classList.add('hidden');
+                nextBtn.classList.add('hidden');
+            }
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') changeImage(-1);
+            if (e.key === 'ArrowRight') changeImage(1);
+        });
+    </script>
 
 </body>
 </html>
