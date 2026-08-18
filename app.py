@@ -69,14 +69,14 @@ PRODUCTS = [
         "category": "Belts", 
         "price": 200.00, 
         "images": [
-            "Screenshot 2026-08-14 140410.jpeg", 
-            "Screenshot 2026-08-14 140415.jpeg", 
-            "Screenshot 2026-08-14 140419.jpeg", 
-            "Screenshot 2026-08-14 140423.jpeg", 
-            "Screenshot 2026-08-14 140428.jpeg", 
-            "Screenshot 2026-08-14 140432.jpeg", 
-            "Screenshot 2026-08-14 140436.jpeg", 
-            "Screenshot 2026-08-14 140441.jpeg"
+            "Screenshot 2026-08-14 140410.png", 
+            "Screenshot 2026-08-14 140415.png", 
+            "Screenshot 2026-08-14 140419.png", 
+            "Screenshot 2026-08-14 140423.png", 
+            "Screenshot 2026-08-14 140428.png", 
+            "Screenshot 2026-08-14 140432.png", 
+            "Screenshot 2026-08-14 140436.png", 
+            "Screenshot 2026-08-14 140441.png"
         ], 
         "description": "Handmade full-grain leather belt.", 
         "colors": ["Black", "Brown"], 
