@@ -22,6 +22,7 @@
             <a href="{{ url_for('index') }}" class="hover:text-[#d4af37] transition">Home</a>
             <a href="{{ url_for('shop') }}" class="gold-accent font-bold transition">Shop Catalog</a>
             <a href="{{ url_for('cart') }}" class="hover:text-[#d4af37] transition"><i class="fa fa-shopping-cart"></i> Cart</a>
+            <a href="{{ url_for('dashboard') }}" class="hover:text-[#d4af37] transition"><i class="fa fa-chart-line"></i> Dashboard</a>
         </div>
         <a href="{{ url_for('cart') }}" class="gold-bg text-[#1c1512] px-4 py-2 rounded-full font-semibold text-sm">
             <i class="fa fa-shopping-cart"></i> Cart
@@ -39,7 +40,7 @@
         <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-10">
             <div class="flex flex-wrap gap-2 justify-center">
                 {% for cat in categories %}
-                <a href="{{ url_for('shop', category=cat) }}" class="px-4 py-2 rounded-full text-sm font-semibold transition {% if selected_category == cat %} gold-bg text-[#1c1512] {% else %} card-bg text-gray-300 hover:bg-[#3a2d26] {% endif %}">
+                <a href="{{ url_for('shop', category=cat) }}" class="px-4 py-2 rounded-full text-xs md:text-sm font-semibold transition {% if selected_category == cat %} gold-bg text-[#1c1512] {% else %} card-bg text-gray-300 hover:bg-[#3a2d26] {% endif %}">
                     {{ cat }}
                 </a>
                 {% endfor %}
@@ -62,8 +63,9 @@
         {% endwith %}
 
         <!-- Products Display -->
+        {% set active_categories = ['Travel Bags', 'Everyday Essentials', 'Sling Bags', 'Handbags', 'Laptop Bags', 'Backpacks', 'Home & Leisure', 'Belts', 'Leather Care'] %}
+        
         {% if selected_category == 'All' and not search_query %}
-            {% set active_categories = ['Travel & Luggage', 'Handbags & Slings', 'Backpacks & Laptop Bags', 'Small Goods & Accessories', 'Home, Leisure & Care'] %}
             {% for cat in active_categories %}
                 {% set cat_products = products | selectattr('category', 'equalto', cat) | list %}
                 {% if cat_products %}
@@ -73,18 +75,12 @@
                             {% for product in cat_products %}
                             <div class="card-bg rounded-xl border border-[#3a2d26] overflow-hidden flex flex-col justify-between shadow-xl">
                                 <div>
-                                    <!-- Image Display (Supports multiple images for products like Laptop Sleeve) -->
-                                    {% if product.images %}
+                                    <!-- Image Display supporting multiple images -->
                                     <div class="h-64 bg-[#1c1512] overflow-hidden flex items-center justify-center p-2 gap-2">
                                         {% for img in product.images %}
-                                        <img src="{{ url_for('static', filename=img) }}" alt="{{ product.name }}" class="max-h-full w-1/2 object-contain rounded border border-[#3a2d26]">
+                                        <img src="{{ url_for('static', filename=img) }}" alt="{{ product.name }}" class="max-h-full {% if product.images|length > 1 %}w-1/2{% else %}w-full{% endif %} object-contain rounded p-1">
                                         {% endfor %}
                                     </div>
-                                    {% else %}
-                                    <div class="h-64 bg-[#1c1512] overflow-hidden flex items-center justify-center p-4">
-                                        <img src="{{ url_for('static', filename=product.image) }}" alt="{{ product.name }}" class="max-h-full max-w-full object-contain">
-                                    </div>
-                                    {% endif %}
                                     
                                     <div class="p-6">
                                         <span class="text-xs uppercase tracking-widest gold-accent font-semibold">{{ product.category }}</span>
@@ -95,24 +91,30 @@
                                 </div>
                                 <div class="p-6 pt-0">
                                     <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST" class="space-y-3">
+                                        {% if product.colors or product.sizes %}
                                         <div class="grid grid-cols-2 gap-2">
+                                            {% if product.colors %}
                                             <div>
-                                                <label class="text-xs text-gray-400 block mb-1">Color</label>
+                                                <label class="text-xs text-gray-400 block mb-1">Color / Shade</label>
                                                 <select name="color" class="w-full bg-[#1c1512] border border-[#3a2d26] rounded px-2 py-1 text-sm text-white">
                                                     {% for c in product.colors %}
                                                     <option value="{{ c }}">{{ c }}</option>
                                                     {% endfor %}
                                                 </select>
                                             </div>
+                                            {% endif %}
+                                            {% if product.sizes %}
                                             <div>
-                                                <label class="text-xs text-gray-400 block mb-1">Size/Spec</label>
+                                                <label class="text-xs text-gray-400 block mb-1">Size Option</label>
                                                 <select name="size" class="w-full bg-[#1c1512] border border-[#3a2d26] rounded px-2 py-1 text-sm text-white">
                                                     {% for s in product.sizes %}
                                                     <option value="{{ s }}">{{ s }}</option>
                                                     {% endfor %}
                                                 </select>
                                             </div>
+                                            {% endif %}
                                         </div>
+                                        {% endif %}
                                         <button type="submit" class="w-full gold-bg text-[#1c1512] py-2 rounded-lg font-bold text-sm hover:opacity-90 transition mt-2">
                                             <i class="fa fa-cart-plus"></i> Add to Cart
                                         </button>
@@ -125,22 +127,16 @@
                 {% endif %}
             {% endfor %}
         {% else %}
-            <!-- Filtered or Searched view -->
+            <!-- Single Filtered Category View -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 {% for product in products %}
                 <div class="card-bg rounded-xl border border-[#3a2d26] overflow-hidden flex flex-col justify-between shadow-xl">
                     <div>
-                        {% if product.images %}
                         <div class="h-64 bg-[#1c1512] overflow-hidden flex items-center justify-center p-2 gap-2">
                             {% for img in product.images %}
-                            <img src="{{ url_for('static', filename=img) }}" alt="{{ product.name }}" class="max-h-full w-1/2 object-contain rounded border border-[#3a2d26]">
+                            <img src="{{ url_for('static', filename=img) }}" alt="{{ product.name }}" class="max-h-full {% if product.images|length > 1 %}w-1/2{% else %}w-full{% endif %} object-contain rounded p-1">
                             {% endfor %}
                         </div>
-                        {% else %}
-                        <div class="h-64 bg-[#1c1512] overflow-hidden flex items-center justify-center p-4">
-                            <img src="{{ url_for('static', filename=product.image) }}" alt="{{ product.name }}" class="max-h-full max-w-full object-contain">
-                        </div>
-                        {% endif %}
 
                         <div class="p-6">
                             <span class="text-xs uppercase tracking-widest gold-accent font-semibold">{{ product.category }}</span>
@@ -151,24 +147,30 @@
                     </div>
                     <div class="p-6 pt-0">
                         <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST" class="space-y-3">
+                            {% if product.colors or product.sizes %}
                             <div class="grid grid-cols-2 gap-2">
+                                {% if product.colors %}
                                 <div>
-                                    <label class="text-xs text-gray-400 block mb-1">Color</label>
+                                    <label class="text-xs text-gray-400 block mb-1">Color / Shade</label>
                                     <select name="color" class="w-full bg-[#1c1512] border border-[#3a2d26] rounded px-2 py-1 text-sm text-white">
                                         {% for c in product.colors %}
                                         <option value="{{ c }}">{{ c }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
+                                {% endif %}
+                                {% if product.sizes %}
                                 <div>
-                                    <label class="text-xs text-gray-400 block mb-1">Size/Spec</label>
+                                    <label class="text-xs text-gray-400 block mb-1">Size Option</label>
                                     <select name="size" class="w-full bg-[#1c1512] border border-[#3a2d26] rounded px-2 py-1 text-sm text-white">
                                         {% for s in product.sizes %}
                                         <option value="{{ s }}">{{ s }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
+                                {% endif %}
                             </div>
+                            {% endif %}
                             <button type="submit" class="w-full gold-bg text-[#1c1512] py-2 rounded-lg font-bold text-sm hover:opacity-90 transition mt-2">
                                 <i class="fa fa-cart-plus"></i> Add to Cart
                             </button>
@@ -186,7 +188,7 @@
 
     <!-- Footer -->
     <footer class="bg-[#18110e] py-8 text-center text-xs text-gray-400 border-t border-[#3a2d26]">
-        <p>&copy; 2026 Leather by Annuschka. All rights reserved. | Contact: lummisannuschka001@gmail.com | WhatsApp: +27 76 430 7990</p>
+        <p>&copy; 2026 Leather by Annuschka. All rights reserved. | Contact: leatherbyannuschka@gmail.com | WhatsApp: +27 76 430 7990</p>
     </footer>
 
 </body>

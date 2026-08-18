@@ -5,74 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout - Leather by Annuschka</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body { background-color: #241c17; color: #f3efe6; font-family: 'Inter', sans-serif; }
-        .gold-accent { color: #d4af37; }
-        .gold-bg { background-color: #d4af37; }
-        .card-bg { background-color: #2e241e; }
-    </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between">
+<body class="bg-[#241c17] text-[#f3efe6] min-h-screen flex flex-col justify-between">
 
-    <!-- Navbar -->
-    <nav class="bg-[#1c1512] border-b border-[#3a2d26] py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50">
-        <a href="{{ url_for('index') }}" class="text-2xl font-serif gold-accent font-bold tracking-wider">Leather by Annuschka</a>
-        <a href="{{ url_for('cart') }}" class="text-sm uppercase tracking-widest hover:text-[#d4af37]"><i class="fa fa-arrow-left"></i> Back to Cart</a>
+    <nav class="bg-[#1c1512] border-b border-[#3a2d26] py-4 px-6 md:px-12 flex justify-between items-center">
+        <a href="/" class="text-2xl font-serif text-[#d4af37] font-bold">Leather by Annuschka</a>
     </nav>
 
-    <!-- Checkout Form -->
-    <main class="max-w-4xl mx-auto px-6 py-12 flex-grow w-full">
-        <h1 class="text-3xl font-serif font-bold mb-8">Secure Local Checkout</h1>
+    <main class="max-w-4xl mx-auto px-6 py-12 w-full">
+        <h1 class="text-3xl font-serif font-bold text-[#d4af37] mb-8">Secure Checkout</h1>
 
-        <form action="{{ url_for('checkout') }}" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="card-bg p-8 rounded-xl border border-[#3a2d26] space-y-4">
-                <h3 class="font-serif font-bold text-xl mb-4 gold-accent">Shipping Details (South Africa)</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <form action="/checkout" method="POST" class="bg-[#2e241e] p-6 rounded-xl border border-[#3a2d26] space-y-4">
+                <h2 class="text-xl font-bold mb-4 border-b border-[#3a2d26] pb-2">Customer & Shipping Details</h2>
+                
                 <div>
-                    <label class="block text-xs uppercase text-gray-400 mb-1">Full Name</label>
-                    <input type="text" name="name" required class="w-full bg-[#1c1512] border border-[#3a2d26] rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-[#d4af37]">
+                    <label class="block text-xs text-gray-400 mb-1">First Name</label>
+                    <input type="text" name="first_name" required class="w-full bg-[#1c1512] border border-[#3a2d26] rounded px-3 py-2 text-white">
                 </div>
                 <div>
-                    <label class="block text-xs uppercase text-gray-400 mb-1">Email Address</label>
-                    <input type="email" name="email" required class="w-full bg-[#1c1512] border border-[#3a2d26] rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-[#d4af37]">
+                    <label class="block text-xs text-gray-400 mb-1">Last Name</label>
+                    <input type="text" name="last_name" required class="w-full bg-[#1c1512] border border-[#3a2d26] rounded px-3 py-2 text-white">
                 </div>
                 <div>
-                    <label class="block text-xs uppercase text-gray-400 mb-1">Phone Number</label>
-                    <input type="text" name="phone" required class="w-full bg-[#1c1512] border border-[#3a2d26] rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-[#d4af37]">
+                    <label class="block text-xs text-gray-400 mb-1">Email Address</label>
+                    <input type="email" name="email" required class="w-full bg-[#1c1512] border border-[#3a2d26] rounded px-3 py-2 text-white">
                 </div>
                 <div>
-                    <label class="block text-xs uppercase text-gray-400 mb-1">Delivery Address</label>
-                    <textarea name="address" rows="3" required class="w-full bg-[#1c1512] border border-[#3a2d26] rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-[#d4af37]"></textarea>
+                    <label class="block text-xs text-gray-400 mb-1">Mobile / WhatsApp Number</label>
+                    <input type="tel" name="phone" required class="w-full bg-[#1c1512] border border-[#3a2d26] rounded px-3 py-2 text-white">
                 </div>
-            </div>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Delivery Address</label>
+                    <textarea name="address" rows="3" required class="w-full bg-[#1c1512] border border-[#3a2d26] rounded px-3 py-2 text-white"></textarea>
+                </div>
 
-            <div class="card-bg p-8 rounded-xl border border-[#3a2d26] flex flex-col justify-between">
-                <div>
-                    <h3 class="font-serif font-bold text-xl mb-4 gold-accent">Order Summary</h3>
-                    <div class="space-y-3 mb-6 max-h-60 overflow-y-auto pr-2">
-                        {% for item in cart_items %}
-                        <div class="flex justify-between text-sm border-b border-[#3a2d26] pb-2">
-                            <span>{{ item.quantity }}x {{ item.name }} ({{ item.color }})</span>
-                            <span class="gold-accent">R {{ "%.2f"|format(item.price * item.quantity) }}</span>
-                        </div>
-                        {% endfor %}
+                <button type="submit" class="w-full bg-[#d4af37] text-[#1c1512] font-bold py-3 rounded-lg mt-4 hover:opacity-90 transition">
+                    Proceed to PayFast Payment
+                </button>
+            </form>
+
+            <div class="bg-[#2e241e] p-6 rounded-xl border border-[#3a2d26] h-fit">
+                <h2 class="text-xl font-bold mb-4 border-b border-[#3a2d26] pb-2">Order Summary</h2>
+                <div class="space-y-3">
+                    {% for item in cart_items %}
+                    <div class="flex justify-between text-sm">
+                        <span>{{ item.name }} (x{{ item.quantity }})</span>
+                        <span class="text-[#d4af37]">R {{ "%.2f"|format(item.price * item.quantity) }}</span>
                     </div>
-                    <div class="flex justify-between font-bold text-lg gold-accent pt-4 border-t border-[#3a2d26]">
+                    {% endfor %}
+                    <div class="border-t border-[#3a2d26] pt-3 flex justify-between text-sm text-gray-400">
+                        <span>Subtotal</span>
+                        <span>R {{ "%.2f"|format(subtotal) }}</span>
+                    </div>
+                    <div class="flex justify-between text-sm text-gray-400">
+                        <span>Standard Courier Transport</span>
+                        <span>R {{ "%.2f"|format(shipping) }}</span>
+                    </div>
+                    <div class="border-t border-[#3a2d26] pt-3 flex justify-between font-bold text-lg text-[#d4af37]">
                         <span>Total Due</span>
                         <span>R {{ "%.2f"|format(total) }}</span>
                     </div>
                 </div>
-                <button type="submit" class="w-full gold-bg text-[#1c1512] py-3 rounded-lg font-bold hover:opacity-90 transition mt-6">
-                    Place Order
-                </button>
             </div>
-        </form>
+        </div>
     </main>
-
-    <!-- Footer -->
-    <footer class="bg-[#18110e] py-8 text-center text-xs text-gray-400 border-t border-[#3a2d26]">
-        <p>&copy; 2026 Leather by Annuschka. All rights reserved. | Contact: lummisannuschka001@gmail.com | WhatsApp: +27 76 430 7990</p>
-    </footer>
 
 </body>
 </html>

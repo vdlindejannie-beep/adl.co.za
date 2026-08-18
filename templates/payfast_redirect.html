@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Redirecting to PayFast...</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#241c17] text-[#f3efe6] flex items-center justify-center min-h-screen">
+
+    <div class="text-center p-8 bg-[#2e241e] rounded-xl border border-[#3a2d26] max-w-md">
+        <h2 class="text-2xl font-serif text-[#d4af37] font-bold mb-4">Connecting to PayFast Gateway</h2>
+        <p class="text-gray-400 text-sm mb-6">Please wait while we redirect you to complete your secure payment...</p>
+
+        <form id="payfast_form" action="{{ payfast_url }}" method="POST">
+            <input type="hidden" name="merchant_id" value="{{ merchant_id }}">
+            <input type="hidden" name="merchant_key" value="{{ merchant_key }}">
+            <input type="hidden" name="return_url" value="{{ return_url }}">
+            <input type="hidden" name="cancel_url" value="{{ cancel_url }}">
+            <input type="hidden" name="notify_url" value="{{ notify_url }}">
+            <input type="hidden" name="m_payment_id" value="{{ m_payment_id }}">
+            <input type="hidden" name="amount" value="{{ amount }}">
+            <input type="hidden" name="item_name" value="{{ item_name }}">
+            <input type="hidden" name="name_first" value="{{ name_first }}">
+            <input type="hidden" name="name_last" value="{{ name_last }}">
+            <input type="hidden" name="email_address" value="{{ email_address }}">
+            <input type="hidden" name="cell_number" value="{{ cell_number }}">
+            
+            <button type="submit" class="bg-[#d4af37] text-[#1c1512] font-bold px-6 py-2 rounded-lg text-sm">
+                Click here if you are not redirected automatically
+            </button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("payfast_form").submit();
+    </script>
+</body>
+</html>
