@@ -13,7 +13,7 @@ PRODUCTS = [
     # 1. Travel Bags
     {"id": 1, "name": "Large Luggage / Travel Bag", "category": "Travel Bags", "price": 1725.00, "images": ["Large_Luggage_travel bag.jpeg"], "description": "Spacious full-grain leather travel bag built for extended travel.", "colors": [], "sizes": []},
     {"id": 2, "name": "Medium Luggage / Travel Bag", "category": "Travel Bags", "price": 1150.00, "images": ["Medium_luggage_travel bag.png", "Medium_luggage_travel bag1.png"], "description": "Versatile weekend travel bag with sturdy handles.", "colors": ["Dark", "Light"], "sizes": []},
-    {"id": 3, "name": "Small Travel Bag / Overnight Bag", "category": "Travel Bags", "price": 680.00, "images": ["Medium_luggage_travel bag1.png"], "description": "Compact travel companion for short trips and daily use.", "colors": ["Dark", "Light"], "sizes": []},
+    {"id": 3, "name": "Small Travel Bag / Overnight Bag", "category": "Travel Bags", "price": 680.00, "images": ["Small_luggage_travel bag1.jpeg","Screenshot 2026-08-19 092959.png"], "description": "Compact travel companion for short trips and daily use.", "colors": ["Dark", "Light"], "sizes": []},
     {"id": 4, "name": "Overnight Bag", "category": "Travel Bags", "price": 1275.00, "images": ["Overnight Bag.png"], "description": "Classic structured leather overnight bag.", "colors": [], "sizes": []},
     {"id": 5, "name": "Medium Travel Bag / Doctor's Bag", "category": "Travel Bags", "price": 910.00, "images": ["Medium Travel Bag _Dokters bag.png"], "description": "Vintage wide-frame doctor's bag style travel carrier.", "colors": ["Dark", "Light"], "sizes": []},
 
@@ -21,6 +21,7 @@ PRODUCTS = [
     {"id": 6, "name": "Toiletries / Makeup Bag", "category": "Everyday Essentials", "price": 450.00, "images": ["Toiletries_makup bag.jpeg"], "description": "Handcrafted leather toilet bag. Please specify preferred brown shade.", "colors": ["Shade 1", "Shade 2", "Shade 3", "Shade 4"], "sizes": []},
     {"id": 7, "name": "Coin Purse", "category": "Everyday Essentials", "price": 55.00, "images": ["Coin purse medium 1.jpeg", "Coin purse medium.jpeg", "Coin purse Large.jpeg", "Coin purse Large 1.jpeg"], "description": "Genuine leather coin purse available in multiple brown shades.", "colors": ["Light Brown", "Medium Brown", "Dark Brown"], "sizes": ["Medium (R55)", "Large (R65)"], "size_prices": {"Medium (R55)": 55.00, "Large (R65)": 65.00}},
     {"id": 8, "name": "Pencil Bag", "category": "Everyday Essentials", "price": 175.00, "images": ["Pencil bag.jpeg", "Pencil bag 1.jpeg", "Pencil bag 2.jpeg"], "description": "Durable zipped leather pencil case.", "colors": ["Light", "Medium", "Dark"], "sizes": []},
+    {"id": 8, "name": "Cosmetic / Makeup Bag", "category": "Everyday Essentials", "price": 180.00, "images": ["Screenshot 2026-08-19 093234.png"], "description": "Elegant cosmetic bag.", "colors": [], "sizes": []},
 
     # 3. Sling Bags
     {"id": 9, "name": "Sling Bag (Small)", "category": "Sling Bags", "price": 250.00, "images": ["Sling bag (smal).jpeg"], "description": "Lightweight petite leather sling bag.", "colors": [], "sizes": []},
@@ -35,11 +36,11 @@ PRODUCTS = [
     {"id": 18, "name": "Cellphone Sling Bag", "category": "Sling Bags", "price": 240.00, "images": ["Celphone slingbag.png"], "description": "Sleek leather pouch for smartphone and cards.", "colors": ["Dark", "Medium", "Light"], "sizes": []},
 
     # 4. Handbags
-    {"id": 19, "name": "Handbag 5", "category": "Handbags", "price": 650.00, "images": ["Handbag 5.png"], "description": "Elegant daily shoulder handbag.", "colors": [], "sizes": []},
-    {"id": 20, "name": "Handbag 4", "category": "Handbags", "price": 450.00, "images": ["Handbag 4.png"], "description": "Classic leather handbag with top handles.", "colors": [], "sizes": []},
+    {"id": 19, "name": "Handbag 1", "category": "Handbags", "price": 650.00, "images": ["Handbag 5.png"], "description": "Elegant daily shoulder handbag.", "colors": [], "sizes": []},
+    {"id": 20, "name": "Handbag 2", "category": "Handbags", "price": 450.00, "images": ["Handbag 4.png"], "description": "Classic leather handbag with top handles.", "colors": [], "sizes": []},
     {"id": 21, "name": "Handbag 3", "category": "Handbags", "price": 300.00, "images": ["Handbag 3.png"], "description": "Petite leather handbag.", "colors": [], "sizes": []},
-    {"id": 22, "name": "Handbag 2", "category": "Handbags", "price": 700.00, "images": ["Handbag 2.png"], "description": "Premium structured tote handbag.", "colors": [], "sizes": []},
-    {"id": 23, "name": "Handbag 1", "category": "Handbags", "price": 610.00, "images": ["Handbag 1.png"], "description": "Artisan leather handbag.", "colors": [], "sizes": []},
+    {"id": 22, "name": "Handbag 4", "category": "Handbags", "price": 700.00, "images": ["Handbag 2.png"], "description": "Premium structured tote handbag.", "colors": [], "sizes": []},
+    {"id": 23, "name": "Handbag 5", "category": "Handbags", "price": 610.00, "images": ["Handbag 1.png"], "description": "Artisan leather handbag.", "colors": [], "sizes": []},
 
     # 5. Laptop Bags
     {"id": 24, "name": "Laptop Bag 1", "category": "Laptop Bags", "price": 750.00, "images": ["Laptop bag 1.png"], "description": "Padded leather work laptop bag.", "colors": [], "sizes": []},
@@ -57,7 +58,7 @@ PRODUCTS = [
 
     # 7. Home & Leisure
     {"id": 34, "name": "Wine Bag (Double Bottle)", "category": "Home & Leisure", "price": 550.00, "images": ["Wine Bag (Double Bottle).png"], "description": "Luxurious double bottle leather wine carrier.", "colors": [], "sizes": []},
-    {"id": 35, "name": "Wine Bag (Single Bottle)", "category": "Home & Leisure", "price": 356.00, "images": ["Wine Bag (Single bottle).png"], "description": "Single bottle leather wine holder.", "colors": [], "sizes": []},
+    {"id": 35, "name": "Wine Bag (Single Bottle)", "category": "Home & Leisure", "price": 365.00, "images": ["Wine Bag (Single bottle).png"], "description": "Single bottle leather wine holder.", "colors": [], "sizes": []},
     {"id": 36, "name": "Cooler Bag", "category": "Home & Leisure", "price": 750.00, "images": ["Cooler bag.png"], "description": "Insulated leather cooler bag for outdoor leisure.", "colors": [], "sizes": []},
     {"id": 37, "name": "Leather Apron", "category": "Home & Leisure", "price": 825.00, "images": ["Leather Apron.png"], "description": "Heavy-duty handcrafted leather apron.", "colors": ["Light", "Dark"], "sizes": []},
 
@@ -83,7 +84,7 @@ PRODUCTS = [
     },
 
     # 9. Leather Care
-    {"id": 39, "name": "Leather Care Cream with Microfiber Cloth", "category": "Leather Care", "price": 59.00, "images": ["Screenshot 2026-08-14 140829.png"], "description": "Specialized leather conditioning cream complete with microfiber application cloth.", "colors": [], "sizes": []}
+    {"id": 39, "name": "Leather Care Cream with Microfiber Cloth", "category": "Leather Care", "price": 59.00, "images": ["WhatsApp Image 2026-08-18 at 15.25.08.jpeg"], "description": "Specialized leather conditioning cream complete with microfiber application cloth.", "colors": [], "sizes": []}
 ]
 
 REVIEWS = [

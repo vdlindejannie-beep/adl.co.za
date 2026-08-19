@@ -1,98 +1,142 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shopping Cart - Leather by Annuschka</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #241c17; color: #f3efe6; font-family: 'Inter', sans-serif; }
-        .gold-accent { color: #d4af37; }
-        .gold-bg { background-color: #d4af37; }
-        .card-bg { background-color: #2e241e; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        h1, h2, h3, .font-serif { font-family: 'Playfair Display', serif; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between">
+<body class="bg-[#FAF9F6] text-[#2C221E] min-h-screen flex flex-col justify-between antialiased">
 
-    <!-- Navbar -->
-    <nav class="bg-[#1c1512] border-b border-[#3a2d26] py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50">
-        <a href="{{ url_for('index') }}" class="text-2xl font-serif gold-accent font-bold tracking-wider">Leather by Annuschka</a>
-        <div class="hidden md:flex space-x-8 text-sm uppercase tracking-widest">
-            <a href="{{ url_for('index') }}" class="hover:text-[#d4af37] transition">Home</a>
-            <a href="{{ url_for('shop') }}" class="hover:text-[#d4af37] transition">Shop Catalog</a>
-            <a href="{{ url_for('cart') }}" class="gold-accent font-bold transition"><i class="fa fa-shopping-cart"></i> Cart</a>
+    <!-- Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-[#2C221E]/95 backdrop-blur-md text-[#FAF9F6] border-b border-[#4A3B32]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <a href="{{ url_for('index') }}" class="flex items-center gap-3 group">
+                <span class="font-serif text-xl sm:text-2xl font-bold tracking-wider text-[#D4AF37] group-hover:text-[#F3E5AB] transition">Leather by Annuschka</span>
+            </a>
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium tracking-wide">
+                <a href="{{ url_for('index') }}" class="hover:text-[#D4AF37] transition">Home</a>
+                <a href="{{ url_for('shop') }}" class="hover:text-[#D4AF37] transition">Shop Catalog</a>
+                <a href="{{ url_for('cart') }}" class="text-[#D4AF37] border-b border-[#D4AF37] pb-1">Cart</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <a href="{{ url_for('shop') }}" class="bg-[#D4AF37] text-[#2C221E] px-5 py-2.5 rounded-full font-semibold text-sm hover:bg-[#C5A028] transition shadow-md flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-left text-xs"></i> Continue Shopping
+                </a>
+            </div>
         </div>
-        <a href="{{ url_for('shop') }}" class="gold-bg text-[#1c1512] px-4 py-2 rounded-full font-semibold text-sm">Continue Shopping</a>
-    </nav>
+    </header>
 
-    <!-- Cart Main -->
-    <main class="max-w-5xl mx-auto px-6 py-12 flex-grow w-full">
-        <h1 class="text-3xl font-serif font-bold mb-8">Your Shopping Cart</h1>
+    <!-- Cart Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-grow w-full">
+        <div class="mb-8">
+            <span class="text-xs uppercase tracking-widest text-[#8C6D4F] font-bold">Review Your Order</span>
+            <h1 class="text-4xl font-serif font-bold text-[#2C221E] mt-1">Your Shopping Cart</h1>
+        </div>
 
         {% if cart_items %}
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Cart Items List -->
             <div class="lg:col-span-2 space-y-4">
                 {% for item in cart_items %}
-                <div class="card-bg p-4 rounded-xl border border-[#3a2d26] flex items-center justify-between gap-4">
-                    <img src="{{ url_for('static', filename=item.image) }}" alt="{{ item.name }}" class="w-20 h-20 object-contain bg-[#1c1512] rounded-lg p-2">
-                    <div class="flex-grow">
-                        <h3 class="font-serif font-bold text-lg">{{ item.name }}</h3>
-                        <p class="text-xs text-gray-400">Color: {{ item.color }} | Size: {{ item.size }}</p>
-                        <p class="gold-accent font-bold mt-1">R {{ "%.2f"|format(item.price) }}</p>
+                <div class="bg-white p-5 rounded-2xl border border-[#E5D3C8] shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+                    <div class="flex items-center gap-4 w-full sm:w-auto">
+                        <div class="w-24 h-24 flex-shrink-0 bg-[#FAF9F6] border border-[#E5D3C8] rounded-xl p-2 flex items-center justify-center">
+                            <img src="{{ url_for('static', filename=item.image) }}" alt="{{ item.name }}" class="max-h-full max-w-full object-contain">
+                        </div>
+                        <div>
+                            <h3 class="font-serif font-bold text-lg text-[#2C221E]">{{ item.name }}</h3>
+                            <div class="flex flex-wrap gap-2 text-xs text-gray-500 mt-1">
+                                {% if item.color %}<span class="bg-[#FAF9F6] border border-[#E5D3C8] px-2 py-0.5 rounded">Color: {{ item.color }}</span>{% endif %}
+                                {% if item.size %}<span class="bg-[#FAF9F6] border border-[#E5D3C8] px-2 py-0.5 rounded">Size: {{ item.size }}</span>{% endif %}
+                            </div>
+                            <p class="text-[#8C6D4F] font-bold text-base mt-2">R {{ "%.2f"|format(item.price) }}</p>
+                        </div>
                     </div>
-                    <div class="flex items-center space-x-2">
-                        <form action="{{ url_for('update_cart', index=loop.index0) }}" method="POST">
-                            <input type="hidden" name="action" value="decrease">
-                            <button type="submit" class="bg-[#1c1512] px-2.5 py-1 rounded border border-[#3a2d26] hover:bg-[#3a2d26]">-</button>
-                        </form>
-                        <span class="px-2 font-semibold">{{ item.quantity }}</span>
-                        <form action="{{ url_for('update_cart', index=loop.index0) }}" method="POST">
-                            <input type="hidden" name="action" value="increase">
-                            <button type="submit" class="bg-[#1c1512] px-2.5 py-1 rounded border border-[#3a2d26] hover:bg-[#3a2d26]">+</button>
-                        </form>
+
+                    <!-- Quantity & Remove Actions -->
+                    <div class="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto border-t sm:border-t-0 border-[#E5D3C8] pt-4 sm:pt-0">
+                        <div class="flex items-center border border-[#E5D3C8] bg-[#FAF9F6] rounded-full p-1">
+                            <form action="{{ url_for('update_cart', index=loop.index0) }}" method="POST">
+                                <input type="hidden" name="action" value="decrease">
+                                <button type="submit" class="w-8 h-8 rounded-full bg-white text-[#2C221E] border border-[#E5D3C8] hover:bg-[#D4AF37] hover:border-[#D4AF37] transition flex items-center justify-center text-sm font-bold shadow-sm">-</button>
+                            </form>
+                            <span class="px-4 font-semibold text-sm text-[#2C221E]">{{ item.quantity }}</span>
+                            <form action="{{ url_for('update_cart', index=loop.index0) }}" method="POST">
+                                <input type="hidden" name="action" value="increase">
+                                <button type="submit" class="w-8 h-8 rounded-full bg-white text-[#2C221E] border border-[#E5D3C8] hover:bg-[#D4AF37] hover:border-[#D4AF37] transition flex items-center justify-center text-sm font-bold shadow-sm">+</button>
+                            </form>
+                        </div>
+
                         <form action="{{ url_for('update_cart', index=loop.index0) }}" method="POST">
                             <input type="hidden" name="action" value="remove">
-                            <button type="submit" class="text-red-400 hover:text-red-300 ml-3"><i class="fa fa-trash"></i></button>
+                            <button type="submit" class="text-gray-400 hover:text-red-600 transition p-2" title="Remove Item">
+                                <i class="fa-solid fa-trash-can text-lg"></i>
+                            </button>
                         </form>
                     </div>
                 </div>
                 {% endfor %}
             </div>
 
-            <!-- Summary Box -->
-            <div class="card-bg p-6 rounded-xl border border-[#3a2d26] h-fit">
-                <h3 class="font-serif font-bold text-xl mb-4 border-b border-[#3a2d26] pb-2">Order Summary</h3>
-                <div class="flex justify-between mb-2 text-gray-300">
-                    <span>Subtotal</span>
-                    <span>R {{ "%.2f"|format(total) }}</span>
+            <!-- Order Summary Box -->
+            <div class="bg-white p-6 rounded-2xl border border-[#E5D3C8] shadow-sm h-fit space-y-6">
+                <h3 class="font-serif font-bold text-2xl text-[#2C221E] border-b border-[#E5D3C8] pb-4">Order Summary</h3>
+                
+                <div class="space-y-3 text-sm">
+                    <div class="flex justify-between text-gray-600">
+                        <span>Subtotal</span>
+                        <span class="font-semibold text-[#2C221E]">R {{ "%.2f"|format(total) }}</span>
+                    </div>
+                    <div class="flex justify-between text-gray-600">
+                        <span>Shipping (Nationwide)</span>
+                        <span class="text-xs bg-[#FAF9F6] border border-[#E5D3C8] px-2 py-1 rounded text-[#8C6D4F] font-medium">Calculated at Checkout</span>
+                    </div>
                 </div>
-                <div class="flex justify-between mb-4 text-gray-300">
-                    <span>Shipping (Local)</span>
-                    <span>Calculated at Checkout</span>
+
+                <div class="border-t border-[#E5D3C8] pt-4 flex justify-between items-center">
+                    <span class="font-serif font-bold text-xl text-[#2C221E]">Total</span>
+                    <span class="font-bold text-2xl text-[#2C221E]">R {{ "%.2f"|format(total) }}</span>
                 </div>
-                <div class="flex justify-between font-bold text-lg mb-6 gold-accent border-t border-[#3a2d26] pt-4">
-                    <span>Total</span>
-                    <span>R {{ "%.2f"|format(total) }}</span>
-                </div>
-                <a href="{{ url_for('checkout') }}" class="block text-center gold-bg text-[#1c1512] py-3 rounded-lg font-bold hover:opacity-90 transition">
-                    Proceed to Checkout
+
+                <a href="{{ url_for('checkout') }}" class="block w-full text-center bg-[#2C221E] text-[#FAF9F6] py-3.5 rounded-full font-bold text-sm hover:bg-[#D4AF37] hover:text-[#2C221E] transition shadow-md flex items-center justify-center gap-2">
+                    Proceed to Checkout <i class="fa-solid fa-arrow-right text-xs"></i>
                 </a>
             </div>
         </div>
         {% else %}
-        <div class="text-center py-20 card-bg rounded-xl border border-[#3a2d26]">
-            <i class="fa fa-shopping-bag gold-accent text-5xl mb-4"></i>
-            <h2 class="text-2xl font-serif font-bold mb-2">Your cart is empty</h2>
-            <p class="text-gray-400 mb-6">Discover our handcrafted leather catalog and add your favorite pieces.</p>
-            <a href="{{ url_for('shop') }}" class="gold-bg text-[#1c1512] px-6 py-3 rounded-full font-bold">Start Shopping</a>
+        <!-- Empty Cart State -->
+        <div class="text-center py-20 bg-white rounded-2xl border border-[#E5D3C8] max-w-2xl mx-auto shadow-sm">
+            <div class="w-20 h-20 bg-[#FAF9F6] border border-[#E5D3C8] rounded-full flex items-center justify-center mx-auto mb-5 text-[#8C6D4F]">
+                <i class="fa-solid fa-bag-shopping text-3xl"></i>
+            </div>
+            <h2 class="text-2xl font-serif font-bold text-[#2C221E] mb-2">Your cart is currently empty</h2>
+            <p class="text-gray-500 text-sm max-w-md mx-auto mb-8 leading-relaxed">
+                Explore our catalog of handcrafted leather luggage, sling bags, and lifestyle accessories to find your next piece.
+            </p>
+            <a href="{{ url_for('shop') }}" class="bg-[#2C221E] text-[#FAF9F6] px-8 py-3.5 rounded-full font-bold text-sm hover:bg-[#D4AF37] hover:text-[#2C221E] transition shadow-md inline-flex items-center gap-2">
+                Start Shopping <i class="fa-solid fa-arrow-right text-xs"></i>
+            </a>
         </div>
         {% endif %}
     </main>
 
     <!-- Footer -->
-    <footer class="bg-[#18110e] py-8 text-center text-xs text-gray-400 border-t border-[#3a2d26]">
-        <p>&copy; 2026 Leather by Annuschka. All rights reserved. | Contact: lummisannuschka001@gmail.com | WhatsApp: +27 76 430 7990</p>
+    <footer class="bg-[#1F1815] text-gray-400 py-12 border-t border-[#332924] mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <p class="text-sm">&copy; 2026 Leather by Annuschka. All rights reserved.</p>
+            <div class="flex items-center gap-6 text-sm">
+                <a href="{{ url_for('index') }}" class="hover:text-[#D4AF37] transition">Home</a>
+                <a href="{{ url_for('shop') }}" class="hover:text-[#D4AF37] transition">Shop Catalog</a>
+                <a href="{{ url_for('index') }}#contact" class="hover:text-[#D4AF37] transition">Contact</a>
+            </div>
+        </div>
     </footer>
 
 </body>
