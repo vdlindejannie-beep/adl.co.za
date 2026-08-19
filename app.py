@@ -4,6 +4,12 @@ from flask import Flask, flash, redirect, render_template, request, session, url
 from flask_apscheduler import APScheduler
 import requests
 
+import os
+
+# Define global variables from environment
+BREVO_API_KEY = os.environ.get('BREVO_API_KEY')
+STUDIO_EMAIL = os.environ.get('STUDIO_EMAIL', 'info@leatherbyannuschka.co.za')  # Replace with actual default studio email
+
 app = Flask(__name__)
 app.secret_key = "leather_by_annuschka_secret_key"
 
@@ -56,7 +62,7 @@ PRODUCTS = [
     {"id": 24, "name": "Laptop Bag 1", "category": "Laptop Bags", "price": 750.00, "images": ["Laptop bag 1.png"], "description": "Padded leather work laptop bag.", "colors": [], "sizes": []},
     {"id": 25, "name": "Laptop Bag 2", "category": "Laptop Bags", "price": 600.00, "images": ["Laptop bag 2.png"], "description": "Sleek messenger-style laptop briefcase.", "colors": [], "sizes": []},
     {"id": 26, "name": "Laptop Bag 3", "category": "Laptop Bags", "price": 750.00, "images": ["Laptop bag 3.png"], "description": "Executive leather laptop bag with organizer pockets.", "colors": [], "sizes": []},
-    {"id": 27, "name": "Laptop Sleeve", "category": "Laptop Bags", "price": 575.00, "images": ["Laptop sleeve 1.png", "Laptop sleeve 2.png"], "description": "Minimalist protective leather laptop sleeve.", "colors": [], "sizes": []},
+    {"id": 27, "name": "Laptop Sleeve", "category": "Laptop Bags", "price": 575.00, "images": ["Laptop sleeve 2.png","Laptop sleeve 1.png" ], "description": "Minimalist protective leather laptop sleeve.", "colors": [], "sizes": []},
 
     # 6. Backpacks
     {"id": 28, "name": "Backpack 1", "category": "Backpacks", "price": 735.00, "images": ["Backpac 1.png"], "description": "Handcrafted leather backpack.", "colors": [], "sizes": []},
