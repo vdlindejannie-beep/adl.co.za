@@ -72,38 +72,42 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <a href="/shop#category-travel-bags" class="group relative rounded-2xl overflow-hidden shadow-lg bg-white block transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
-                <div class="h-80 w-full overflow-hidden">
-                    <img src="{{ url_for('static', filename='Collection1.jpeg') }}" alt="Travel & Luggage" class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
-                </div>
-                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
-                    <span class="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">Travel & Everyday</span>
-                    <h3 class="text-2xl font-serif font-bold mt-1">Luggage & Bags</h3>
-                    <p class="text-xs text-gray-300 mt-1 flex items-center gap-1">Shop Collection <i class="fa-solid fa-arrow-right text-[#D4AF37]"></i></p>
-                </div>
-            </a>
 
-            <a href="/shop#category-sling-bags" class="group relative rounded-2xl overflow-hidden shadow-lg bg-white block transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
-                <div class="h-80 w-full overflow-hidden">
-                    <img src="{{ url_for('static', filename='Collection2.jpeg') }}" alt="Sling Bags & Wallets" class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
-                </div>
-                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
-                    <span class="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">Accessories</span>
-                    <h3 class="text-2xl font-serif font-bold mt-1">Sling Bags & Wallets</h3>
-                    <p class="text-xs text-gray-300 mt-1 flex items-center gap-1">Shop Collection <i class="fa-solid fa-arrow-right text-[#D4AF37]"></i></p>
-                </div>
-            </a>
+<!-- 1. Luggage & Bags -->
+<a href="{{ url_for('shop', category='Travel Bags') }}" class="group relative rounded-2xl overflow-hidden shadow-lg bg-white block transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
+    <div class="h-80 w-full overflow-hidden">
+        <img src="{{ url_for('static', filename='Collection1.jpeg') }}" alt="Travel & Luggage" class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
+    </div>
+    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
+        <span class="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">Travel & Everyday</span>
+        <h3 class="text-2xl font-serif font-bold mt-1">Luggage & Bags</h3>
+        <p class="text-xs text-gray-300 mt-1 flex items-center gap-1">Shop Collection <i class="fa-solid fa-arrow-right text-[#D4AF37]"></i></p>
+    </div>
+</a>
 
-            <a href="/shop#category-home-leisure" class="group relative rounded-2xl overflow-hidden shadow-lg bg-white block transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
-                <div class="h-80 w-full overflow-hidden">
-                    <img src="{{ url_for('static', filename='Collection3.jpeg') }}" alt="Home & Leather Care" class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
-                </div>
-                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
-                    <span class="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">Lifestyle & Care</span>
-                    <h3 class="text-2xl font-serif font-bold mt-1">Home, Aprons & Care</h3>
-                    <p class="text-xs text-gray-300 mt-1 flex items-center gap-1">Shop Collection <i class="fa-solid fa-arrow-right text-[#D4AF37]"></i></p>
-                </div>
-            </a>
+<!-- 2. Sling Bags & Wallets -->
+<a href="{{ url_for('shop', category='Sling Bags') }}" class="group relative rounded-2xl overflow-hidden shadow-lg bg-white block transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
+    <div class="h-80 w-full overflow-hidden">
+        <img src="{{ url_for('static', filename='Collection2.jpeg') }}" alt="Sling Bags & Wallets" class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
+    </div>
+    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
+        <span class="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">Accessories</span>
+        <h3 class="text-2xl font-serif font-bold mt-1">Sling Bags & Wallets</h3>
+        <p class="text-xs text-gray-300 mt-1 flex items-center gap-1">Shop Collection <i class="fa-solid fa-arrow-right text-[#D4AF37]"></i></p>
+    </div>
+</a>
+
+<!-- 3. Home, Aprons & Care -->
+<a href="{{ url_for('shop', category='Home & Leisure') }}" class="group relative rounded-2xl overflow-hidden shadow-lg bg-white block transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
+    <div class="h-80 w-full overflow-hidden">
+        <img src="{{ url_for('static', filename='Collection3.jpeg') }}" alt="Home & Leather Care" class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
+    </div>
+    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
+        <span class="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">Lifestyle & Care</span>
+        <h3 class="text-2xl font-serif font-bold mt-1">Home, Aprons & Care</h3>
+        <p class="text-xs text-gray-300 mt-1 flex items-center gap-1">Shop Collection <i class="fa-solid fa-arrow-right text-[#D4AF37]"></i></p>
+    </div>
+</a>
         </div>
     </section>
 
