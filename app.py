@@ -6,12 +6,12 @@ import requests
 
 import os
 
-# Define global variables from environment
-BREVO_API_KEY = os.environ.get('BREVO_API_KEY')
-STUDIO_EMAIL = os.environ.get('STUDIO_EMAIL', 'info@leatherbyannuschka.co.za')  # Replace with actual default studio email
+import os
 
-app = Flask(__name__)
-app.secret_key = "leather_by_annuschka_secret_key"
+# Map Render Environment Variables to Python Globals
+BREVO_API_KEY = os.environ.get('SENDINBLUE_API_KEY')
+STUDIO_EMAIL = os.environ.get('STUDIO_EMAIL')
+SECRET_KEY = os.environ.get('FLASK_SECRET_KEY', 'default-fallback-key')
 
 # --- Brevo HTTPS Email API Configuration ---
 import os
