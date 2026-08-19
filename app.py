@@ -1,23 +1,21 @@
-import os
 from datetime import datetime, timedelta
+import os
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 from flask_apscheduler import APScheduler
 import requests
 
-import os
+# 1. Initialize Flask Application (MUST be defined before decorators or scheduler)
+app = Flask(__name__)
 
-import os
-
-# Map Render Environment Variables to Python Globals
+# 2. App Configuration & Environment Variables
+app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY', 'default-fallback-key')
 BREVO_API_KEY = os.environ.get('SENDINBLUE_API_KEY')
 STUDIO_EMAIL = os.environ.get('STUDIO_EMAIL')
-SECRET_KEY = os.environ.get('FLASK_SECRET_KEY', 'default-fallback-key')
 
-# --- Brevo HTTPS Email API Configuration ---
-import os
-SENDINBLUE_API_KEY = os.environ.get('SENDINBLUE_API_KEY')
-
+# 3. Background Scheduler Setup
 scheduler = APScheduler()
+scheduler.init_app(app)
+scheduler.start()
 
 # --- PayFast Merchant Credentials ---
 PAYFAST_MERCHANT_ID = "36712149"
@@ -425,8 +423,6 @@ def mark_shipped(order_id):
             
     return redirect(url_for('dashboard'))
 
-# --- Start App & Scheduler ---
+# --- Start Local Server ---
 if __name__ == '__main__':
-    scheduler.init_app(app)
-    scheduler.start()
     app.run(debug=True)
