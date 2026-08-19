@@ -28,7 +28,7 @@
                 </div>
                 <div>
                     <h1 class="font-serif text-lg sm:text-xl font-bold tracking-wide text-[#FAF9F6] leading-tight">Studio Dashboard</h1>
-                    <p class="text-xs text-[#D4AF37]/80">Order Inquiries & Inventory</p>
+                    <p class="text-xs text-[#D4AF37]/80">Order Fulfillment & Analytics</p>
                 </div>
             </div>
             <nav class="hidden md:flex items-center gap-8 text-sm font-medium tracking-wide">
@@ -47,6 +47,20 @@
     <!-- Main Content Area -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-grow w-full space-y-10">
         
+        <!-- Flash Messages Alert Box -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="space-y-3">
+                    {% for category, message in messages %}
+                        <div class="p-4 rounded-xl text-sm font-medium flex items-center gap-3 shadow-xs {% if category == 'success' %}bg-emerald-50 text-emerald-800 border border-emerald-200{% elif category == 'warning' %}bg-amber-50 text-amber-800 border border-amber-200{% else %}bg-blue-50 text-blue-800 border border-blue-200{% endif %}">
+                            <i class="fa-solid {% if category == 'success' %}fa-circle-check text-emerald-600{% elif category == 'warning' %}fa-triangle-exclamation text-amber-600{% else %}fa-circle-info text-blue-600{% endif %} text-base"></i>
+                            <span>{{ message }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
         <!-- Dashboard Title Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
@@ -55,57 +69,60 @@
             </div>
         </div>
 
-        <!-- Metric Cards -->
+        <!-- Dynamic Metric Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <!-- Card 1 -->
+            <!-- Card 1: Total Orders -->
             <div class="bg-white rounded-2xl p-6 border border-[#E5D3C8] shadow-sm hover:shadow-md transition">
                 <div class="flex justify-between items-start">
-                    <p class="text-xs font-semibold text-[#8C6D4F] uppercase tracking-wider">Total Inquiries</p>
+                    <p class="text-xs font-semibold text-[#8C6D4F] uppercase tracking-wider">Total Orders</p>
                     <i class="fa-solid fa-inbox text-[#8C6D4F]/50 text-lg"></i>
                 </div>
-                <h3 class="text-3xl font-serif font-bold text-[#2C221E] mt-3">14</h3>
+                <h3 class="text-3xl font-serif font-bold text-[#2C221E] mt-3">{{ orders|length }}</h3>
                 <p class="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                    <i class="fa-solid fa-arrow-trend-up text-emerald-600"></i> +3 received this week
+                    <i class="fa-solid fa-arrow-trend-up text-emerald-600"></i> +{{ weekly_orders|length }} placed this week
                 </p>
             </div>
 
-            <!-- Card 2 -->
+            <!-- Card 2: Active Products -->
             <div class="bg-white rounded-2xl p-6 border border-[#E5D3C8] shadow-sm hover:shadow-md transition">
                 <div class="flex justify-between items-start">
                     <p class="text-xs font-semibold text-[#8C6D4F] uppercase tracking-wider">Active Products</p>
                     <i class="fa-solid fa-bag-shopping text-[#8C6D4F]/50 text-lg"></i>
                 </div>
-                <h3 class="text-3xl font-serif font-bold text-[#2C221E] mt-3">14 Items</h3>
-                <p class="text-xs text-gray-500 mt-1">Across 5 collections</p>
+                <h3 class="text-3xl font-serif font-bold text-[#2C221E] mt-3">{{ active_products }} Items</h3>
+                <p class="text-xs text-gray-500 mt-1">Available in online shop</p>
             </div>
 
-            <!-- Card 3 -->
+            <!-- Card 3: Total Gross Sales -->
             <div class="bg-white rounded-2xl p-6 border border-[#E5D3C8] shadow-sm hover:shadow-md transition">
                 <div class="flex justify-between items-start">
-                    <p class="text-xs font-semibold text-[#8C6D4F] uppercase tracking-wider">Potential Revenue</p>
+                    <p class="text-xs font-semibold text-[#8C6D4F] uppercase tracking-wider">Gross Sales</p>
                     <i class="fa-solid fa-coins text-[#8C6D4F]/50 text-lg"></i>
                 </div>
-                <h3 class="text-3xl font-serif font-bold text-[#2C221E] mt-3">R 8,450.00</h3>
-                <p class="text-xs text-gray-500 mt-1">From active cart inquiries</p>
+                <h3 class="text-3xl font-serif font-bold text-[#2C221E] mt-3">R {{ "%.2f"|format(total_sales) }}</h3>
+                <p class="text-xs text-gray-500 mt-1">Excluding transport fees</p>
             </div>
 
-            <!-- Card 4: Jan's Fee -->
+            <!-- Card 4: Jan's Platform Fee -->
             <div class="bg-white rounded-2xl p-6 border border-[#E5D3C8] shadow-sm hover:shadow-md transition">
                 <div class="flex justify-between items-start">
-                    <p class="text-xs font-semibold text-[#8C6D4F] uppercase tracking-wider">Jan's Fee</p>
+                    <p class="text-xs font-semibold text-[#8C6D4F] uppercase tracking-wider">Jan's Fee (10%)</p>
                     <i class="fa-solid fa-percent text-[#D4AF37] text-lg"></i>
                 </div>
-                <h3 class="text-3xl font-serif font-bold text-[#D4AF37] mt-3">10% Commission</h3>
-                <p class="text-xs text-gray-500 mt-1">Automatic cut calculation</p>
+                <h3 class="text-3xl font-serif font-bold text-[#D4AF37] mt-3">R {{ "%.2f"|format(investor_cut) }}</h3>
+                <p class="text-xs text-gray-500 mt-1">10% platform fee calculation</p>
             </div>
         </div>
 
-        <!-- Recent Customer Inquiries Section -->
+        <!-- Recent Customer Orders Section -->
         <div class="bg-white rounded-2xl border border-[#E5D3C8] shadow-sm overflow-hidden">
             <div class="p-6 border-b border-[#E5D3C8] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-[#FAF9F6]">
                 <div>
-                    <h3 class="font-serif font-bold text-xl text-[#2C221E]">Recent Customer Inquiries</h3>
-                    <p class="text-xs text-gray-500 mt-0.5">Orders submitted via the catalog cart.</p>
+                    <h3 class="font-serif font-bold text-xl text-[#2C221E]">Customer Orders</h3>
+                    <p class="text-xs text-gray-500 mt-0.5">
+                        Pending dispatch: <strong class="text-[#2C221E]">{{ pending_orders|length }}</strong> &bull; 
+                        Orders this week: <strong class="text-[#2C221E]">{{ weekly_orders|length }}</strong>
+                    </p>
                 </div>
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-[#E5D3C8] text-[#8C6D4F] text-xs rounded-full font-medium shadow-xs">
                     <i class="fa-solid fa-rotate text-xs"></i> Auto-Sync Enabled
@@ -116,35 +133,62 @@
                 <table class="w-full text-left border-collapse text-sm">
                     <thead>
                         <tr class="bg-[#FAF9F6] text-[#8C6D4F] text-xs uppercase tracking-wider border-b border-[#E5D3C8]">
-                            <th class="px-6 py-4 font-semibold">Inquiry ID</th>
+                            <th class="px-6 py-4 font-semibold">Order ID</th>
+                            <th class="px-6 py-4 font-semibold">Customer</th>
                             <th class="px-6 py-4 font-semibold">Items Requested</th>
-                            <th class="px-6 py-4 font-semibold">Subtotal</th>
-                            <th class="px-6 py-4 font-semibold">Jan's Fee (10%)</th>
-                            <th class="px-6 py-4 font-semibold">Total (ZAR)</th>
+                            <th class="px-6 py-4 font-semibold">Total (Excl. Shipping)</th>
+                            <th class="px-6 py-4 font-semibold">Date</th>
+                            <th class="px-6 py-4 font-semibold">Status</th>
                             <th class="px-6 py-4 font-semibold text-right">Action</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-[#E5D3C8]">
+                        {% for order in orders %}
                         <tr class="hover:bg-[#FAF9F6]/80 transition">
-                            <td class="px-6 py-4 font-bold text-[#2C221E]">#ORD-2026-01</td>
-                            <td class="px-6 py-4 text-[#2C221E]">Large Travel Luggage Bag (1), Pencil Bag (1)</td>
-                            <td class="px-6 py-4 text-[#2C221E]">R 1,900.00</td>
-                            <td class="px-6 py-4 text-[#8C6D4F] font-bold">R 190.00</td>
-                            <td class="px-6 py-4 font-bold text-[#2C221E]">R 1,900.00</td>
+                            <td class="px-6 py-4 font-bold text-[#2C221E]">{{ order.id }}</td>
+                            <td class="px-6 py-4 text-[#2C221E]">
+                                <div class="font-semibold">{{ order.customer_name if order.customer_name else 'Guest Customer' }}</div>
+                                <div class="text-xs text-gray-500">{{ order.customer_email if order.customer_email else 'No email' }}</div>
+                            </td>
+                            <td class="px-6 py-4 text-[#2C221E] max-w-xs truncate" title="{{ order.items }}">{{ order.items }}</td>
+                            <td class="px-6 py-4 font-bold text-[#2C221E]">R {{ "%.2f"|format(order.sales_excl_transport) }}</td>
+                            <td class="px-6 py-4 text-xs text-gray-500">
+                                {% if order.timestamp %}
+                                    {{ order.timestamp.strftime('%Y-%m-%d %H:%M') }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4">
+                                {% if order.status == 'Shipped' %}
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-semibold rounded-full border border-emerald-200">
+                                        <i class="fa-solid fa-circle-check text-xs"></i> Shipped
+                                    </span>
+                                {% else %}
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-800 text-xs font-semibold rounded-full border border-amber-200">
+                                        <i class="fa-solid fa-clock text-xs"></i> Pending
+                                    </span>
+                                {% endif %}
+                            </td>
                             <td class="px-6 py-4 text-right">
-                                <button onclick="alert('Viewing order details')" class="px-4 py-2 bg-[#2C221E] text-[#FAF9F6] text-xs font-bold rounded-full hover:bg-[#D4AF37] hover:text-[#2C221E] transition shadow-xs">Review</button>
+                                {% if order.status != 'Shipped' %}
+                                    <form action="{{ url_for('mark_shipped', order_id=order.id) }}" method="POST" class="inline">
+                                        <button type="submit" onclick="return confirm('Mark order {{ order.id }} as shipped and dispatch tracking email to customer?');" class="px-3.5 py-1.5 bg-[#2C221E] text-[#FAF9F6] text-xs font-bold rounded-full hover:bg-[#D4AF37] hover:text-[#2C221E] transition shadow-xs flex items-center gap-1.5 ml-auto">
+                                            <i class="fa-solid fa-truck-fast"></i> Mark Shipped
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <span class="text-xs text-gray-400 italic">Dispatched</span>
+                                {% endif %}
                             </td>
                         </tr>
-                        <tr class="hover:bg-[#FAF9F6]/80 transition">
-                            <td class="px-6 py-4 font-bold text-[#2C221E]">#ORD-2026-02</td>
-                            <td class="px-6 py-4 text-[#2C221E]">Executive Laptop Bag (1), Leather Care Kit (1)</td>
-                            <td class="px-6 py-4 text-[#2C221E]">R 809.00</td>
-                            <td class="px-6 py-4 text-[#8C6D4F] font-bold">R 80.90</td>
-                            <td class="px-6 py-4 font-bold text-[#2C221E]">R 809.00</td>
-                            <td class="px-6 py-4 text-right">
-                                <button onclick="alert('Viewing order details')" class="px-4 py-2 bg-[#2C221E] text-[#FAF9F6] text-xs font-bold rounded-full hover:bg-[#D4AF37] hover:text-[#2C221E] transition shadow-xs">Review</button>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="px-6 py-8 text-center text-gray-500 font-medium">
+                                No orders have been placed yet.
                             </td>
                         </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>

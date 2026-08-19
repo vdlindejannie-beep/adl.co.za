@@ -1,0 +1,261 @@
+[1mdiff --git a/app.py b/app.py[m
+[1mindex 3e191b6..3390d34 100644[m
+[1m--- a/app.py[m
+[1m+++ b/app.py[m
+[36m@@ -1,14 +1,24 @@[m
+ import os[m
+[32m+[m[32mfrom datetime import datetime, timedelta[m
+ from flask import Flask, flash, redirect, render_template, request, session, url_for[m
+[32m+[m[32mfrom flask_apscheduler import APScheduler[m
+[32m+[m[32mimport requests[m
+ [m
+ app = Flask(__name__)[m
+ app.secret_key = "leather_by_annuschka_secret_key"[m
+ [m
+[31m-# PayFast Merchant Credentials[m
+[32m+[m[32m# --- Brevo HTTPS Email API Configuration ---[m
+[32m+[m[32mimport os[m
+[32m+[m[32mSENDINBLUE_API_KEY = os.environ.get('SENDINBLUE_API_KEY')[m
+[32m+[m
+[32m+[m[32mscheduler = APScheduler()[m
+[32m+[m
+[32m+[m[32m# --- PayFast Merchant Credentials ---[m
+ PAYFAST_MERCHANT_ID = "36712149"[m
+ PAYFAST_MERCHANT_KEY = "ur6ctzlgqfwbo"[m
+ PAYFAST_URL = "https://www.payfast.co.za/eng/process"[m
+ [m
+[32m+[m[32m# --- Data Store ---[m
+ PRODUCTS = [[m
+     # 1. Travel Bags[m
+     {"id": 1, "name": "Large Luggage / Travel Bag", "category": "Travel Bags", "price": 1725.00, "images": ["Large_Luggage_travel bag.jpeg"], "description": "Spacious full-grain leather travel bag built for extended travel.", "colors": [], "sizes": []},[m
+[36m@@ -21,7 +31,7 @@[m [mPRODUCTS = [[m
+     {"id": 6, "name": "Toiletries / Makeup Bag", "category": "Everyday Essentials", "price": 450.00, "images": ["Toiletries_makup bag.jpeg"], "description": "Handcrafted leather toilet bag. Please specify preferred brown shade.", "colors": ["Shade 1", "Shade 2", "Shade 3", "Shade 4"], "sizes": []},[m
+     {"id": 7, "name": "Coin Purse", "category": "Everyday Essentials", "price": 55.00, "images": ["Coin purse medium 1.jpeg", "Coin purse medium.jpeg", "Coin purse Large.jpeg", "Coin purse Large 1.jpeg"], "description": "Genuine leather coin purse available in multiple brown shades.", "colors": ["Light Brown", "Medium Brown", "Dark Brown"], "sizes": ["Medium (R55)", "Large (R65)"], "size_prices": {"Medium (R55)": 55.00, "Large (R65)": 65.00}},[m
+     {"id": 8, "name": "Pencil Bag", "category": "Everyday Essentials", "price": 175.00, "images": ["Pencil bag.jpeg", "Pencil bag 1.jpeg", "Pencil bag 2.jpeg"], "description": "Durable zipped leather pencil case.", "colors": ["Light", "Medium", "Dark"], "sizes": []},[m
+[31m-    {"id": 8, "name": "Cosmetic / Makeup Bag", "category": "Everyday Essentials", "price": 180.00, "images": ["Screenshot 2026-08-19 093234.png"], "description": "Elegant cosmetic bag.", "colors": [], "sizes": []},[m
+[32m+[m[32m    {"id": 40, "name": "Cosmetic / Makeup Bag", "category": "Everyday Essentials", "price": 180.00, "images": ["Screenshot 2026-08-19 093234.png"], "description": "Elegant cosmetic bag.", "colors": [], "sizes": []},[m
+ [m
+     # 3. Sling Bags[m
+     {"id": 9, "name": "Sling Bag (Small)", "category": "Sling Bags", "price": 250.00, "images": ["Sling bag (smal).jpeg"], "description": "Lightweight petite leather sling bag.", "colors": [], "sizes": []},[m
+[36m@@ -95,6 +105,84 @@[m [mREVIEWS = [[m
+ ORDERS = [][m
+ CATEGORIES = ["All", "Travel Bags", "Everyday Essentials", "Sling Bags", "Handbags", "Laptop Bags", "Backpacks", "Home & Leisure", "Belts", "Leather Care"][m
+ [m
+[32m+[m
+[32m+[m[32m# --- HTTPS Email Sender via Brevo REST API ---[m
+[32m+[m[32mdef send_email_https(subject, recipient_email, body_text):[m
+[32m+[m[32m    """Sends email over standard HTTPS Port 443 to bypass corporate firewall/socket blocks."""[m
+[32m+[m[32m    url = "https://api.brevo.com/v3/smtp/email"[m
+[32m+[m[32m    headers = {[m
+[32m+[m[32m        "accept": "application/json",[m
+[32m+[m[32m        "api-key": BREVO_API_KEY,[m
+[32m+[m[32m        "content-type": "application/json"[m
+[32m+[m[32m    }[m
+[32m+[m[32m    payload = {[m
+[32m+[m[32m        "sender": {"name": "Leather by Annuschka", "email": STUDIO_EMAIL},[m
+[32m+[m[32m        "to": [{"email": recipient_email}],[m
+[32m+[m[32m        "subject": subject,[m
+[32m+[m[32m        "textContent": body_text[m
+[32m+[m[32m    }[m
+[32m+[m[41m    [m
+[32m+[m[32m    response = requests.post(url, json=payload, headers=headers)[m
+[32m+[m[32m    if response.status_code not in [200, 201, 202]:[m
+[32m+[m[32m        raise Exception(f"Brevo API Error ({response.status_code}): {response.text}")[m
+[32m+[m[32m    return True[m
+[32m+[m
+[32m+[m
+[32m+[m[32m# --- Background Scheduler Job ---[m
+[32m+[m[32mdef generate_summary_email(period_name):[m
+[32m+[m[32m    with app.app_context():[m
+[32m+[m[32m        now = datetime.now()[m
+[32m+[m
+[32m+[m[32m        if period_name == "Weekly":[m
+[32m+[m[32m            cutoff_date = now - timedelta(days=7)[m
+[32m+[m[32m            recent_orders = [o for o in ORDERS if o.get('timestamp', now) >= cutoff_date][m
+[32m+[m[32m        else:[m
+[32m+[m[32m            first_of_this_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)[m
+[32m+[m[32m            last_day_of_prev_month = first_of_this_month - timedelta(days=1)[m
+[32m+[m[41m            [m
+[32m+[m[32m            target_month = last_day_of_prev_month.month[m
+[32m+[m[32m            target_year = last_day_of_prev_month.year[m
+[32m+[m
+[32m+[m[32m            recent_orders = [[m
+[32m+[m[32m                o for o in ORDERS[m[41m [m
+[32m+[m[32m                if o.get('timestamp', now).month == target_month and o.get('timestamp', now).year == target_year[m
+[32m+[m[32m            ][m
+[32m+[m[41m        [m
+[32m+[m[32m        total_orders = len(recent_orders)[m
+[32m+[m[32m        gross_revenue = sum(o['sales_excl_transport'] for o in recent_orders)[m
+[32m+[m[32m        jan_commission = gross_revenue * 0.10[m
+[32m+[m[32m        net_studio_payout = gross_revenue - jan_commission[m
+[32m+[m
+[32m+[m[32m        subject = f"📊 Studio Performance Report ({period_name})"[m
+[32m+[m[32m        body = ([m
+[32m+[m[32m            f"Hi Annuschka,\n\nHere is your {period_name.lower()} studio summary:\n\n"[m
+[32m+[m[32m            f"• Total Orders: {total_orders}\n"[m
+[32m+[m[32m            f"• Gross Revenue (Excl. Shipping): R {gross_revenue:,.2f}\n"[m
+[32m+[m[32m            f"• Jan's Platform Fee (10%): R {jan_commission:,.2f}\n"[m
+[32m+[m[32m            f"• Net Studio Earnings: R {net_studio_payout:,.2f}\n\n"[m
+[32m+[m[32m            f"Check the studio dashboard for itemized details."[m
+[32m+[m[32m        )[m
+[32m+[m
+[32m+[m[32m        send_email_https(subject, STUDIO_EMAIL, body)[m
+[32m+[m
+[32m+[m
+[32m+[m[32m# Scheduled Jobs (Friday at 08:00 AM & 1st of every month at 08:00 AM)[m
+[32m+[m[32m@scheduler.task('cron', id='weekly_report', day_of_week='fri', hour=8, minute=0)[m
+[32m+[m[32mdef weekly_job():[m
+[32m+[m[32m    try:[m
+[32m+[m[32m        generate_summary_email("Weekly")[m
+[32m+[m[32m    except Exception as e:[m
+[32m+[m[32m        print(f"Weekly scheduled email error: {e}")[m
+[32m+[m
+[32m+[m[32m@scheduler.task('cron', id='monthly_report', day=1, hour=8, minute=0)[m
+[32m+[m[32mdef monthly_job():[m
+[32m+[m[32m    try:[m
+[32m+[m[32m        generate_summary_email("Monthly")[m
+[32m+[m[32m    except Exception as e:[m
+[32m+[m[32m        print(f"Monthly scheduled email error: {e}")[m
+[32m+[m
+[32m+[m
+[32m+[m[32m# --- Flask Routes ---[m
+ @app.route('/')[m
+ def index():[m
+     return render_template('index.html', reviews=REVIEWS)[m
+[36m@@ -198,6 +286,9 @@[m [mdef checkout():[m
+     if request.method == 'POST':[m
+         order_id = f"ORD-2026-{len(ORDERS) + 1:02d}"[m
+         item_summary = ", ".join([f"{item['name']} ({item['quantity']})" for item in cart_items])[m
+[32m+[m[32m        first_name = request.form.get('first_name', '')[m
+[32m+[m[32m        last_name = request.form.get('last_name', '')[m
+[32m+[m[32m        customer_email = request.form.get('email', '')[m
+         [m
+         session['pending_order'] = {[m
+             "id": order_id,[m
+[36m@@ -205,7 +296,11 @@[m [mdef checkout():[m
+             "subtotal": subtotal,[m
+             "transport": shipping_cost,[m
+             "sales_excl_transport": subtotal,[m
+[31m-            "investor_cut": round(subtotal * 0.10, 2)[m
+[32m+[m[32m            "investor_cut": round(subtotal * 0.10, 2),[m
+[32m+[m[32m            "timestamp": datetime.now(),[m
+[32m+[m[32m            "customer_name": f"{first_name} {last_name}".strip(),[m
+[32m+[m[32m            "customer_email": customer_email,[m
+[32m+[m[32m            "status": "Pending"[m
+         }[m
+ [m
+         return render_template([m
+[36m@@ -219,9 +314,9 @@[m [mdef checkout():[m
+             m_payment_id=order_id,[m
+             amount=f"{total:.2f}",[m
+             item_name=f"Leather by Annuschka Order #{order_id}",[m
+[31m-            name_first=request.form.get('first_name', ''),[m
+[31m-            name_last=request.form.get('last_name', ''),[m
+[31m-            email_address=request.form.get('email', ''),[m
+[32m+[m[32m            name_first=first_name,[m
+[32m+[m[32m            name_last=last_name,[m
+[32m+[m[32m            email_address=customer_email,[m
+             cell_number=request.form.get('phone', '')[m
+         )[m
+ [m
+[36m@@ -236,15 +331,96 @@[m [mdef payment_success():[m
+         return render_template('checkout_success.html', order_id=pending_order['id'], subtotal=pending_order['subtotal'])[m
+     return redirect(url_for('shop'))[m
+ [m
+[31m-@app.route('/payfast_itn', methods=['POST'])[m
+[32m+[m[32m@app.route('/payfast/itn', methods=['POST'])[m
+ def payfast_itn():[m
+[31m-    return "", 200[m
+[32m+[m[32m    data = request.form.to_dict()[m
+[32m+[m[41m    [m
+[32m+[m[32m    if data.get('payment_status') == 'COMPLETE':[m
+[32m+[m[32m        order_id = data.get('m_payment_id', 'N/A')[m
+[32m+[m[32m        item_name = data.get('item_name', 'Leather Item')[m
+[32m+[m[32m        amount = data.get('amount_gross', '0.00')[m
+[32m+[m[32m        customer_email = data.get('email_address')[m
+[32m+[m
+[32m+[m[32m        body_owner = ([m
+[32m+[m[32m            f"Hi Annuschka,\n\nA new order has been paid successfully!\n\n"[m
+[32m+[m[32m            f"Order ID: {order_id}\n"[m
+[32m+[m[32m            f"Items: {item_name}\n"[m
+[32m+[m[32m            f"Total Paid: R {amount}\n"[m
+[32m+[m[32m            f"Customer Email: {customer_email}\n\n"[m
+[32m+[m[32m            f"Log into your Studio Dashboard to process shipping."[m
+[32m+[m[32m        )[m
+[32m+[m
+[32m+[m[32m        body_customer = ([m
+[32m+[m[32m            f"Thank you for supporting local craftsmanship!\n\n"[m
+[32m+[m[32m            f"We've received your payment of R {amount} for order #{order_id}.\n"[m
+[32m+[m[32m            f"Your item is being prepared with care in our studio."[m
+[32m+[m[32m        )[m
+[32m+[m
+[32m+[m[32m        try:[m
+[32m+[m[32m            send_email_https(f"🎉 New Paid Order #{order_id} - R{amount}", STUDIO_EMAIL, body_owner)[m
+[32m+[m[32m            if customer_email:[m
+[32m+[m[32m                send_email_https("Order Confirmation - Leather by Annuschka", customer_email, body_customer)[m
+[32m+[m[32m        except Exception as e:[m
+[32m+[m[32m            print(f"ITN Email sending error: {e}")[m
+[32m+[m
+[32m+[m[32m        return "ITN Processed", 200[m
+[32m+[m
+[32m+[m[32m    return "Invalid Status", 400[m
+ [m
+ @app.route('/dashboard')[m
+ def dashboard():[m
+[32m+[m[32m    now = datetime.now()[m
+[32m+[m[32m    seven_days_ago = now - timedelta(days=7)[m
+[32m+[m[41m    [m
+[32m+[m[32m    # Categorize orders for the dashboard view[m
+[32m+[m[32m    weekly_orders = [o for o in ORDERS if o.get('timestamp', now) >= seven_days_ago][m
+[32m+[m[32m    pending_orders = [o for o in ORDERS if o.get('status') == 'Pending'][m
+[32m+[m[32m    shipped_orders = [o for o in ORDERS if o.get('status') == 'Shipped'][m
+[32m+[m[41m    [m
+     total_sales_excl_transport = sum(order['sales_excl_transport'] for order in ORDERS)[m
+     investor_total_cut = total_sales_excl_transport * 0.10[m
+[31m-    return render_template('dashboard.html', orders=ORDERS, total_sales=total_sales_excl_transport, investor_cut=investor_total_cut, active_products=len(PRODUCTS))[m
+ [m
+[32m+[m[32m    return render_template([m
+[32m+[m[32m        'dashboard.html',[m[41m [m
+[32m+[m[32m        orders=ORDERS,[m
+[32m+[m[32m        weekly_orders=weekly_orders,[m
+[32m+[m[32m        pending_orders=pending_orders,[m
+[32m+[m[32m        shipped_orders=shipped_orders,[m
+[32m+[m[32m        total_sales=total_sales_excl_transport,[m[41m [m
+[32m+[m[32m        investor_cut=investor_total_cut,[m[41m [m
+[32m+[m[32m        active_products=len(PRODUCTS)[m
+[32m+[m[32m    )[m
+[32m+[m
+[32m+[m[32m# --- Route: Mark Order as Shipped & Email Customer ---[m
+[32m+[m[32m@app.route('/mark_shipped/<order_id>', methods=['POST'])[m
+[32m+[m[32mdef mark_shipped(order_id):[m
+[32m+[m[32m    order = next((o for o in ORDERS if o['id'] == order_id), None)[m
+[32m+[m[32m    if order:[m
+[32m+[m[32m        order['status'] = 'Shipped'[m
+[32m+[m[32m        order['shipped_at'] = datetime.now()[m
+[32m+[m[41m        [m
+[32m+[m[32m        customer_email = order.get('customer_email')[m
+[32m+[m[32m        if customer_email:[m
+[32m+[m[32m            subject = f"📦 Your Order #{order_id} Has Shipped! - Leather by Annuschka"[m
+[32m+[m[32m            body = ([m
+[32m+[m[32m                f"Hi {order.get('customer_name', 'Customer')},\n\n"[m
+[32m+[m[32m                f"Great news! Your handcrafted order #{order_id} ({order.get('items')}) has been packaged and shipped from our studio.\n\n"[m
+[32m+[m[32m                f"Thank you for supporting local craftsmanship!\n\n"[m
+[32m+[m[32m                f"Warm regards,\n"[m
+[32m+[m[32m                f"Leather by Annuschka Studio"[m
+[32m+[m[32m            )[m
+[32m+[m[32m            try:[m
+[32m+[m[32m                send_email_https(subject, customer_email, body)[m
+[32m+[m[32m                flash(f"Order #{order_id} marked as shipped and confirmation email sent to {customer_email}!", "success")[m
+[32m+[m[32m            except Exception as e:[m
+[32m+[m[32m                flash(f"Order status updated to Shipped, but email failed: {e}", "warning")[m
+[32m+[m[32m        else:[m
+[32m+[m[32m            flash(f"Order #{order_id} marked as shipped (no customer email on file).", "info")[m
+[32m+[m[41m            [m
+[32m+[m[32m    return redirect(url_for('dashboard'))[m
+[32m+[m
+[32m+[m[32m# --- Start App & Scheduler ---[m
+ if __name__ == '__main__':[m
+[32m+[m[32m    scheduler.init_app(app)[m
+[32m+[m[32m    scheduler.start()[m
+     app.run(debug=True)[m
+\ No newline at end of file[m
