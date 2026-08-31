@@ -103,7 +103,6 @@ def get_db_orders():
         try:
             response = supabase.table("orders").select("*").order("timestamp", desc=True).execute()
             if response.data:
-                # Format timestamps back to datetime objects where applicable
                 for order in response.data:
                     if order.get('timestamp'):
                         try:
@@ -306,7 +305,6 @@ def payfast_itn():
     if data.get('payment_status') == 'COMPLETE':
         order_id = data.get('m_payment_id')
         if order_id and supabase:
-            # Automatically update order status via ITN if verified
             supabase.table("orders").update({"status": "Paid"}).eq("id", order_id).execute()
         return "ITN Processed", 200
     return "Invalid Status", 400
