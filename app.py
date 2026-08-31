@@ -653,13 +653,13 @@ def generate_summary_email(period_name):
 
     total_orders = len(recent_orders)
     gross_revenue = sum(o.get("sales_excl_transport", 0) for o in recent_orders)
-    net_studio_payout = gross_revenue * 0.90
+    investor_cut = gross_revenue * 0.10
 
     subject = f"📊 Studio Performance Report ({period_name})"
     body = (
         f"Hi Annuschka,\n\n{period_name} Summary:\nTotal Orders:"
-        f" {total_orders}\nGross Revenue: R {gross_revenue:,.2f}\nNet Payout:"
-        f" R {net_studio_payout:,.2f}"
+        f" {total_orders}\nGross Revenue: R {gross_revenue:,.2f}\nInvestor Cut (10%):"
+        f" R {investor_cut:,.2f}"
     )
     if STUDIO_EMAIL:
       send_email_https(subject, STUDIO_EMAIL, body)
@@ -954,6 +954,7 @@ def dashboard():
   ]
   pending_orders = [o for o in orders if o.get("status") == "Pending"]
   total_sales = sum(o.get("sales_excl_transport", 0) for o in orders)
+  investor_cut = total_sales * 0.10
 
   return render_template(
       "dashboard.html",
@@ -961,6 +962,7 @@ def dashboard():
       weekly_orders=weekly_orders,
       pending_orders=pending_orders,
       total_sales=total_sales,
+      investor_cut=investor_cut,
       active_products=len(PRODUCTS),
   )
 
