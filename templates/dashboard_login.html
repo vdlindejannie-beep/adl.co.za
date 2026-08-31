@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Login - Leather by Annuschka</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="login-container" style="max-width: 400px; margin: 100px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+        <h2>Dashboard Login</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert {{ category }}" style="color: red; margin-bottom: 15px;">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        <form method="POST">
+            <div style="margin-bottom: 15px;">
+                <label for="username">Username:</label><br>
+                <input type="text" id="username" name="username" required style="width: 100%; padding: 8px; margin-top: 5px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label for="password">Password:</label><br>
+                <input type="password" id="password" name="password" required style="width: 100%; padding: 8px; margin-top: 5px;">
+            </div>
+            <button type="submit" style="width: 100%; padding: 10px; background: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Login</button>
+        </form>
+    </div>
+</body>
+</html>
