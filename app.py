@@ -626,6 +626,24 @@ def send_email_https(subject, recipient_email, body_text):
   return response.status_code in [200, 201, 202]
 
 
+# --- Session Inactivity Timeout Hook ---
+@app.before_request
+def check_session_timeout():
+    if session.get("dashboard_logged_in"):
+        now = datetime.now()
+        last_active_str = session.get("last_active")
+        if last_active_str:
+            try:
+                last_active = datetime.fromisoformat(last_active_str)
+                if now - last_active > timedelta(minutes=5):
+                    session.clear()
+                    flash("Session expired due to inactivity.", "warning")
+                    return redirect(url_for("dashboard_login"))
+            except Exception:
+                pass
+        session["last_active"] = now.isoformat()
+
+
 # --- Background Scheduler Job ---
 def generate_summary_email(period_name):
   with app.app_context():
@@ -928,6 +946,7 @@ def dashboard_login():
         and request.form.get("password") == DASHBOARD_PASS
     ):
       session["dashboard_logged_in"] = True
+      session["last_active"] = datetime.now().isoformat()
       return redirect(url_for("dashboard"))
     flash("Invalid credentials.", "error")
   return render_template("dashboard_login.html")
@@ -935,7 +954,7 @@ def dashboard_login():
 
 @app.route("/dashboard/logout")
 def dashboard_logout():
-  session.pop("dashboard_logged_in", None)
+  session.clear()
   return redirect(url_for("dashboard_login"))
 
 
