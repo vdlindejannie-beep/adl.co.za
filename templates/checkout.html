@@ -95,7 +95,7 @@
                     <div class="space-y-3">
                         <label class="flex items-center justify-between p-4 rounded-xl border border-[#E5D3C8] hover:border-[#D4AF37] cursor-pointer transition bg-[#FAF9F6]">
                             <div class="flex items-center gap-3">
-                                <input type="radio" name="shipping_option" value="3-5" {% if selected_shipping == '3-5' %}checked{% endif %} onchange="this.form.submit()" class="text-[#D4AF37] focus:ring-[#D4AF37]">
+                                <input type="radio" name="shipping_option" value="3-5" {% if selected_shipping == '3-5' %}checked{% endif %} onchange="updateShipping(this.value)" class="text-[#D4AF37] focus:ring-[#D4AF37]">
                                 <div>
                                     <span class="font-bold text-sm text-[#2C221E] block">PEP Paxi (3-5 Business Days)</span>
                                     <span class="text-xs text-gray-500">Standard fast courier service to your nearest PEP store</span>
@@ -106,7 +106,7 @@
 
                         <label class="flex items-center justify-between p-4 rounded-xl border border-[#E5D3C8] hover:border-[#D4AF37] cursor-pointer transition bg-[#FAF9F6]">
                             <div class="flex items-center gap-3">
-                                <input type="radio" name="shipping_option" value="7-9" {% if selected_shipping == '7-9' %}checked{% endif %} onchange="this.form.submit()" class="text-[#D4AF37] focus:ring-[#D4AF37]">
+                                <input type="radio" name="shipping_option" value="7-9" {% if selected_shipping == '7-9' %}checked{% endif %} onchange="updateShipping(this.value)" class="text-[#D4AF37] focus:ring-[#D4AF37]">
                                 <div>
                                     <span class="font-bold text-sm text-[#2C221E] block">PEP Paxi (7-9 Business Days)</span>
                                     <span class="text-xs text-gray-500">Economy budget service to your nearest PEP store</span>
@@ -153,6 +153,7 @@
                     <span class="font-bold text-2xl text-[#D4AF37]">R {{ "%.2f"|format(total) }}</span>
                 </div>
 
+                <!-- Only this button triggers the POST request to PayFast -->
                 <button type="submit" class="block w-full text-center bg-[#2C221E] text-[#FAF9F6] py-4 rounded-full font-bold text-sm hover:bg-[#D4AF37] hover:text-[#2C221E] transition shadow-md flex items-center justify-center gap-2">
                     Proceed to PayFast Secure Checkout <i class="fa-solid fa-lock text-xs"></i>
                 </button>
@@ -173,5 +174,13 @@
         </div>
     </footer>
 
+    <!-- Script to reload bill total on shipping option change via GET (without triggering checkout POST) -->
+    <script>
+        function updateShipping(optionValue) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('shipping_option', optionValue);
+            window.location.href = url.toString();
+        }
+    </script>
 </body>
 </html>

@@ -291,8 +291,8 @@ def checkout():
     
     subtotal = sum(item['price'] * item['quantity'] for item in cart_items)
     
-    # Selected shipping option handling
-    shipping_key = request.form.get('shipping_option', '3-5') if request.method == 'POST' else request.args.get('shipping_option', '3-5')
+    # Read selected shipping option cleanly from GET parameters or form payload
+    shipping_key = request.args.get('shipping_option') or request.form.get('shipping_option', '3-5')
     if shipping_key not in PEPAXI_OPTIONS:
         shipping_key = '3-5'
         
