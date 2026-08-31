@@ -195,9 +195,13 @@ def add_review():
         }
         if supabase:
             try:
-                supabase.table("reviews").insert(new_review).execute()
+                response = supabase.table("reviews").insert(new_review).execute()
+                print("Supabase Insert Response:", response) # Check your terminal for this!
             except Exception as e:
-                print(f"Supabase review insert error: {e}")
+                print(f"CRITICAL Supabase review insert error: {e}")
+        else:
+            print("Supabase client is None (not initialized). Check your SUPABASE_URL and SUPABASE_KEY environment variables.")
+            
         flash("Thank you! Your review has been submitted successfully.", "success")
     return redirect(url_for('index') + '#reviews')
 
