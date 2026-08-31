@@ -12,6 +12,10 @@ app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY', 'default-fallback-
 BREVO_API_KEY = os.environ.get('SENDINBLUE_API_KEY')
 STUDIO_EMAIL = os.environ.get('STUDIO_EMAIL')
 
+# Secure Dashboard Logins from Environment Variables
+DASHBOARD_USER = os.environ.get('DASHBOARD_USER', 'annuschka')
+DASHBOARD_PASS = os.environ.get('DASHBOARD_PASS', 'securepassword123')
+
 # 3. Background Scheduler Setup
 scheduler = APScheduler()
 scheduler.init_app(app)
@@ -407,8 +411,29 @@ def payfast_itn():
 
     return "Invalid Status", 400
 
+# --- Secure Dashboard Authentication Routes ---
+@app.route('/dashboard/login', methods=['GET', 'POST'])
+def dashboard_login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        if username == DASHBOARD_USER and password == DASHBOARD_PASS:
+            session['dashboard_logged_in'] = True
+            return redirect(url_for('dashboard'))
+        else:
+            flash("Invalid credentials. Please try again.", "error")
+    return render_template('dashboard_login.html')
+
+@app.route('/dashboard/logout')
+def dashboard_logout():
+    session.pop('dashboard_logged_in', None)
+    return redirect(url_for('dashboard_login'))
+
 @app.route('/dashboard')
 def dashboard():
+    if not session.get('dashboard_logged_in'):
+        return redirect(url_for('dashboard_login'))
+
     now = datetime.now()
     seven_days_ago = now - timedelta(days=7)
     
@@ -432,6 +457,9 @@ def dashboard():
 
 @app.route('/mark_shipped/<order_id>', methods=['POST'])
 def mark_shipped(order_id):
+    if not session.get('dashboard_logged_in'):
+        return redirect(url_for('dashboard_login'))
+
     order = next((o for o in ORDERS if o['id'] == order_id), None)
     if order:
         order['status'] = 'Shipped'
