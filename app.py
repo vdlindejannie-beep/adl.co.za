@@ -912,31 +912,41 @@ def payment_success():
   return redirect(url_for("shop"))
 
 
-@app.route("/payfast/itn", methods=["POST"])
+@app.route('/payfast/itn', methods=['POST'])
 def payfast_itn():
-  data = request.form.to_dict()
-  if data.get("payment_status") == "COMPLETE":
-    order_id = data.get("m_payment_id")
-    if order_id and SUPABASE_URL and SUPABASE_KEY:
-      try:
-        headers = {
-            "apikey": SUPABASE_KEY,
-            "Authorization": f"Bearer {SUPABASE_KEY}",
-            "Content-Type": "application/json",
-            "Prefer": "return=representation",
-        }
-        payload = {"status": "Paid"}
-        requests.patch(
-            f"{SUPABASE_URL}/rest/v1/orders?id=eq.{order_id}",
-            json=payload,
-            headers=headers,
-            timeout=5,
-        )
-      except Exception as e:
-        print(f"Supabase ITN update error: {e}")
-    return "ITN Processed", 200
-  return "Invalid Status", 400
+    data = request.form.to_dict()
+    
+    # 1. Grab the order ID sent back by PayFast
+    order_id = data.get('m_payment_id')
+    payment_status = data.get('payment_status')
 
+    # Log incoming payload to Render logs for visibility
+    print(f"ITN Received for Order: {order_id}, Status: {payment_status}", flush=True)
+
+    order = Order.query.get(order_id)
+    if not order:
+        print(f"Order {order_id} not found in database.", flush=True)
+        return "Order not found", 200
+
+    # 2. Check for completed payment status
+    if payment_status == 'COMPLETE':
+        order.status = 'Paid'
+        
+        try:
+            db.session.commit()
+            print(f"Order {order_id} marked as Paid in DB.", flush=True)
+        except Exception as e:
+            db.session.rollback()
+            print(f"Database commit error: {e}", flush=True)
+
+        # 3. Trigger Brevo Email Dispatch
+        try:
+            send_order_confirmation_email(order)
+            print("Confirmation emails dispatched successfully.", flush=True)
+        except Exception as e:
+            print(f"Brevo email dispatch failed: {e}", flush=True)
+
+    return "OK", 200
 
 @app.route("/dashboard/login", methods=["GET", "POST"])
 def dashboard_login():
