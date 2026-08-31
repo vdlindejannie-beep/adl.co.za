@@ -5,3 +5,4 @@ Flask-Mail==0.9.1
 Flask-APScheduler==1.13.1
 twilio==8.10.0
 requests==2.31.0
+supabase==2.3.0
