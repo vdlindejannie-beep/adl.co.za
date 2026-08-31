@@ -140,17 +140,17 @@
                 <div class="border-t border-[#E5D3C8] pt-4 space-y-3 text-sm">
                     <div class="flex justify-between text-gray-600">
                         <span>Subtotal</span>
-                        <span class="font-semibold text-[#2C221E]">R {{ "%.2f"|format(subtotal) }}</span>
+                        <span class="font-semibold text-[#2C221E]">R <span id="subtotal-display">{{ "%.2f"|format(subtotal) }}</span></span>
                     </div>
                     <div class="flex justify-between text-gray-600">
                         <span>PEP Paxi Shipping</span>
-                        <span class="font-semibold text-[#2C221E]">R {{ "%.2f"|format(shipping) }}</span>
+                        <span class="font-semibold text-[#2C221E]">R <span id="shipping-display">{{ "%.2f"|format(shipping) }}</span></span>
                     </div>
                 </div>
 
                 <div class="border-t border-[#E5D3C8] pt-4 flex justify-between items-center">
                     <span class="font-serif font-bold text-xl text-[#2C221E]">Total Payment</span>
-                    <span class="font-bold text-2xl text-[#D4AF37]">R {{ "%.2f"|format(total) }}</span>
+                    <span class="font-bold text-2xl text-[#D4AF37]">R <span id="total-display">{{ "%.2f"|format(total) }}</span></span>
                 </div>
 
                 <!-- Only this button triggers the POST request to PayFast -->
@@ -174,12 +174,23 @@
         </div>
     </footer>
 
-    <!-- Script to reload bill total on shipping option change via GET (without triggering checkout POST) -->
+    <!-- Async AJAX Script to update shipping costs without page refresh -->
     <script>
-        function updateShipping(optionValue) {
-            const url = new URL(window.location.href);
-            url.searchParams.set('shipping_option', optionValue);
-            window.location.href = url.toString();
+        async function updateShipping(optionValue) {
+            try {
+                const response = await fetch(`/checkout?shipping_option=${optionValue}`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('shipping-display').innerText = data.shipping_price;
+                    document.getElementById('total-display').innerText = data.total;
+                }
+            } catch (error) {
+                console.error('Failed to update shipping price:', error);
+            }
         }
     </script>
 </body>

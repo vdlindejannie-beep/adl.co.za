@@ -842,9 +842,18 @@ def checkout():
     return redirect(url_for("shop"))
 
   subtotal = sum(item["price"] * item["quantity"] for item in cart_items)
-  shipping_key = request.form.get("shipping_option", "3-5")
+  
+  # Retrieve shipping option from query parameter (for AJAX) or form post/default
+  shipping_key = request.args.get("shipping_option") or request.form.get("shipping_option", "3-5")
   shipping_info = PEPAXI_OPTIONS.get(shipping_key, PEPAXI_OPTIONS["3-5"])
   total = subtotal + shipping_info["price"]
+
+  # Return JSON if requested via AJAX fetch
+  if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+      return {
+          "shipping_price": f"{shipping_info['price']:.2f}",
+          "total": f"{total:.2f}"
+      }
 
   if request.method == "POST":
     orders_count = len(get_db_orders())
@@ -895,6 +904,7 @@ def checkout():
       shipping=shipping_info["price"],
       total=total,
       paxi_options=PEPAXI_OPTIONS,
+      selected_shipping=shipping_key,
   )
 
 
