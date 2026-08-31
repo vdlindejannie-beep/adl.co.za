@@ -93,8 +93,8 @@ def get_db_reviews():
         except Exception as e:
             print(f"Supabase fetch reviews error: {e}")
     return [
-        {"name": "Sarah M.", "rating": 5, "comment": "Absolutely beautiful leather quality! Bought the overnight bag and it gets so many compliments."},
-        {"name": "Johan K.", "rating": 5, "comment": "Sturdy belt and fast delivery. Very impressed with the craftsmanship."}
+        {"name": "Sarah M.", "rating": 5, "comment": "Absolutely beautiful leather quality! Bought the overnight bag and it gets so many compliments.", "created_at": "2026-08-01T10:00:00"},
+        {"name": "Johan K.", "rating": 5, "comment": "Sturdy belt and fast delivery. Very impressed with the craftsmanship.", "created_at": "2026-08-02T10:00:00"}
     ]
 
 def get_db_orders():
@@ -187,7 +187,12 @@ def add_review():
     comment = request.form.get('comment', '').strip()
     
     if comment:
-        new_review = {"name": name if name else "Anonymous", "rating": rating, "comment": comment, "created_at": datetime.now().isoformat()}
+        new_review = {
+            "name": name if name else "Anonymous", 
+            "rating": rating, 
+            "comment": comment, 
+            "created_at": datetime.now().isoformat()
+        }
         if supabase:
             try:
                 supabase.table("reviews").insert(new_review).execute()
