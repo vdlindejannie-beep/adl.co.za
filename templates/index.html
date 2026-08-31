@@ -56,7 +56,7 @@
                     </a>
                 </div>
             </div>
-            <!-- Logo Only in Hero Right Column (Box Removed & Doubled in Size) -->
+            <!-- Logo Only in Hero Right Column -->
             <div class="relative flex justify-center items-center">
                 <img src="{{ url_for('static', filename='Logo.jpeg') }}" alt="Leather by Annuschka Logo" class="w-80 h-80 sm:w-96 sm:h-96 md:w-[28rem] md:h-[28rem] object-contain rounded-full border-4 border-[#D4AF37] p-3 bg-[#2C221E] shadow-2xl">
             </div>
@@ -72,46 +72,45 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- 1. Luggage & Bags -->
+            <a href="{{ url_for('shop', category='Travel Bags') }}" class="group relative rounded-2xl overflow-hidden shadow-lg bg-white block transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
+                <div class="h-80 w-full overflow-hidden">
+                    <img src="{{ url_for('static', filename='L and B collection.jpeg') }}" alt="Travel & Luggage" class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
+                    <span class="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">Travel & Everyday</span>
+                    <h3 class="text-2xl font-serif font-bold mt-1">Luggage & Bags</h3>
+                    <p class="text-xs text-gray-300 mt-1 flex items-center gap-1">Shop Collection <i class="fa-solid fa-arrow-right text-[#D4AF37]"></i></p>
+                </div>
+            </a>
 
-<!-- 1. Luggage & Bags -->
-<a href="{{ url_for('shop', category='Travel Bags') }}" class="group relative rounded-2xl overflow-hidden shadow-lg bg-white block transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
-    <div class="h-80 w-full overflow-hidden">
-        <img src="{{ url_for('static', filename='L and B collection.jpeg') }}" alt="Travel & Luggage" class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
-    </div>
-    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
-        <span class="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">Travel & Everyday</span>
-        <h3 class="text-2xl font-serif font-bold mt-1">Luggage & Bags</h3>
-        <p class="text-xs text-gray-300 mt-1 flex items-center gap-1">Shop Collection <i class="fa-solid fa-arrow-right text-[#D4AF37]"></i></p>
-    </div>
-</a>
+            <!-- 2. Sling Bags & Wallets -->
+            <a href="{{ url_for('shop', category='Sling Bags') }}" class="group relative rounded-2xl overflow-hidden shadow-lg bg-white block transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
+                <div class="h-80 w-full overflow-hidden">
+                    <img src="{{ url_for('static', filename='Collection2.jpeg') }}" alt="Sling Bags & Wallets" class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
+                    <span class="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">Accessories</span>
+                    <h3 class="text-2xl font-serif font-bold mt-1">Sling Bags & Wallets</h3>
+                    <p class="text-xs text-gray-300 mt-1 flex items-center gap-1">Shop Collection <i class="fa-solid fa-arrow-right text-[#D4AF37]"></i></p>
+                </div>
+            </a>
 
-<!-- 2. Sling Bags & Wallets -->
-<a href="{{ url_for('shop', category='Sling Bags') }}" class="group relative rounded-2xl overflow-hidden shadow-lg bg-white block transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
-    <div class="h-80 w-full overflow-hidden">
-        <img src="{{ url_for('static', filename='Collection2.jpeg') }}" alt="Sling Bags & Wallets" class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
-    </div>
-    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
-        <span class="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">Accessories</span>
-        <h3 class="text-2xl font-serif font-bold mt-1">Sling Bags & Wallets</h3>
-        <p class="text-xs text-gray-300 mt-1 flex items-center gap-1">Shop Collection <i class="fa-solid fa-arrow-right text-[#D4AF37]"></i></p>
-    </div>
-</a>
-
-<!-- 3. Home, Aprons & Care -->
-<a href="{{ url_for('shop', category='Home & Leisure') }}" class="group relative rounded-2xl overflow-hidden shadow-lg bg-white block transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
-    <div class="h-80 w-full overflow-hidden">
-        <img src="{{ url_for('static', filename='Home collection.jpeg') }}" alt="Home & Leather Care" class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
-    </div>
-    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
-        <span class="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">Lifestyle & Care</span>
-        <h3 class="text-2xl font-serif font-bold mt-1">Home, Aprons & Care</h3>
-        <p class="text-xs text-gray-300 mt-1 flex items-center gap-1">Shop Collection <i class="fa-solid fa-arrow-right text-[#D4AF37]"></i></p>
-    </div>
-</a>
+            <!-- 3. Home, Aprons & Care -->
+            <a href="{{ url_for('shop', category='Home & Leisure') }}" class="group relative rounded-2xl overflow-hidden shadow-lg bg-white block transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
+                <div class="h-80 w-full overflow-hidden">
+                    <img src="{{ url_for('static', filename='Home collection.jpeg') }}" alt="Home & Leather Care" class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
+                    <span class="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">Lifestyle & Care</span>
+                    <h3 class="text-2xl font-serif font-bold mt-1">Home, Aprons & Care</h3>
+                    <p class="text-xs text-gray-300 mt-1 flex items-center gap-1">Shop Collection <i class="fa-solid fa-arrow-right text-[#D4AF37]"></i></p>
+                </div>
+            </a>
         </div>
     </section>
 
-<!-- Reviews Section -->
+    <!-- Reviews Section -->
     <section id="reviews" class="bg-[#1c1512] border-t border-b border-[#3a2d26] py-16 px-6">
         <div class="max-w-4xl mx-auto">
             <h2 class="text-3xl font-serif font-bold text-[#d4af37] mb-8 text-center">Customer Reviews</h2>
@@ -143,7 +142,7 @@
             <!-- Review Submission Form -->
             <div class="bg-[#2e241e] border border-[#3a2d26] p-6 rounded-xl">
                 <h3 class="text-xl font-serif font-bold text-[#d4af37] mb-4">Leave a Review</h3>
-                <form action="/add_review" method="POST" class="space-y-4">
+                <form action="{{ url_for('add_review') }}" method="POST" class="space-y-4">
                     <div>
                         <label class="block text-xs text-gray-400 mb-1">Your Name:</label>
                         <input type="text" name="name" placeholder="Jane Doe" class="w-full p-2 bg-[#1c1512] border border-[#3a2d26] rounded text-white text-sm" required>

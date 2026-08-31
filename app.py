@@ -92,7 +92,6 @@ def get_db_reviews():
                 return response.data
         except Exception as e:
             print(f"Supabase fetch reviews error: {e}")
-    # Fallback default reviews if table is empty or unconfigured
     return [
         {"name": "Sarah M.", "rating": 5, "comment": "Absolutely beautiful leather quality! Bought the overnight bag and it gets so many compliments."},
         {"name": "Johan K.", "rating": 5, "comment": "Sturdy belt and fast delivery. Very impressed with the craftsmanship."}
@@ -330,8 +329,8 @@ def dashboard():
 
     orders = get_db_orders()
     now = datetime.now()
-    weekly_orders = [o for o in orders if isinstance(o.get('timestamp'), datetime) and o.get('timestamp') >= now - timedelta(days=7)]
-    pending_orders = [o for o in orders if o.get('status') == 'Pending']
+    weekly_orders = [o for o in orders if isinstance(o.get('timestamp'), datetime) and o.get('timestamp'] >= now - timedelta(days=7)]
+    pending_orders = [o for o in orders if o.get('status'] == 'Pending']
     total_sales = sum(o.get('sales_excl_transport', 0) for o in orders)
 
     return render_template('dashboard.html', orders=orders, weekly_orders=weekly_orders, pending_orders=pending_orders, total_sales=total_sales, active_products=len(PRODUCTS))
