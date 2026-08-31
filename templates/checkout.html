@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Checkout - Leather by Annuschka</title>
+    <title>Checkout - Leather by Annuschka</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -34,96 +34,131 @@
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-grow w-full">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-grow w-full">
         <div class="mb-8">
-            <span class="text-xs uppercase tracking-widest text-[#8C6D4F] font-bold">Final Step</span>
-            <h1 class="text-4xl font-serif font-bold text-[#2C221E] mt-1">Secure Checkout</h1>
+            <span class="text-xs uppercase tracking-widest text-[#8C6D4F] font-bold">Secure Checkout</span>
+            <h1 class="text-4xl font-serif font-bold text-[#2C221E] mt-1">Complete Your Order</h1>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <form action="{{ url_for('checkout') }}" method="POST" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
-            <!-- Customer & Shipping Form -->
-            <form action="/checkout" method="POST" class="lg:col-span-7 bg-white p-6 sm:p-8 rounded-2xl border border-[#E5D3C8] shadow-sm space-y-5">
-                <div class="flex items-center justify-between border-b border-[#E5D3C8] pb-4">
-                    <h2 class="text-2xl font-serif font-bold text-[#2C221E]">Shipping & Contact</h2>
-                    <span class="text-xs text-gray-500"><i class="fa-solid fa-lock text-[#8C6D4F] mr-1"></i> 256-bit Encryption</span>
-                </div>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">First Name</label>
-                        <input type="text" name="first_name" required class="w-full bg-[#FAF9F6] border border-[#E5D3C8] rounded-xl px-4 py-2.5 text-sm text-[#2C221E] focus:outline-none focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37] transition">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Last Name</label>
-                        <input type="text" name="last_name" required class="w-full bg-[#FAF9F6] border border-[#E5D3C8] rounded-xl px-4 py-2.5 text-sm text-[#2C221E] focus:outline-none focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37] transition">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Email Address</label>
-                    <input type="email" name="email" required class="w-full bg-[#FAF9F6] border border-[#E5D3C8] rounded-xl px-4 py-2.5 text-sm text-[#2C221E] focus:outline-none focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37] transition">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Mobile / WhatsApp Number</label>
-                    <input type="tel" name="phone" required class="w-full bg-[#FAF9F6] border border-[#E5D3C8] rounded-xl px-4 py-2.5 text-sm text-[#2C221E] focus:outline-none focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37] transition">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Delivery Address</label>
-                    <textarea name="address" rows="3" required placeholder="Street address, suburb, city, postal code..." class="w-full bg-[#FAF9F6] border border-[#E5D3C8] rounded-xl px-4 py-2.5 text-sm text-[#2C221E] focus:outline-none focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37] transition"></textarea>
-                </div>
-
-                <div class="pt-2">
-                    <button type="submit" class="w-full bg-[#2C221E] text-[#FAF9F6] font-bold py-4 rounded-full text-sm hover:bg-[#D4AF37] hover:text-[#2C221E] transition shadow-md flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-[#25D366]"></i> Proceed to PayFast Payment <i class="fa-solid fa-shield-halved text-xs ml-1"></i>
-                    </button>
-                    <p class="text-center text-xs text-gray-400 mt-3">You will be redirected safely to PayFast to finalize your transaction.</p>
-                </div>
-            </form>
-
-            <!-- Order Summary Sidebar -->
-            <div class="lg:col-span-5 bg-white p-6 sm:p-8 rounded-2xl border border-[#E5D3C8] shadow-sm space-y-6">
-                <h2 class="text-2xl font-serif font-bold text-[#2C221E] border-b border-[#E5D3C8] pb-4">Order Summary</h2>
-                
-                <div class="space-y-3">
-                    {% for item in cart_items %}
-                    <div class="flex justify-between items-start text-sm py-1 border-b border-[#FAF9F6]">
+            <!-- Customer & Shipping Details Form -->
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white p-6 sm:p-8 rounded-2xl border border-[#E5D3C8] shadow-sm space-y-6">
+                    <h3 class="font-serif font-bold text-2xl text-[#2C221E] border-b border-[#E5D3C8] pb-4">Billing & Contact Information</h3>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <span class="font-medium text-[#2C221E] block">{{ item.name }}</span>
-                            <span class="text-xs text-gray-400">Qty: {{ item.quantity }}</span>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">First Name</label>
+                            <input type="text" name="first_name" required class="w-full bg-[#FAF9F6] border border-[#E5D3C8] text-sm text-[#2C221E] rounded-lg px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37]">
                         </div>
-                        <span class="font-semibold text-[#8C6D4F]">R {{ "%.2f"|format(item.price * item.quantity) }}</span>
-                    </div>
-                    {% endfor %}
-
-                    <div class="pt-4 space-y-2 text-sm text-gray-600">
-                        <div class="flex justify-between">
-                            <span>Subtotal</span>
-                            <span class="font-medium text-[#2C221E]">R {{ "%.2f"|format(subtotal) }}</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span>Standard Courier Transport</span>
-                            <span class="font-medium text-[#2C221E]">R {{ "%.2f"|format(shipping) }}</span>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Last Name</label>
+                            <input type="text" name="last_name" required class="w-full bg-[#FAF9F6] border border-[#E5D3C8] text-sm text-[#2C221E] rounded-lg px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37]">
                         </div>
                     </div>
 
-                    <div class="border-t border-[#E5D3C8] pt-4 flex justify-between items-center">
-                        <span class="font-serif font-bold text-xl text-[#2C221E]">Total Due</span>
-                        <span class="font-bold text-2xl text-[#2C221E]">R {{ "%.2f"|format(total) }}</span>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Email Address</label>
+                            <input type="email" name="email" required class="w-full bg-[#FAF9F6] border border-[#E5D3C8] text-sm text-[#2C221E] rounded-lg px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37]">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Phone Number</label>
+                            <input type="text" name="phone" required class="w-full bg-[#FAF9F6] border border-[#E5D3C8] text-sm text-[#2C221E] rounded-lg px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37]">
+                        </div>
                     </div>
                 </div>
 
-                <div class="bg-[#FAF9F6] border border-[#E5D3C8] p-4 rounded-xl flex items-center gap-3">
-                    <i class="fa-solid fa-truck-fast text-[#8C6D4F] text-xl"></i>
-                    <p class="text-xs text-gray-600 leading-relaxed">
-                        Handcrafted with care. Local courier delivery within South Africa.
-                    </p>
+                <!-- PEP Paxi Shipping Selection -->
+                <div class="bg-white p-6 sm:p-8 rounded-2xl border border-[#E5D3C8] shadow-sm space-y-6">
+                    <div class="flex items-center justify-between border-b border-[#E5D3C8] pb-4">
+                        <div>
+                            <h3 class="font-serif font-bold text-2xl text-[#2C221E]">PEP Paxi Delivery Method</h3>
+                            <p class="text-xs text-gray-500 mt-0.5">Select your preferred delivery speed via PEP Paxi</p>
+                        </div>
+                        <span class="bg-[#D4AF37]/20 text-[#2C221E] text-xs font-bold px-3 py-1.5 rounded-full border border-[#D4AF37]">
+                            <i class="fa-solid fa-box mr-1"></i> PEP Paxi
+                        </span>
+                    </div>
+
+                    <!-- Weekend Shipping Notice -->
+                    <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl text-amber-900 text-xs flex items-start gap-3">
+                        <i class="fa-solid fa-triangle-exclamation text-amber-600 text-base mt-0.5"></i>
+                        <div>
+                            <strong class="font-semibold block mb-0.5">Weekend Shipping Schedule</strong>
+                            Please note that studio packing and shipping take place exclusively over weekends. Orders will be dispatched on the upcoming weekend.
+                        </div>
+                    </div>
+
+                    <!-- Shipping Options Radios -->
+                    <div class="space-y-3">
+                        <label class="flex items-center justify-between p-4 rounded-xl border border-[#E5D3C8] hover:border-[#D4AF37] cursor-pointer transition bg-[#FAF9F6]">
+                            <div class="flex items-center gap-3">
+                                <input type="radio" name="shipping_option" value="3-5" {% if selected_shipping == '3-5' %}checked{% endif %} onchange="this.form.submit()" class="text-[#D4AF37] focus:ring-[#D4AF37]">
+                                <div>
+                                    <span class="font-bold text-sm text-[#2C221E] block">PEP Paxi (3-5 Business Days)</span>
+                                    <span class="text-xs text-gray-500">Standard fast courier service to your nearest PEP store</span>
+                                </div>
+                            </div>
+                            <span class="font-bold text-sm text-[#2C221E]">R 120.00</span>
+                        </label>
+
+                        <label class="flex items-center justify-between p-4 rounded-xl border border-[#E5D3C8] hover:border-[#D4AF37] cursor-pointer transition bg-[#FAF9F6]">
+                            <div class="flex items-center gap-3">
+                                <input type="radio" name="shipping_option" value="7-9" {% if selected_shipping == '7-9' %}checked{% endif %} onchange="this.form.submit()" class="text-[#D4AF37] focus:ring-[#D4AF37]">
+                                <div>
+                                    <span class="font-bold text-sm text-[#2C221E] block">PEP Paxi (7-9 Business Days)</span>
+                                    <span class="text-xs text-gray-500">Economy budget service to your nearest PEP store</span>
+                                </div>
+                            </div>
+                            <span class="font-bold text-sm text-[#2C221E]">R 90.00</span>
+                        </label>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">PEP Paxi Store Code / Branch Name</label>
+                        <input type="text" name="paxi_code" placeholder="e.g., PEP Store Main Street (Code: XXXX)" required class="w-full bg-[#FAF9F6] border border-[#E5D3C8] text-sm text-[#2C221E] rounded-lg px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37]">
+                        <p class="text-xs text-gray-400 mt-1">Specify your preferred PEP store where you'd like to collect your parcel.</p>
+                    </div>
                 </div>
             </div>
 
-        </div>
+            <!-- Order Summary Sidebar -->
+            <div class="bg-white p-6 rounded-2xl border border-[#E5D3C8] shadow-sm h-fit space-y-6">
+                <h3 class="font-serif font-bold text-2xl text-[#2C221E] border-b border-[#E5D3C8] pb-4">Order Summary</h3>
+                
+                <div class="space-y-3 text-sm max-h-60 overflow-y-auto pr-2">
+                    {% for item in cart_items %}
+                    <div class="flex justify-between text-gray-600 gap-2">
+                        <span class="truncate">{{ item.quantity }}x {{ item.name }}</span>
+                        <span class="font-semibold text-[#2C221E] flex-shrink-0">R {{ "%.2f"|format(item.price * item.quantity) }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="border-t border-[#E5D3C8] pt-4 space-y-3 text-sm">
+                    <div class="flex justify-between text-gray-600">
+                        <span>Subtotal</span>
+                        <span class="font-semibold text-[#2C221E]">R {{ "%.2f"|format(subtotal) }}</span>
+                    </div>
+                    <div class="flex justify-between text-gray-600">
+                        <span>PEP Paxi Shipping</span>
+                        <span class="font-semibold text-[#2C221E]">R {{ "%.2f"|format(shipping) }}</span>
+                    </div>
+                </div>
+
+                <div class="border-t border-[#E5D3C8] pt-4 flex justify-between items-center">
+                    <span class="font-serif font-bold text-xl text-[#2C221E]">Total Payment</span>
+                    <span class="font-bold text-2xl text-[#D4AF37]">R {{ "%.2f"|format(total) }}</span>
+                </div>
+
+                <button type="submit" class="block w-full text-center bg-[#2C221E] text-[#FAF9F6] py-4 rounded-full font-bold text-sm hover:bg-[#D4AF37] hover:text-[#2C221E] transition shadow-md flex items-center justify-center gap-2">
+                    Proceed to PayFast Secure Checkout <i class="fa-solid fa-lock text-xs"></i>
+                </button>
+            </div>
+
+        </form>
     </main>
 
     <!-- Footer -->
@@ -133,7 +168,7 @@
             <div class="flex items-center gap-6 text-sm">
                 <a href="{{ url_for('index') }}" class="hover:text-[#D4AF37] transition">Home</a>
                 <a href="{{ url_for('shop') }}" class="hover:text-[#D4AF37] transition">Shop Catalog</a>
-                <a href="{{ url_for('index') }}#contact" class="hover:text-[#D4AF37] transition">Contact</a>
+                <a href="{{ url_for('cart') }}" class="hover:text-[#D4AF37] transition">Cart</a>
             </div>
         </div>
     </footer>

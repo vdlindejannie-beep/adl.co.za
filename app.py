@@ -109,6 +109,12 @@ REVIEWS = [
 ORDERS = []
 CATEGORIES = ["All", "Travel Bags", "Everyday Essentials", "Sling Bags", "Handbags", "Laptop Bags", "Backpacks", "Home & Leisure", "Belts", "Leather Care"]
 
+# --- PEP Paxi Shipping Options ---
+PEPAXI_OPTIONS = {
+    "3-5": {"name": "PEP Paxi (3-5 Business Days)", "price": 120.00},
+    "7-9": {"name": "PEP Paxi (7-9 Business Days)", "price": 90.00}
+}
+
 
 # --- HTTPS Email Sender via Brevo REST API ---
 def send_email_https(subject, recipient_email, body_text):
@@ -284,7 +290,14 @@ def checkout():
         return redirect(url_for('shop'))
     
     subtotal = sum(item['price'] * item['quantity'] for item in cart_items)
-    shipping_cost = 120.00
+    
+    # Selected shipping option handling
+    shipping_key = request.form.get('shipping_option', '3-5') if request.method == 'POST' else request.args.get('shipping_option', '3-5')
+    if shipping_key not in PEPAXI_OPTIONS:
+        shipping_key = '3-5'
+        
+    shipping_info = PEPAXI_OPTIONS[shipping_key]
+    shipping_cost = shipping_info['price']
     total = subtotal + shipping_cost
 
     if request.method == 'POST':
@@ -293,12 +306,15 @@ def checkout():
         first_name = request.form.get('first_name', '')
         last_name = request.form.get('last_name', '')
         customer_email = request.form.get('email', '')
+        paxi_code = request.form.get('paxi_code', '')
         
         session['pending_order'] = {
             "id": order_id,
             "items": item_summary,
             "subtotal": subtotal,
             "transport": shipping_cost,
+            "shipping_method": shipping_info['name'],
+            "paxi_code": paxi_code,
             "sales_excl_transport": subtotal,
             "investor_cut": round(subtotal * 0.10, 2),
             "timestamp": datetime.now(),
@@ -317,14 +333,14 @@ def checkout():
             notify_url=url_for('payfast_itn', _external=True),
             m_payment_id=order_id,
             amount=f"{total:.2f}",
-            item_name=f"Leather by Annuschka Order #{order_id}",
+            item_name=f"Leather by Annuschka Order #{order_id} ({shipping_info['name']})",
             name_first=first_name,
             name_last=last_name,
             email_address=customer_email,
             cell_number=request.form.get('phone', '')
         )
 
-    return render_template('checkout.html', cart_items=cart_items, subtotal=subtotal, shipping=shipping_cost, total=total)
+    return render_template('checkout.html', cart_items=cart_items, subtotal=subtotal, shipping=shipping_cost, total=total, selected_shipping=shipping_key, paxi_options=PEPAXI_OPTIONS)
 
 @app.route('/payment_success')
 def payment_success():
@@ -346,18 +362,18 @@ def payfast_itn():
         customer_email = data.get('email_address')
 
         body_owner = (
-            f"Hi Annuschka,\n\nA new order has been paid successfully!\n\n"
+            f"Hi Annuschka,\n\nA new order has been paid successfully via PEP Paxi!\n\n"
             f"Order ID: {order_id}\n"
             f"Items: {item_name}\n"
             f"Total Paid: R {amount}\n"
             f"Customer Email: {customer_email}\n\n"
-            f"Log into your Studio Dashboard to process shipping."
+            f"Note: Shipping takes place over weekends. Log into your Studio Dashboard to process packing and shipping."
         )
 
         body_customer = (
             f"Thank you for supporting local craftsmanship!\n\n"
             f"We've received your payment of R {amount} for order #{order_id}.\n"
-            f"Your item is being prepared with care in our studio."
+            f"Your item is being prepared with care in our studio and will be dispatched via PEP Paxi during our weekend shipping schedule."
         )
 
         try:
@@ -405,10 +421,10 @@ def mark_shipped(order_id):
         
         customer_email = order.get('customer_email')
         if customer_email:
-            subject = f"📦 Your Order #{order_id} Has Shipped! - Leather by Annuschka"
+            subject = f"📦 Your Order #{order_id} Has Shipped via PEP Paxi! - Leather by Annuschka"
             body = (
                 f"Hi {order.get('customer_name', 'Customer')},\n\n"
-                f"Great news! Your handcrafted order #{order_id} ({order.get('items')}) has been packaged and shipped from our studio.\n\n"
+                f"Great news! Your handcrafted order #{order_id} ({order.get('items')}) has been packaged and shipped via PEP Paxi from our studio.\n\n"
                 f"Thank you for supporting local craftsmanship!\n\n"
                 f"Warm regards,\n"
                 f"Leather by Annuschka Studio"
