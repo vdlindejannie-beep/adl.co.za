@@ -30,7 +30,7 @@ scheduler.start()
 # --- PayFast Merchant Credentials ---
 PAYFAST_MERCHANT_ID = "36712149"
 PAYFAST_MERCHANT_KEY = "ur6ctzlgqfwbo"
-PAYFAST_URL = "https://www.payfast.co.za/eng/process"
+PAYFAST_URL = "https://sandbox.payfast.co.za/eng/process"
 
 # --- Static Product Catalog ---
 PRODUCTS = [
