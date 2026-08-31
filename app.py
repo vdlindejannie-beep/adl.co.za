@@ -259,6 +259,10 @@ def add_to_cart(product_id):
                 'image': product['images'][0],
                 'color': color,
                 'size': size,
+                'available_colors': product.get('colors', []),
+                'available_sizes': product.get('sizes', []),
+                'size_prices': product.get('size_prices', {}),
+                'base_price': product['price'],
                 'quantity': quantity
             })
             
@@ -271,6 +275,7 @@ def update_cart(index):
     cart = session.get('cart', [])
     if 0 <= index < len(cart):
         action = request.form.get('action')
+        
         if action == 'increase':
             cart[index]['quantity'] += 1
         elif action == 'decrease':
@@ -279,6 +284,22 @@ def update_cart(index):
                 cart.pop(index)
         elif action == 'remove':
             cart.pop(index)
+        elif action == 'update_options':
+            # Allows users to change size/color directly from inside the cart
+            new_color = request.form.get('color')
+            new_size = request.form.get('size')
+            
+            if new_color:
+                cart[index]['color'] = new_color
+            if new_size:
+                cart[index]['size'] = new_size
+                # Recalculate price if size tier changes
+                size_prices = cart[index].get('size_prices', {})
+                if new_size in size_prices:
+                    cart[index]['price'] = size_prices[new_size]
+                else:
+                    cart[index]['price'] = cart[index].get('base_price', cart[index]['price'])
+                    
         session['cart'] = cart
     return redirect(url_for('cart'))
 
@@ -291,7 +312,6 @@ def checkout():
     
     subtotal = sum(item['price'] * item['quantity'] for item in cart_items)
     
-    # Read selected shipping option cleanly from GET parameters or form payload
     shipping_key = request.args.get('shipping_option') or request.form.get('shipping_option', '3-5')
     if shipping_key not in PEPAXI_OPTIONS:
         shipping_key = '3-5'
@@ -302,7 +322,7 @@ def checkout():
 
     if request.method == 'POST':
         order_id = f"ORD-2026-{len(ORDERS) + 1:02d}"
-        item_summary = ", ".join([f"{item['name']} ({item['quantity']})" for item in cart_items])
+        item_summary = ", ".join([f"{item['name']} [{item.get('color')}, {item.get('size')}] ({item['quantity']})" for item in cart_items])
         first_name = request.form.get('first_name', '')
         last_name = request.form.get('last_name', '')
         customer_email = request.form.get('email', '')
@@ -392,7 +412,6 @@ def dashboard():
     now = datetime.now()
     seven_days_ago = now - timedelta(days=7)
     
-    # Categorize orders for the dashboard view
     weekly_orders = [o for o in ORDERS if o.get('timestamp', now) >= seven_days_ago]
     pending_orders = [o for o in ORDERS if o.get('status') == 'Pending']
     shipped_orders = [o for o in ORDERS if o.get('status') == 'Shipped']
@@ -411,7 +430,6 @@ def dashboard():
         active_products=len(PRODUCTS)
     )
 
-# --- Route: Mark Order as Shipped & Email Customer ---
 @app.route('/mark_shipped/<order_id>', methods=['POST'])
 def mark_shipped(order_id):
     order = next((o for o in ORDERS if o['id'] == order_id), None)
@@ -439,6 +457,5 @@ def mark_shipped(order_id):
             
     return redirect(url_for('dashboard'))
 
-# --- Start Local Server ---
 if __name__ == '__main__':
     app.run(debug=True)
