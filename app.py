@@ -329,8 +329,8 @@ def dashboard():
 
     orders = get_db_orders()
     now = datetime.now()
-    weekly_orders = [o for o in orders if isinstance(o.get('timestamp'), datetime) and o.get('timestamp'] >= now - timedelta(days=7)]
-    pending_orders = [o for o in orders if o.get('status'] == 'Pending']
+    weekly_orders = [o for o in orders if isinstance(o.get('timestamp'), datetime) and o.get('timestamp') >= now - timedelta(days=7)]
+    pending_orders = [o for o in orders if o.get('status') == 'Pending']
     total_sales = sum(o.get('sales_excl_transport', 0) for o in orders)
 
     return render_template('dashboard.html', orders=orders, weekly_orders=weekly_orders, pending_orders=pending_orders, total_sales=total_sales, active_products=len(PRODUCTS))
