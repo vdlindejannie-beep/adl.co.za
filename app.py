@@ -12,7 +12,7 @@ app.config["SECRET_KEY"] = os.environ.get(
     "FLASK_SECRET_KEY", "default-fallback-key"
 )
 BREVO_API_KEY = os.environ.get("SENDINBLUE_API_KEY")
-STUDIO_EMAIL = os.environ.get("STUDIO_EMAIL")
+STUDIO_EMAIL = os.environ.get("STUDIO_EMAIL", "leatherbyannuschka@gmail.com")
 
 # Supabase Configuration (using direct REST API to prevent client library version clashes)
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
@@ -912,31 +912,63 @@ def payment_success():
   return redirect(url_for("shop"))
 
 
-@app.route("/payfast/itn", methods=["POST"])
+@app.route('/payfast/itn', methods=['POST'])
 def payfast_itn():
-  data = request.form.to_dict()
-  if data.get("payment_status") == "COMPLETE":
-    order_id = data.get("m_payment_id")
-    if order_id and SUPABASE_URL and SUPABASE_KEY:
-      try:
-        headers = {
-            "apikey": SUPABASE_KEY,
-            "Authorization": f"Bearer {SUPABASE_KEY}",
-            "Content-Type": "application/json",
-            "Prefer": "return=representation",
-        }
-        payload = {"status": "Paid"}
-        requests.patch(
-            f"{SUPABASE_URL}/rest/v1/orders?id=eq.{order_id}",
-            json=payload,
-            headers=headers,
-            timeout=5,
-        )
-      except Exception as e:
-        print(f"Supabase ITN update error: {e}")
-    return "ITN Processed", 200
-  return "Invalid Status", 400
+    data = request.form.to_dict()
+    
+    if data.get('payment_status') == 'COMPLETE':
+        order_id = data.get('m_payment_id', 'N/A')
+        item_name = data.get('item_name', 'Leather Item')
+        amount_str = data.get('amount_gross', '0.00')
+        customer_email = data.get('email_address')
+        customer_name = f"{data.get('name_first', '')} {data.get('name_last', '')}".strip()
+        
+        try:
+            amount_float = float(amount_str)
+        except ValueError:
+            amount_float = 0.00
 
+        new_order = {
+            "id": order_id,
+            "items": item_name,
+            "sales_excl_transport": amount_float,
+            "investor_cut": round(amount_float * 0.10, 2),
+            "timestamp": datetime.now(),
+            "customer_name": customer_name or 'Guest Customer',
+            "customer_email": customer_email,
+            "status": "Pending"
+        }
+
+        # Prevent duplicate entries by checking existing orders in Supabase
+        existing_orders = get_db_orders()
+        if not any(o.get('id') == order_id for o in existing_orders):
+            save_order_to_db(new_order)
+
+        body_owner = (
+            f"Hi Annuschka,\n\nA new order has been paid successfully!\n\n"
+            f"Order ID: {order_id}\n"
+            f"Items: {item_name}\n"
+            f"Total Paid: R {amount_float:,.2f}\n"
+            f"Customer Email: {customer_email}\n\n"
+            f"Log into your Studio Dashboard to process shipping."
+        )
+
+        body_customer = (
+            f"Thank you for supporting local craftsmanship!\n\n"
+            f"We've received your payment of R {amount_float:,.2f} for order #{order_id}.\n"
+            f"Your item is being prepared with care in our studio."
+        )
+
+        try:
+            send_email_https(f"New Paid Order #{order_id} - R{amount_float:,.2f}", STUDIO_EMAIL, body_owner)
+            if customer_email:
+                send_email_https("Order Confirmation - Leather by Annuschka", customer_email, body_customer)
+        except Exception as e:
+            print(f"ITN Email sending error: {e}")
+
+        return "ITN Processed", 200
+
+    return "Invalid Status", 400
 
 @app.route("/dashboard/login", methods=["GET", "POST"])
 def dashboard_login():
